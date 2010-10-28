@@ -18,36 +18,36 @@
 
 /*! Simple table view datasource with filtering support
     Exemple of uses
-    
+
     var colA = [[CPTableColumn alloc] initWithIdentifier:@"keypath1"],
         colB = [[CPTableColumn alloc] initWithIdentifier:@"keypath2"];
-    
+
     [aTableView addTableColumn:colA];
     [aTableView addTableColumn:colB];
-    
-    ... 
-    
+
+    ...
+
     datasource  = [[TNTableViewDataSource alloc] init];
-    
+
     [datasource setTable:aTableView];
     [datasource setSearchableKeyPaths:[@"keypath1"]]; // only key path1 is searchable
 
     [aTableView setDataSource:datasource];
-    
+
     ...
-    
+
     // bind a CPSearchField to the datasource
-    
+
     [aSearchField setTarget:datasource];
     [aSearchField setAction:@selector(filterObjects:)];
-    
+
     ...
-    
+
     [datasource addObject:anObject];
     [aTableView reloadData];
-    
+
     Not the anObject must have keypath1, keypath2 if you want to be able to search and display
-    
+
 */
 @implementation TNTableViewDataSource: CPObject
 {
@@ -257,7 +257,7 @@
 }
 
 /*! returns the number of object in the datasource
-    If a filter is applied, it will return the number of objects 
+    If a filter is applied, it will return the number of objects
     matching the filyter , not the total
     @return the number of object
 */

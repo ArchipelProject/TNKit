@@ -1,17 +1,17 @@
-/*  
+/*
  * TNAlert.j
- *    
+ *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -36,9 +36,9 @@
     @param aTitle CPString containing the title
     @param aMessage CPString containing the message
     @param aTarget the target of the actions
-    @param actions CPArray containing name of buttons and associated actions 
+    @param actions CPArray containing name of buttons and associated actions
         (ex [["Ok", @selector(performOK:)],["NOK", @selector(performNOK:)]])
-    
+
     @return ready to use TNAlert
 */
 + (void)alertWithTitle:(CPString)aTitle message:(CPString)aMessage target:(id)aTarget actions:(CPArray)someActions
@@ -53,9 +53,9 @@
     @param aMessage CPString containing the message
     @param anInfo CPString containing a subsidiary message
     @param aTarget the target of the actions
-    @param actions CPArray containing name of buttons and associated actions 
+    @param actions CPArray containing name of buttons and associated actions
         (ex [["Ok", @selector(performOK:)],["NOK", @selector(performNOK:)]])
-    
+
     @return ready to use TNAlert
 */
 + (void)alertWithTitle:(CPString)aTitle message:(CPString)aMessage informativeMessage:(CPString)anInfo target:(id)aTarget actions:(CPArray)someActions
@@ -69,9 +69,9 @@
     @param aTitle CPString containing the title
     @param aMessage CPString containing the message
     @param aTarget the target of the actions
-    @param actions CPArray containing name of buttons and associated actions 
+    @param actions CPArray containing name of buttons and associated actions
         (ex [["Ok", @selector(performOK:)],["NOK", @selector(performNOK:)]])
-    
+
     @return ready to use TNAlert
 */
 - (TNAlert)initWithTitle:(CPString)aTitle message:(CPString)aMessage target:(id)aTarget actions:(CPArray)someActions
@@ -98,9 +98,9 @@
     @param aMessage CPString containing the message
     @param anInfo CPString containing a subsidiary message
     @param aTarget the target of the actions
-    @param actions CPArray containing name of buttons and associated actions 
+    @param actions CPArray containing name of buttons and associated actions
         (ex [["Ok", @selector(performOK:)],["NOK", @selector(performNOK:)]])
-    
+
     @return ready to use TNAlert
 */
 
