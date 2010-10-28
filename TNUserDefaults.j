@@ -221,7 +221,7 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
 - (void)synchronizeObject:(id)anObject forKey:(CPString)aKey
 {
     var datas       = [CPKeyedArchiver archivedDataWithRootObject:anObject],
-        identifier  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"CPBundleIdentifier"] + @"_" +_user + @"_"+ aKey;
+        identifier  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"CPBundleIdentifier"] + @"_" +_user + @"_"+ aKey,
         string      = [datas rawString];
 
     switch (_storageType)
