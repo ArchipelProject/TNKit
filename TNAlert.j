@@ -41,7 +41,7 @@
 + (void)showAlertWithTitle:(CPString)aTitle message:(CPString)aMessage
 {
     var tnalert = [[TNAlert alloc] initWithTitle:aTitle message:aMessage target:nil actions:[["Ok", nil]]];
-    
+
     [tnalert runModal];
 }
 
