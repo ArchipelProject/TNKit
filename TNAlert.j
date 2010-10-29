@@ -32,6 +32,19 @@
 #pragma mark -
 #pragma mark Initialization
 
+/*! create a TNAlert and show alert with given parameters
+    @param aTitle CPString containing the title
+    @param aMessage CPString containing the message
+
+    @return ready to use TNAlert
+*/
++ (void)showAlertWithTitle:(CPString)aTitle message:(CPString)aMessage
+{
+    var tnalert = [[TNAlert alloc] initWithTitle:aTitle message:aMessage target:nil actions:[["Ok", nil]]];
+    
+    [tnalert runModal];
+}
+
 /*! create a TNAlert alert with given parameters
     @param aTitle CPString containing the title
     @param aMessage CPString containing the message
