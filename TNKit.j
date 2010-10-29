@@ -24,6 +24,7 @@
 @import "TNTableViewDataSource.j"
 @import "TNUserDefaults.j"
 @import "TNAlert.j"
+@import "TNQuickEditView.j"
 
 
 /*! @mainpage
