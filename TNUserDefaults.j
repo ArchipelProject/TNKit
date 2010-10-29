@@ -65,7 +65,7 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
 */
 @implementation TNUserDefaults : CPObject
 {
-    int             _storageType    @accessors(property=storagetype);
+    int             _storageType    @accessors(property=storageType);
 
     CPDictionary    _appDefaults;
     CPDictionary    _defaults;
