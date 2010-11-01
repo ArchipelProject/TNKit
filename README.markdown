@@ -23,6 +23,7 @@ A simple wrapper of CPAlert to make alert quickly and not having to deal with de
 
 
 ## Build
+
 To build TNKit you can type
 
     # jake debug ; jake release
@@ -41,6 +42,7 @@ You can see a demo application here: [Demo](http://github.com/primalmotion/TNKit
 
 
 ## Documentation
+
 To generate the documentation execute the following :
 
     # jake docs
