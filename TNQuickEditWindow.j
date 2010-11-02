@@ -244,7 +244,10 @@ TNQuickEditWindowThemeBlack = @"Black";
 - (void)_editWindowDidMove:(CPNotification)aNotification
 {
     if (_leftMouseDownView)
+    {
         [_cursorView setHidden:YES];
+        [self setLevel:CPNormalWindowLevel ];
+    }
 }
 
 
