@@ -42,7 +42,7 @@
     @param aTarget the target
     @return a initialized instance of TNToolbar
 */
-- (id)initWithTarget:(id)aTarget
+- (id)init
 {
     if (self = [super init])
     {
@@ -174,7 +174,7 @@
 #pragma mark Item selection
 
 /*! make the item identified by the given identifier selected
-    @param aToolbarItem the identifier of toolbaritem you want to select
+    @param aToolbarItem the toolbaritem you want to select
 */
 - (void)selectToolbarItem:(CPToolbarItem)aToolbarItem
 {
@@ -197,8 +197,7 @@
     [_toolbarView addSubview:_imageViewSelection positioned:CPWindowBelow relativeTo:nil];
 }
 
-/*! deselect the item identified by the given identifier
-    @param aToolbarItem the identifier of toolbaritem you want to deselect
+/*! deselect current selected item
 */
 - (void)deselectToolbarItem
 {
