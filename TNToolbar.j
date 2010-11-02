@@ -1,28 +1,29 @@
 /*
  * TNToolbar.j
  *
- * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * Copyright (C) 2010  Antoine Mercadal <antoine.mercadal@inframonde.eu>
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3.0 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
 
-/*! @ingroup archipelcore
-    subclass of CPToolbar that allow dynamic insertion. This is used by TNModuleLoader
+/*! @ingroup tnkit
+    subclass of CPToolbar that allow dynamic insertion and item selection
 */
 @implementation TNToolbar  : CPToolbar
 {
@@ -32,6 +33,10 @@
     CPImageView     _imageViewSelection;
     BOOL            _iconSelected;
 }
+
+
+#pragma mark -
+#pragma mark Initialization
 
 /*! initialize the class with a target
     @param aTarget the target
@@ -81,39 +86,18 @@
     [_toolbarItems setObject:newItem forKey:anIdentifier];
 }
 
+
+#pragma mark -
+#pragma mark Content management
+
+/*! add given item with the given indentifier
+    @param anItem the ToolbarItem to add
+    @param anIdentifier the identifer to use for the item
+*/
 - (void)addItem:(CPToolbarItem)anItem withIdentifier:(CPString)anIdentifier
 {
     [_toolbarItems setObject:anItem forKey:anIdentifier];
 }
-
-- (void)_reloadToolbarItems
-{
-    var sortFunction = function(a, b, context){
-        var indexA = a,
-            indexB = b;
-        if (a < b)
-                return CPOrderedAscending;
-            else if (a > b)
-                return CPOrderedDescending;
-            else
-                return CPOrderedSame;
-        },
-        sortedKeys = [[_toolbarItemsOrder allKeys] sortedArrayUsingFunction:sortFunction];
-
-    _sortedToolbarItems = [CPArray array];
-
-    for (var i = 0; i < [sortedKeys count]; i++)
-    {
-        var key = [sortedKeys objectAtIndex:i];
-        [_sortedToolbarItems addObject:[_toolbarItemsOrder objectForKey:key]];
-    }
-
-    [super _reloadToolbarItems];
-
-    if (_iconSelected)
-        [_toolbarView addSubview:_imageViewSelection positioned:CPWindowBelow relativeTo:nil];
-}
-
 
 /*! add a new CPToolbarItem with a custom view
     @param anIdentifier CPString containing the identifier
@@ -148,29 +132,50 @@
     [_toolbarItemsOrder setObject:anIndentifier forKey:aPosition];
 }
 
-/*! CPToolbar Protocol
+/*! @ignore
 */
-- (CPArray)toolbarAllowedItemIdentifiers:(CPToolbar)aToolbar
+- (void)_reloadToolbarItems
 {
-    return  _sortedToolbarItems;
+    var sortFunction = function(a, b, context){
+        var indexA = a,
+            indexB = b;
+        if (a < b)
+                return CPOrderedAscending;
+            else if (a > b)
+                return CPOrderedDescending;
+            else
+                return CPOrderedSame;
+        },
+        sortedKeys = [[_toolbarItemsOrder allKeys] sortedArrayUsingFunction:sortFunction];
+
+    _sortedToolbarItems = [CPArray array];
+
+    for (var i = 0; i < [sortedKeys count]; i++)
+    {
+        var key = [sortedKeys objectAtIndex:i];
+        [_sortedToolbarItems addObject:[_toolbarItemsOrder objectForKey:key]];
+    }
+
+    [super _reloadToolbarItems];
+
+    if (_iconSelected)
+        [_toolbarView addSubview:_imageViewSelection positioned:CPWindowBelow relativeTo:nil];
 }
 
-/*! CPToolbar Protocol
+/*! reloads all the items in the toolbar
 */
-- (CPArray)toolbarDefaultItemIdentifiers:(CPToolbar)aToolbar
+- (void)reloadToolbarItems
 {
-    return  _sortedToolbarItems;
+    [self _reloadToolbarItems];
 }
 
-/*! CPToolbar Protocol
+
+#pragma mark -
+#pragma mark Item selection
+
+/*! make the item identified by the given identifier selected
+    @param aToolbarItem the identifier of toolbaritem you want to select
 */
-- (CPToolbarItem)toolbar:(CPToolbar)aToolbar itemForItemIdentifier:(CPString)anItemIdentifier willBeInsertedIntoToolbar:(BOOL)aFlag
-{
-    var toolbarItem = [[CPToolbarItem alloc] initWithItemIdentifier:anItemIdentifier];
-
-    return ([_toolbarItems objectForKey:anItemIdentifier]) ? [_toolbarItems objectForKey:anItemIdentifier] : toolbarItem;
-}
-
 - (void)selectToolbarItem:(CPToolbarItem)aToolbarItem
 {
     var toolbarItemView;
@@ -192,10 +197,40 @@
     [_toolbarView addSubview:_imageViewSelection positioned:CPWindowBelow relativeTo:nil];
 }
 
+/*! deselect the item identified by the given identifier
+    @param aToolbarItem the identifier of toolbaritem you want to deselect
+*/
 - (void)deselectToolbarItem
 {
     _iconSelected = NO;
     [_imageViewSelection removeFromSuperview];
+}
+
+
+#pragma mark -
+#pragma mark CPToolbar DataSource implementation
+
+/*! CPToolbar Protocol
+*/
+- (CPArray)toolbarAllowedItemIdentifiers:(CPToolbar)aToolbar
+{
+    return  _sortedToolbarItems;
+}
+
+/*! CPToolbar Protocol
+*/
+- (CPArray)toolbarDefaultItemIdentifiers:(CPToolbar)aToolbar
+{
+    return  _sortedToolbarItems;
+}
+
+/*! CPToolbar Protocol
+*/
+- (CPToolbarItem)toolbar:(CPToolbar)aToolbar itemForItemIdentifier:(CPString)anItemIdentifier willBeInsertedIntoToolbar:(BOOL)aFlag
+{
+    var toolbarItem = [[CPToolbarItem alloc] initWithItemIdentifier:anItemIdentifier];
+
+    return ([_toolbarItems objectForKey:anItemIdentifier]) ? [_toolbarItems objectForKey:anItemIdentifier] : toolbarItem;
 }
 
 

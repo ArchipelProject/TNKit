@@ -56,10 +56,9 @@ TNUserDefaultStorageTypeNoStorage   = @"TNUserDefaultStorageTypeNoStorage";
 
 TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNUserDefaultStorageType"];
 
-#pragma mark -
-#pragma mark TNUserDefaults Base
 
-/*! This class is an implementation of NSUserDefaults.
+/*! @ingroup tnkit
+    This class is an implementation of NSUserDefaults.
     It allows to store using different methods (HTML5 or Cookie)
     datas in order to be recovered in future session.
 */
@@ -302,9 +301,6 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
 @end
 
 
-#pragma mark -
-#pragma mark TNUserDefaults CocoaInterface
-
 @implementation TNUserDefaults (CocoaInterface)
 
 #pragma mark -
@@ -509,9 +505,6 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
 
 @end
 
-
-#pragma mark -
-#pragma mark TNUserDefaults CodingCompliant
 
 @implementation TNUserDefaults (CPCodingCompliant)
 

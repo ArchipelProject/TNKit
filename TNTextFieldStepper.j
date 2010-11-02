@@ -1,54 +1,59 @@
 /*
  * TNTextFieldStepper.j
  *
- * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * Copyright (C) 2010  Antoine Mercadal <antoine.mercadal@inframonde.eu>
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3.0 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 var TNStepperButtonsSize = CPSizeMake(19, 13);
 
+/*! exctracted from Cappuccino's CPTheme because this rocks
+*/
 function PatternColor()
 {
- if (arguments.length < 3)
- {
-     var slices = arguments[0],
-         imageSlices = [],
-         bundle = [CPBundle bundleForClass:TNTextFieldStepper];
+    if (arguments.length < 3)
+    {
+        var slices = arguments[0],
+        imageSlices = [],
+        bundle = [CPBundle bundleForClass:TNTextFieldStepper];
 
-     for (var i = 0; i < slices.length; ++i)
-     {
-         var slice = slices[i];
+        for (var i = 0; i < slices.length; ++i)
+        {
+            var slice = slices[i];
 
-         imageSlices.push(slice ? [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:slice[0]] size:CGSizeMake(slice[1], slice[2])] : nil);
-     }
+            imageSlices.push(slice ? [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:slice[0]] size:CGSizeMake(slice[1], slice[2])] : nil);
+        }
 
-     if (arguments.length == 2)
-         return [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:imageSlices isVertical:arguments[1]]];
-     else
-         return [CPColor colorWithPatternImage:[[CPNinePartImage alloc] initWithImageSlices:imageSlices]];
- }
- else if (arguments.length == 3)
- {
-     return [CPColor colorWithPatternImage:PatternImage(arguments[0], arguments[1], arguments[2])];
- }
- else
- {
-     return nil;
- }
+        if (arguments.length == 2)
+            return [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:imageSlices isVertical:arguments[1]]];
+        else
+            return [CPColor colorWithPatternImage:[[CPNinePartImage alloc] initWithImageSlices:imageSlices]];
+    }
+    else if (arguments.length == 3)
+    {
+        return [CPColor colorWithPatternImage:PatternImage(arguments[0], arguments[1], arguments[2])];
+    }
+    else
+    {
+        return nil;
+    }
 }
 
-/*! TNTextFieldStepper is a subclass of CPStepper. it contains a textfield that displays the current stepper value
+/*! @ingroup tnkit
+    TNTextFieldStepper is a subclass of CPStepper. it contains a textfield that displays the current stepper value
 */
 @implementation TNTextFieldStepper : CPStepper
 {
