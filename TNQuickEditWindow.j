@@ -28,6 +28,9 @@ TNQuickEditWindowGravityLeft    = 2;
 TNQuickEditWindowGravityRight   = 3;
 TNQuickEditWindowGravityAuto    = 4;
 
+TNQuickEditWindowThemeWhite = @"White";
+TNQuickEditWindowThemeBlack = @"Black";
+
 /*! @ingroup tnkit
     This is a simple edit view like the one that pops up
     when you double click on a meeting in iCal
@@ -61,28 +64,40 @@ TNQuickEditWindowGravityAuto    = 4;
     return quickEdit;
 }
 
-/*! create and init a TNQuickEditWindow with given fram
+/*! create and init a TNQuickEditWindow with given frame
     @param aFrame the frame of the edit view
     @return ready to use TNQuickEditWindow
 */
 - (id)initWithContentRect:(CGRect)aFrame
 {
+    self = [self initWithContentRect:aFrame themeColor:TNQuickEditWindowThemeWhite]
+    return self;
+}
+
+/*! create and init a TNQuickEditWindow with given frame
+    @param aFrame the frame of the edit view
+    @param themeColor the color sheme to use  (TNQuickEditWindowThemeWhite or TNQuickEditWindowThemeWhite)
+    @return ready to use TNQuickEditWindow
+*/
+- (id)initWithContentRect:(CGRect)aFrame themeColor:(CPString)aThemeColor
+{
     if (self = [super initWithContentRect:aFrame styleMask:CPBorderlessWindowMask])
     {
+
         var bundle          = [CPBundle bundleForClass:[self class]],
             backgroundImage = [[CPNinePartImage alloc] initWithImageSlices:[
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"quick-edit-view/quick-edit-view-top-left.png"] size:CPSizeMake(20.0, 20.0)],
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"quick-edit-view/quick-edit-view-top.png"] size:CPSizeMake(1.0, 20.0)],
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"quick-edit-view/quick-edit-view-top-right.png"] size:CPSizeMake(20.0, 20.0)],
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"quick-edit-view/quick-edit-view-left.png"] size:CPSizeMake(20.0, 1.0)],
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"quick-edit-view/quick-edit-view-center.png"] size:CPSizeMake(1.0, 1.0)],
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"quick-edit-view/quick-edit-view-right.png"] size:CPSizeMake(20.0, 1.0)],
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"quick-edit-view/quick-edit-view-bottom-left.png"] size:CPSizeMake(20.0, 20.0)],
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"quick-edit-view/quick-edit-view-bottom.png"] size:CPSizeMake(1.0, 20.0)],
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"quick-edit-view/quick-edit-view-bottom-right.png"] size:CPSizeMake(20.0, 20.0)]
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNQuickEditWindow/" + aThemeColor + "/quick-edit-view-top-left.png"] size:CPSizeMake(20.0, 20.0)],
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNQuickEditWindow/" + aThemeColor + "/quick-edit-view-top.png"] size:CPSizeMake(1.0, 20.0)],
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNQuickEditWindow/" + aThemeColor + "/quick-edit-view-top-right.png"] size:CPSizeMake(20.0, 20.0)],
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNQuickEditWindow/" + aThemeColor + "/quick-edit-view-left.png"] size:CPSizeMake(20.0, 1.0)],
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNQuickEditWindow/" + aThemeColor + "/quick-edit-view-center.png"] size:CPSizeMake(1.0, 1.0)],
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNQuickEditWindow/" + aThemeColor + "/quick-edit-view-right.png"] size:CPSizeMake(20.0, 1.0)],
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNQuickEditWindow/" + aThemeColor + "/quick-edit-view-bottom-left.png"] size:CPSizeMake(20.0, 20.0)],
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNQuickEditWindow/" + aThemeColor + "/quick-edit-view-bottom.png"] size:CPSizeMake(1.0, 20.0)],
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNQuickEditWindow/" + aThemeColor + "/quick-edit-view-bottom-right.png"] size:CPSizeMake(20.0, 20.0)]
             ]],
-            buttonClose = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"quick-edit-view/quick-edit-view-button-close.png"] size:CPSizeMake(15.0, 15.0)],
-            buttonClosePressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"quick-edit-view/quick-edit-view-button-close-pressed.png"] size:CPSizeMake(15.0, 15.0)];
+            buttonClose = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNQuickEditWindow/quick-edit-view-button-close.png"] size:CPSizeMake(15.0, 15.0)],
+            buttonClosePressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNQuickEditWindow/quick-edit-view-button-close-pressed.png"] size:CPSizeMake(15.0, 15.0)];
 
         _closeButton = [[CPButton alloc] initWithFrame:CPRectMake(aFrame.size.width - 17.0 - 12.0, 15, 14, 15)];
         [_closeButton setAutoresizingMask:CPViewMinXMargin];
@@ -95,14 +110,13 @@ TNQuickEditWindowGravityAuto    = 4;
         [[self contentView] addSubview:_closeButton];
 
 
-        _cursorBackgroundLeft   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"quick-edit-view/quick-edit-view-arrow-left.png"] size:CPSizeMake(20.0, 20.0)];
-        _cursorBackgroundRight  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"quick-edit-view/quick-edit-view-arrow-right.png"] size:CPSizeMake(20.0, 20.0)];
-        _cursorBackgroundTop    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"quick-edit-view/quick-edit-view-arrow-top.png"] size:CPSizeMake(20.0, 20.0)];
-        _cursorBackgroundBottom = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"quick-edit-view/quick-edit-view-arrow-bottom.png"] size:CPSizeMake(20.0, 20.0)];
+        _cursorBackgroundLeft   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNQuickEditWindow/" + aThemeColor + "/quick-edit-view-arrow-left.png"]];
+        _cursorBackgroundRight  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNQuickEditWindow/" + aThemeColor + "/quick-edit-view-arrow-right.png"]];
+        _cursorBackgroundTop    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNQuickEditWindow/" + aThemeColor + "/quick-edit-view-arrow-top.png"]];
+        _cursorBackgroundBottom = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNQuickEditWindow/" + aThemeColor + "/quick-edit-view-arrow-bottom.png"]];
 
-        _cursorView = [[CPImageView alloc] initWithFrame:CPRectMake(0.0, CPRectGetHeight(aFrame) / 2.0 - 10.0, 20.0, 20.0)];
-        [_cursorView setImageScaling:CPScaleProportionally];
-        [_cursorView setImage:_cursorBackgroundLeft];
+        _cursorView = [[CPImageView alloc] initWithFrame:CPRectMakeZero()];
+        // [_cursorView setImageScaling:CPScaleProportionally];
 
         [[self contentView] setBackgroundColor:[CPColor colorWithPatternImage:backgroundImage]];
         [[self contentView] addSubview:_cursorView];
@@ -203,22 +217,22 @@ TNQuickEditWindowGravityAuto    = 4;
     switch (gravity)
     {
         case TNQuickEditWindowGravityRight:
-            [_cursorView setFrameOrigin:CPPointMake(0.0, CPRectGetHeight([self frame]) / 2.0 - 12.0)];
+            [_cursorView setFrame:CPRectMake(2.0, CPRectGetHeight([self frame]) / 2.0 - 12.0, 10.0, 20.0)];
             [_cursorView setImage:_cursorBackgroundLeft];
             return originRight;
 
         case TNQuickEditWindowGravityLeft:
-            [_cursorView setFrameOrigin:CPPointMake(CPRectGetWidth([self frame]) - 17.0, CPRectGetHeight([self frame]) / 2.0 - 12.0)];
+            [_cursorView setFrame:CPRectMake(CPRectGetWidth([self frame]) - 11.0, CPRectGetHeight([self frame]) / 2.0 - 12.0, 10.0, 20.0)];
             [_cursorView setImage:_cursorBackgroundRight];
             return originLeft;
 
         case TNQuickEditWindowGravityDown:
-            [_cursorView setFrameOrigin:CPPointMake(CPRectGetWidth([self frame]) / 2.0 - 10.0, 0.0)];
+            [_cursorView setFrame:CPRectMake(CPRectGetWidth([self frame]) / 2.0 - 10.0, 2.0, 20.0, 10.0)];
             [_cursorView setImage:_cursorBackgroundTop];
             return originBottom;
 
         case TNQuickEditWindowGravityUp:
-            [_cursorView setFrameOrigin:CPPointMake(CPRectGetWidth([self frame]) / 2.0 - 10.0, CPRectGetHeight([self frame]) - 20.0)];
+            [_cursorView setFrame:CPRectMake(CPRectGetWidth([self frame]) / 2.0 - 10.0, CPRectGetHeight([self frame]) - 16.0, 20.0, 10.0)];
             [_cursorView setImage:_cursorBackgroundBottom];
             return originTop;
     }
