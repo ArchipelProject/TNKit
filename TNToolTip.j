@@ -34,7 +34,20 @@
 */
 + (TNToolTip)toolTipWithString:(CPString)aString forView:(CPView)aView
 {
-    var tooltip = [[TNToolTip alloc] initWithString:aString];
+    var tooltip = [[TNToolTip alloc] initWithString:aString themeColor:TNAttachedWindowThemeWhite];
+
+    [tooltip attachToView:aView];
+
+    return tooltip;
+}
+
+/*! returns an initialized black TNToolTip with string and attach it to given view
+    @param aString the content of the tooltip
+    @param aView the view where the tooltip will be attached
+*/
++ (TNToolTip)blackToolTipWithString:(CPString)aString forView:(CPView)aView
+{
+    var tooltip = [[TNToolTip alloc] initWithString:aString themeColor:TNAttachedWindowThemeBlack];
 
     [tooltip attachToView:aView];
 
@@ -44,9 +57,9 @@
 /*! returns an initialized TNToolTip with string
     @param aString the content of the tooltip
 */
-- (id)initWithString:(CPString)aString
+- (id)initWithString:(CPString)aString themeColor:(int)aThemeColor
 {
-    if (self = [super initWithContentRect:CPRectMake(0.0, 0.0, 200.0, 0.0)])
+    if (self = [super initWithContentRect:CPRectMake(0.0, 0.0, 200.0, 0.0) themeColor:aThemeColor])
     {
         _content = [CPTextField labelWithTitle:aString];
 

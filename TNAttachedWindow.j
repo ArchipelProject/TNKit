@@ -80,7 +80,7 @@ TNAttachedWindowThemeBlack = @"Black";
     @param themeColor the color sheme to use  (TNAttachedWindowThemeWhite or TNAttachedWindowThemeWhite)
     @return ready to use TNAttachedWindow
 */
-- (id)initWithContentRect:(CGRect)aFrame themeColor:(CPString)aThemeColor
+- (id)initWithContentRect:(CGRect)aFrame themeColor:(int)aThemeColor
 {
     if (self = [super initWithContentRect:aFrame styleMask:CPBorderlessWindowMask])
     {
@@ -233,7 +233,7 @@ TNAttachedWindowThemeBlack = @"Black";
             return originBottom;
 
         case TNAttachedWindowGravityUp:
-            [_cursorView setFrame:CPRectMake(CPRectGetWidth([self frame]) / 2.0 - 10.0, CPRectGetHeight([self frame]) - 16.0, 20.0, 10.0)];
+            [_cursorView setFrame:CPRectMake(CPRectGetWidth([self frame]) / 2.0 - 10.0, CPRectGetHeight([self frame]) - 14.0, 20.0, 10.0)];
             [_cursorView setImage:_cursorBackgroundBottom];
             return originTop;
     }
