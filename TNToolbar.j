@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -27,11 +27,13 @@
 */
 @implementation TNToolbar  : CPToolbar
 {
+    CPToolbarItem   _selectedToolbarItem   @accessors(getter=selectedToolbarItem);
+
+    BOOL            _iconSelected;
     CPArray         _sortedToolbarItems;
     CPDictionary    _toolbarItems;
     CPDictionary    _toolbarItemsOrder;
     CPImageView     _imageViewSelection;
-    BOOL            _iconSelected;
 }
 
 
@@ -109,9 +111,6 @@
 - (CPToolbarItem)addItemWithIdentifier:(CPString)anIdentifier label:(CPString)aLabel view:(CPView)aView target:(id)aTarget action:(SEL)anAction
 {
     var newItem = [[CPToolbarItem alloc] initWithItemIdentifier:anIdentifier];
-
-    //[newItem setMinSize:CGSizeMake(120.0, 24.0)];
-    //[newItem setMaxSize:CGSizeMake(120.0, 24.0)]
 
     [newItem setLabel:aLabel];
     [newItem setView:aView];
@@ -195,13 +194,16 @@
     [_imageViewSelection setFrameOrigin:CGPointMake(CGRectGetMinX(frame) + (CGRectGetWidth(frame) - CGRectGetWidth([_imageViewSelection frame])) / 2.0, 0.0)];
 
     [_toolbarView addSubview:_imageViewSelection positioned:CPWindowBelow relativeTo:nil];
+
+    _selectedToolbarItem = aToolbarItem;
 }
 
 /*! deselect current selected item
 */
 - (void)deselectToolbarItem
 {
-    _iconSelected = NO;
+    _selectedToolbarItem    = nil;
+    _iconSelected           = NO;
     [_imageViewSelection removeFromSuperview];
 }
 
