@@ -56,9 +56,9 @@
         _iconSelected       = NO
 
         var selectedBgImage     = [[CPThreePartImage alloc] initWithImageSlices:[
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-item-selected-left.png"] size:CPSizeMake(2.0, 60.0)],
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-item-selected-left.png"] size:CPSizeMake(3.0, 60.0)],
                 [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-item-selected-center.png"] size:CPSizeMake(1.0, 60.0)],
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-item-selected-right.png"] size:CPSizeMake(2.0, 60.0)]
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-item-selected-right.png"] size:CPSizeMake(3.0, 60.0)]
             ] isVertical:NO];
 
         [_imageViewSelection setBackgroundColor:[CPColor colorWithPatternImage:selectedBgImage]];
