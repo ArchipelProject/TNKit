@@ -41,7 +41,7 @@
 {
     if (self = [super init])
     {
-        var bundle          = [CPBundle mainBundle];
+        var bundle          = [CPBundle bundleForClass:[self class]];
 
         _toolbarItems       = [CPDictionary dictionary];
         _toolbarItemsOrder  = [CPDictionary dictionary];
