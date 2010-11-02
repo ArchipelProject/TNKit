@@ -116,11 +116,11 @@ TNQuickEditWindowThemeBlack = @"Black";
         _cursorBackgroundBottom = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNQuickEditWindow/" + aThemeColor + "/quick-edit-view-arrow-bottom.png"]];
 
         _cursorView = [[CPImageView alloc] initWithFrame:CPRectMakeZero()];
-        // [_cursorView setImageScaling:CPScaleProportionally];
 
         [[self contentView] setBackgroundColor:[CPColor colorWithPatternImage:backgroundImage]];
         [[self contentView] addSubview:_cursorView];
 
+        [self setLevel:CPStatusWindowLevel];
         [self setMovableByWindowBackground:YES];
         [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_editWindowDidMove:) name:CPWindowDidMoveNotification object:self];
     }
