@@ -19,6 +19,7 @@
  */
 
 @import <AppKit/AppKit.j>
+@import "TNToolTip.j";
 
 var currentToolTip,
     currentToolTipTimer;
@@ -82,18 +83,7 @@ var currentToolTip,
 
 - (void)showToolTip:(CPTimer)aTimer
 {
-    var field = [CPTextField labelWithTitle:_toolTip],
-        size = [_toolTip sizeWithFont:[field font]];
-
-    [field sizeToFit];
-    size.width += 50;
-    size.height += 50;
-
-    currentToolTip = [TNQuickEditWindow quickEditWindowWithSize:size forView:self];
-    [currentToolTip setUseCloseButton:NO];
-
-    [field setCenter:[[currentToolTip contentView] center]];
-    [[currentToolTip contentView] addSubview:field];
+    currentToolTip = [TNToolTip toolTipWithString:_toolTip forView:self];
 }
 
 
