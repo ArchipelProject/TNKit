@@ -24,7 +24,7 @@
 @import "TNTableViewDataSource.j"
 @import "TNUserDefaults.j"
 @import "TNAlert.j"
-@import "TNQuickEditWindow.j"
+@import "TNAttachedWindow.j"
 @import "TNToolbar.j"
 @import "TNToolTip.j"
 @import "TNCategories.j"

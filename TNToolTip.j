@@ -18,12 +18,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-@import "TNQuickEditWindow.j"
+@import "TNAttachedWindow.j"
 
 /*! @ingroup TNKit
-    subclass of TNQuickEditWindow in order to build quick tooltip
+    subclass of TNAttachedWindow in order to build quick tooltip
 */
-@implementation TNToolTip : TNQuickEditWindow
+@implementation TNToolTip : TNAttachedWindow
 {
     CPTextField _content;
 }
