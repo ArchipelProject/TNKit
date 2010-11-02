@@ -25,6 +25,7 @@
 @import "TNUserDefaults.j"
 @import "TNAlert.j"
 @import "TNQuickEditWindow.j"
+@import "TNToolbar.j"
 
 
 /*! @mainpage
