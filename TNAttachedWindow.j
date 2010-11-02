@@ -101,9 +101,9 @@ TNAttachedWindowThemeBlack = @"Black";
             buttonClosePressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + aThemeColor + "/attached-window-button-close-pressed.png"] size:CPSizeMake(15.0, 15.0)];
 
         _closeButton = [[CPButton alloc] initWithFrame:CPRectMake(15.0, 15.0, 14.0, 14.0)];
-        [_closeButton setAutoresizingMask:CPViewMinXMargin];
         [_closeButton setImageScaling:CPScaleProportionally];
         [_closeButton setBordered:NO];
+        [_closeButton setImage:buttonClose]; // this avoid the blinking..
         [_closeButton setValue:buttonClose forThemeAttribute:@"image"];
         [_closeButton setValue:buttonClosePressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
         [_closeButton setTarget:self];
