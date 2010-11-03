@@ -47,11 +47,13 @@ var currentToolTip,
     if (_toolTip)
     {
         _DOMElement.addEventListener("mouseover", fIn);
+        _DOMElement.addEventListener("keypress", fOut);
         _DOMElement.addEventListener("mouseout", fOut);
     }
     else
     {
         _DOMElement.removeEventListener("mouseover", fIn);
+        _DOMElement.removeEventListener("keypress", fOut);
         _DOMElement.removeventListener("mouseout", fOut);
     }
 }
@@ -70,15 +72,23 @@ var currentToolTip,
     }
 
     if (_toolTip)
-        currentToolTipTimer = [CPTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(showToolTip:) userInfo:nil repeats:NO];
+        currentToolTipTimer = [CPTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(showToolTip:) userInfo:nil repeats:NO];
 }
 
 - (void)invalidateToolTip
 {
     if (currentToolTipTimer)
+    {
         [currentToolTipTimer invalidate];
+        currentToolTipTimer = nil;
+    }
+
     if (currentToolTip)
+    {
         [currentToolTip close:nil];
+        currentToolTip = nil;
+    }
+
 }
 
 - (void)showToolTip:(CPTimer)aTimer
