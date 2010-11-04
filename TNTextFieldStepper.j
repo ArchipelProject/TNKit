@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -27,8 +27,8 @@ function PatternColor()
     if (arguments.length < 3)
     {
         var slices = arguments[0],
-        imageSlices = [],
-        bundle = [CPBundle bundleForClass:TNTextFieldStepper];
+            imageSlices = [],
+            bundle = [CPBundle bundleForClass:TNTextFieldStepper];
 
         for (var i = 0; i < slices.length; ++i)
         {
@@ -105,7 +105,10 @@ function PatternColor()
 
         _textField = [[CPTextField alloc] initWithFrame:CPRectMake(0, 0, aFrame.size.width - TNStepperButtonsSize.width, aFrame.size.height)];
         [_textField setBezeled:YES];
-        [_textField setEditable:NO];
+        [_textField setEditable:YES];
+        [_textField setTarget:self];
+        [_textField setSendsActionOnEndEditing:YES];
+        [_textField setAction:@selector(_didTextFieldEdit:)];
         [_textField setAutoresizingMask:CPViewWidthSizable];
         [_textField bind:@"doubleValue" toObject:self withKeyPath:@"doubleValue" options:nil];
         [_textField setValue:CGInsetMake(0.0, 0.0, 0.0, 0.0) forThemeAttribute:@"bezel-inset"];
@@ -203,6 +206,20 @@ function PatternColor()
 {
     [super setEnabled:shouldEnabled];
     [_textField setEnabled:shouldEnabled];
+}
+
+- (IBAction)_didTextFieldEdit:(id)aSender
+{
+    var value = [aSender doubleValue];
+
+    if (value == _value)
+        return;
+    else if (value > _maxValue)
+        value = _maxValue
+    else if (value < _minValue)
+        value = _minValue;
+
+    [self setDoubleValue:value];
 }
 
 @end
