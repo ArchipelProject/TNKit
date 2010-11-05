@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -282,6 +282,9 @@
 {
     var identifier = [aCol identifier];
 
+    if (aRow >= [_filteredContent count])
+            return nil;
+
     return [[_filteredContent objectAtIndex:aRow] valueForKey:identifier];
 }
 
@@ -308,6 +311,9 @@
 
 - (void)tableView:(CPTableView)aTableView setObjectValue:(id)aValue forTableColumn:(CPTableColumn)aCol row:(int)aRow
 {
+    if (aRow >= [_filteredContent count])
+        return;
+
     var identifier = [aCol identifier];
 
     [[_filteredContent objectAtIndex:aRow] setValue:aValue forKey:identifier];
