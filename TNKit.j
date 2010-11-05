@@ -22,7 +22,6 @@
 @import "TNAnimation.j"
 @import "TNOutlineViewDataSource.j"
 @import "TNTableViewDataSource.j"
-@import "TNUserDefaults.j"
 @import "TNAlert.j"
 @import "TNAttachedWindow.j"
 @import "TNToolbar.j"
