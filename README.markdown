@@ -5,9 +5,6 @@
 
 TNKit is a general framework that contains different things
 
-### TNUserDefaults
-An implementation of NSUserDefault with HTML5 or Cookie based storage
-
 ### TNAttachedWindow
 A property view acting like the one that pops up when you double click on a meeting in iCal
 
