@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -25,6 +25,8 @@
 @implementation TNAlert : CPObject
 {
     CPAlert _alert      @accessors(getter=alert);
+    SEL     _helpAction @accessors(getter=helpAction);
+    id      _helpTarget @accessors(getter=helpTarget);
     CPArray _actions    @accessors(getter=actions);
     id      _target     @accessors(property=target);
     id      _userInfo   @accessors(property=userInfo);
@@ -92,6 +94,29 @@
     return self;
 }
 
+/*! define the target and action for help button
+    if set, help button will be automatically set.
+    to remove it, simply set aTarget of anAction to nil
+    @param aTarget the target of the help action
+    @param anAction the action to execute if user click the help button
+*/
+- (void)setHelpTarget:(id)aTarget action:(SEL)anAction
+{
+    if (aTarget && anAction)
+    {
+        _helpTarget = aTarget;
+        _helpAction = anAction;
+        [_alert setShowsHelp:YES];
+    }
+    else
+    {
+        _helpTarget = nil;
+        _helpAction = nil;
+        [_alert setShowsHelp:NO];
+
+    }
+}
+
 
 #pragma mark -
 #pragma mark Displaying
@@ -123,6 +148,14 @@
 
     if ([_target respondsToSelector:selector])
         [_target performSelector:selector withObject:_userInfo];
+}
+
+/*! @ignore
+*/
+- (void)alertShowHelp:(CPAlert)anAlert
+{
+    if ([_helpTarget respondsToSelector:_helpAction])
+        [_helpTarget performSelector:_helpAction withObject:anAlert];
 }
 
 @end
