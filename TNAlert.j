@@ -49,6 +49,21 @@
     [tnalert runModal];
 }
 
+/*! create a TNAlert and show alert with given parameters
+    @param aTitle CPString containing the title
+    @param aMessage CPString containing the message
+    @param aStyle the style of the alert
+
+    @return ready to use TNAlert
+*/
++ (void)showAlertWithMessage:(CPString)aTitle informative:(CPString)aMessage style:(int)aStyle
+{
+    var tnalert = [[TNAlert alloc] initWithMessage:aTitle informative:aMessage target:nil actions:[["Ok", nil]]];
+
+    [tnalert setAlertStyle:aStyle];
+    [tnalert runModal];
+}
+
 /*! create a TNAlert alert with given parameters
     @param aTitle CPString containing the title
     @param aMessage CPString containing the message
