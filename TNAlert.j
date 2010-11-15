@@ -86,6 +86,7 @@
         [_alert setMessageText:aTitle];
         [_alert setInformativeText:aMessage];
         [_alert setDelegate:self];
+        [_alert setAlertStyle:CPInformationalAlertStyle];
 
         for (var i = 0; i < [_actions count]; i++)
             [_alert addButtonWithTitle:[[_actions objectAtIndex:i] objectAtIndex:0]];
@@ -115,6 +116,11 @@
         [_alert setShowsHelp:NO];
 
     }
+}
+
+- (void)setAlertStyle:(int)aStyle
+{
+    [_alert setAlertStyle:aStyle];
 }
 
 
