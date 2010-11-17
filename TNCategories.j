@@ -24,7 +24,7 @@
 var currentToolTip,
     currentToolTipTimer;
 
-@implementation CPResponder (tooltip)
+@implementation CPControl (tooltip)
 
 - (void)setToolTip:(CPString)aToolTip
 {
