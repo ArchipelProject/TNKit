@@ -114,61 +114,18 @@ function PatternColor()
         [_textField setValue:CGInsetMake(0.0, 0.0, 0.0, 0.0) forThemeAttribute:@"bezel-inset"];
         [_textField setValue:CGInsetMake(7.0, 7.0, 5.0, 8.0) forThemeAttribute:@"content-inset"];
 
-
-        var bezelUpSquareLeft = PatternColor(
-                [
-                    ["TNTextFieldStepper/stepper-textfield-bezel-big-up-left.png", 3.0, 13.0],
-                    ["TNTextFieldStepper/stepper-textfield-bezel-big-up-center.png", 13.0, 13.0],
-                    ["TNTextFieldStepper/stepper-textfield-bezel-big-up-right.png", 3.0, 13.0]
-                ],
-                NO),
-            bezelDownSquareLeft = PatternColor(
-                [
-                    ["TNTextFieldStepper/stepper-textfield-bezel-big-down-left.png", 3.0, 12.0],
-                    ["TNTextFieldStepper/stepper-textfield-bezel-big-down-center.png", 13.0, 12.0],
-                    ["TNTextFieldStepper/stepper-textfield-bezel-big-down-right.png", 3.0, 12.0]
-                ],
-                NO),
-            bezelUpDisabledSquareLeft = PatternColor(
-                [
-                    ["TNTextFieldStepper/stepper-textfield-bezel-big-disabled-up-left.png", 3.0, 13.0],
-                    ["TNTextFieldStepper/stepper-textfield-bezel-big-disabled-up-center.png", 13.0, 13.0],
-                    ["TNTextFieldStepper/stepper-textfield-bezel-big-disabled-up-right.png", 3.0, 13.0]
-                ],
-                NO),
-            bezelDownDisabledSquareLeft = PatternColor(
-                [
-                    ["TNTextFieldStepper/stepper-textfield-bezel-big-disabled-down-left.png", 3.0, 12.0],
-                    ["TNTextFieldStepper/stepper-textfield-bezel-big-disabled-down-center.png", 13.0, 12.0],
-                    ["TNTextFieldStepper/stepper-textfield-bezel-big-disabled-down-right.png", 3.0, 12.0]
-                ],
-                NO),
-            bezelUpHighlightedSquareLeft = PatternColor(
-                [
-                    [@"TNTextFieldStepper/stepper-textfield-bezel-big-highlighted-up-left.png", 3.0, 13.0],
-                    [@"TNTextFieldStepper/stepper-textfield-bezel-big-highlighted-up-center.png", 13.0, 13.0],
-                    [@"TNTextFieldStepper/stepper-textfield-bezel-big-highlighted-up-right.png", 3.0, 13.0]
-                ],
-                NO),
-            bezelDownHighlightedSquareLeft = PatternColor(
-                [
-                    [@"TNTextFieldStepper/stepper-textfield-bezel-big-highlighted-down-left.png", 3.0, 12.0],
-                    [@"TNTextFieldStepper/stepper-textfield-bezel-big-highlighted-down-center.png", 13.0, 12.0],
-                    [@"TNTextFieldStepper/stepper-textfield-bezel-big-highlighted-down-right.png", 3.0, 12.0]
-                ],
-                NO),
-            tfbezelColor = PatternColor(
-                [
-                    ["TNTextFieldStepper/stepper-textfield-bezel-big-bezel-square-0.png", 2.0, 3.0],
-                    ["TNTextFieldStepper/stepper-textfield-bezel-big-bezel-square-1.png", 1.0, 3.0],
-                    ["TNTextFieldStepper/stepper-textfield-bezel-big-bezel-square-2.png", 2.0, 3.0],
-                    ["TNTextFieldStepper/stepper-textfield-bezel-big-bezel-square-3.png", 2.0, 1.0],
-                    ["TNTextFieldStepper/stepper-textfield-bezel-big-bezel-square-4.png", 1.0, 1.0],
-                    ["TNTextFieldStepper/stepper-textfield-bezel-big-bezel-square-5.png", 2.0, 1.0],
-                    ["TNTextFieldStepper/stepper-textfield-bezel-big-bezel-square-6.png", 2.0, 2.0],
-                    ["TNTextFieldStepper/stepper-textfield-bezel-big-bezel-square-7.png", 1.0, 2.0],
-                    ["TNTextFieldStepper/stepper-textfield-bezel-big-bezel-square-8.png", 2.0, 2.0]
-                ]),
+        var tfbezelColor = PatternColor(
+            [
+                ["TNTextFieldStepper/stepper-textfield-bezel-big-bezel-square-0.png", 2.0, 3.0],
+                ["TNTextFieldStepper/stepper-textfield-bezel-big-bezel-square-1.png", 1.0, 3.0],
+                ["TNTextFieldStepper/stepper-textfield-bezel-big-bezel-square-2.png", 2.0, 3.0],
+                ["TNTextFieldStepper/stepper-textfield-bezel-big-bezel-square-3.png", 2.0, 1.0],
+                ["TNTextFieldStepper/stepper-textfield-bezel-big-bezel-square-4.png", 1.0, 1.0],
+                ["TNTextFieldStepper/stepper-textfield-bezel-big-bezel-square-5.png", 2.0, 1.0],
+                ["TNTextFieldStepper/stepper-textfield-bezel-big-bezel-square-6.png", 2.0, 2.0],
+                ["TNTextFieldStepper/stepper-textfield-bezel-big-bezel-square-7.png", 1.0, 2.0],
+                ["TNTextFieldStepper/stepper-textfield-bezel-big-bezel-square-8.png", 2.0, 2.0]
+            ]),
             tfbezelDisabledColor = PatternColor(
                 [
                     ["TNTextFieldStepper/stepper-textfield-bezel-big-disabled-bezel-square-0.png", 2.0, 3.0],
@@ -185,18 +142,69 @@ function PatternColor()
         [_textField setValue:tfbezelColor forThemeAttribute:@"bezel-color"];
         [_textField setValue:tfbezelDisabledColor forThemeAttribute:@"bezel-color" inState:CPThemeStateBezeled | CPThemeStateDisabled];
 
-        [_buttonUp setValue:bezelUpSquareLeft forThemeAttribute:@"bezel-color" inState:CPThemeStateBordered];
-        [_buttonUp setValue:bezelUpDisabledSquareLeft forThemeAttribute:@"bezel-color" inState:CPThemeStateBordered | CPThemeStateDisabled];
-        [_buttonUp setValue:bezelUpHighlightedSquareLeft forThemeAttribute:@"bezel-color" inState:CPThemeStateBordered | CPThemeStateHighlighted];
-
-        [_buttonDown setValue:bezelDownSquareLeft forThemeAttribute:@"bezel-color" inState:CPThemeStateBordered];
-        [_buttonDown setValue:bezelDownDisabledSquareLeft forThemeAttribute:@"bezel-color" inState:CPThemeStateBordered | CPThemeStateDisabled];
-        [_buttonDown setValue:bezelDownHighlightedSquareLeft forThemeAttribute:@"bezel-color" inState:CPThemeStateBordered | CPThemeStateHighlighted];
 
         [self addSubview:_textField];
     }
 
     return self;
+}
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+
+    var bezelUpSquareLeft = PatternColor(
+            [
+                ["TNTextFieldStepper/stepper-textfield-bezel-big-up-left.png", 3.0, 13.0],
+                ["TNTextFieldStepper/stepper-textfield-bezel-big-up-center.png", 13.0, 13.0],
+                ["TNTextFieldStepper/stepper-textfield-bezel-big-up-right.png", 3.0, 13.0]
+            ],
+            NO),
+        bezelDownSquareLeft = PatternColor(
+            [
+                ["TNTextFieldStepper/stepper-textfield-bezel-big-down-left.png", 3.0, 12.0],
+                ["TNTextFieldStepper/stepper-textfield-bezel-big-down-center.png", 13.0, 12.0],
+                ["TNTextFieldStepper/stepper-textfield-bezel-big-down-right.png", 3.0, 12.0]
+            ],
+            NO),
+        bezelUpDisabledSquareLeft = PatternColor(
+            [
+                ["TNTextFieldStepper/stepper-textfield-bezel-big-disabled-up-left.png", 3.0, 13.0],
+                ["TNTextFieldStepper/stepper-textfield-bezel-big-disabled-up-center.png", 13.0, 13.0],
+                ["TNTextFieldStepper/stepper-textfield-bezel-big-disabled-up-right.png", 3.0, 13.0]
+            ],
+            NO),
+        bezelDownDisabledSquareLeft = PatternColor(
+            [
+                ["TNTextFieldStepper/stepper-textfield-bezel-big-disabled-down-left.png", 3.0, 12.0],
+                ["TNTextFieldStepper/stepper-textfield-bezel-big-disabled-down-center.png", 13.0, 12.0],
+                ["TNTextFieldStepper/stepper-textfield-bezel-big-disabled-down-right.png", 3.0, 12.0]
+            ],
+            NO),
+        bezelUpHighlightedSquareLeft = PatternColor(
+            [
+                [@"TNTextFieldStepper/stepper-textfield-bezel-big-highlighted-up-left.png", 3.0, 13.0],
+                [@"TNTextFieldStepper/stepper-textfield-bezel-big-highlighted-up-center.png", 13.0, 13.0],
+                [@"TNTextFieldStepper/stepper-textfield-bezel-big-highlighted-up-right.png", 3.0, 13.0]
+            ],
+            NO),
+        bezelDownHighlightedSquareLeft = PatternColor(
+            [
+                [@"TNTextFieldStepper/stepper-textfield-bezel-big-highlighted-down-left.png", 3.0, 12.0],
+                [@"TNTextFieldStepper/stepper-textfield-bezel-big-highlighted-down-center.png", 13.0, 12.0],
+                [@"TNTextFieldStepper/stepper-textfield-bezel-big-highlighted-down-right.png", 3.0, 12.0]
+            ],
+            NO);
+
+    [_buttonUp setValue:bezelUpSquareLeft forThemeAttribute:@"bezel-color" inState:CPThemeStateBordered];
+    [_buttonUp setValue:bezelUpDisabledSquareLeft forThemeAttribute:@"bezel-color" inState:CPThemeStateBordered | CPThemeStateDisabled];
+    [_buttonUp setValue:bezelUpHighlightedSquareLeft forThemeAttribute:@"bezel-color" inState:CPThemeStateBordered | CPThemeStateHighlighted];
+
+    [_buttonDown setValue:bezelDownSquareLeft forThemeAttribute:@"bezel-color" inState:CPThemeStateBordered];
+    [_buttonDown setValue:bezelDownDisabledSquareLeft forThemeAttribute:@"bezel-color" inState:CPThemeStateBordered | CPThemeStateDisabled];
+    [_buttonDown setValue:bezelDownHighlightedSquareLeft forThemeAttribute:@"bezel-color" inState:CPThemeStateBordered | CPThemeStateHighlighted];
+
+    alert("ping");
 }
 
 /*! set the TNTextFieldStepper enabled or not
