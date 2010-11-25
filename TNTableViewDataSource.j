@@ -61,6 +61,7 @@
     CPArray         _filteredContent;
     CPSearchField   _searchField;
     CPString        _filter;
+    BOOL            _needsFilter;
 }
 
 #pragma mark -
@@ -75,6 +76,7 @@
         _searchableKeyPaths = [CPArray array];
 
         _filter             = @"";
+        _needsFilter        = NO;
     }
     return self;
 }
@@ -132,12 +134,10 @@
 */
 - (void)setContent:(CPArray)aContent
 {
-    _filter = @"";
-    if (_searchField)
-        [_searchField setStringValue:@""];
-
     _content = [aContent copy];
     _filteredContent = [aContent copy];
+
+    _needsFilter = YES;
 }
 
 /*! add an object to the datasource
@@ -145,13 +145,10 @@
 */
 - (void)addObject:(id)anObject
 {
-    _filter = @"";
-
-    if (_searchField)
-        [_searchField setStringValue:@""];
-
     [_content addObject:anObject];
     [_filteredContent addObject:anObject];
+
+    _needsFilter = YES;
 }
 
 /*! insert an object at a given index in the datasource
@@ -160,13 +157,10 @@
 */
 - (void)insertObject:(id)anObject atIndex:(int)anIndex
 {
-    _filter = @"";
-
-    if (_searchField)
-        [_searchField setStringValue:@""];
-
     [_content insertObject:anObject atIndex:anIndex];
     [_filteredContent insertObject:anObject atIndex:anIndex];
+
+    _needsFilter = YES;
 }
 
 /*! return the object at given index
@@ -197,6 +191,8 @@
 
     [_filteredContent removeObjectAtIndex:index];
     [_content removeObject:object];
+
+    _needsFilter = YES;
 }
 
 /*! removes the object at given indexes contained in a CPIndexSet
@@ -210,6 +206,8 @@
 
         [_filteredContent removeObjectsAtIndexes:aSet];
         [_content removeObjectsInArray:objects];
+
+        _needsFilter = YES;
     }
     catch(e)
     {
@@ -224,6 +222,8 @@
 {
     [_content removeObject:anObject];
     [_filteredContent removeObject:anObject];
+
+    _needsFilter = YES;
 }
 
 /*! remove all objects
@@ -232,6 +232,8 @@
 {
     [_content removeAllObjects];
     [_filteredContent removeAllObjects];
+
+    _needsFilter = YES;
 }
 
 /*! remove last object
@@ -240,6 +242,8 @@
 {
     [_content removeLastObject];
     [_filteredContent removeLastObject];
+
+    _needsFilter = YES;
 }
 
 /*! remove first object
@@ -248,6 +252,8 @@
 {
     [_content removeFirstObject];
     [_filteredContent removeFirstObject];
+
+    _needsFilter = YES;
 }
 
 /*! return the index of the given object
@@ -280,10 +286,16 @@
 
 - (id)tableView:(CPTableView)aTable objectValueForTableColumn:(CPNumber)aCol row:(CPNumber)aRow
 {
-    var identifier = [aCol identifier];
+    if (_needsFilter && _searchField)
+    {
+        [self filterObjects:_searchField];
+        _needsFilter = NO;
+    }
 
     if (aRow >= [_filteredContent count])
             return nil;
+
+    var identifier = [aCol identifier];
 
     return [[_filteredContent objectAtIndex:aRow] valueForKey:identifier];
 }
