@@ -203,8 +203,6 @@ function PatternColor()
     [_buttonDown setValue:bezelDownSquareLeft forThemeAttribute:@"bezel-color" inState:CPThemeStateBordered];
     [_buttonDown setValue:bezelDownDisabledSquareLeft forThemeAttribute:@"bezel-color" inState:CPThemeStateBordered | CPThemeStateDisabled];
     [_buttonDown setValue:bezelDownHighlightedSquareLeft forThemeAttribute:@"bezel-color" inState:CPThemeStateBordered | CPThemeStateHighlighted];
-
-    alert("ping");
 }
 
 /*! set the TNTextFieldStepper enabled or not
