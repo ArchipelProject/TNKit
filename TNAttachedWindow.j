@@ -308,7 +308,6 @@ TNAttachedWindowThemeBlack = @"Black";
 */
 - (IBAction)close:(id)aSender
 {
-    //[self removeFromSuperview];
     [self close];
 
     if (_delegate && [_delegate respondsToSelected:@selector(didQuickEditViewClose:)])
