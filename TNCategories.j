@@ -45,16 +45,34 @@ var currentToolTip,
 
 
     if (_toolTip)
-    {
-        _DOMElement.addEventListener("mouseover", fIn);
-        _DOMElement.addEventListener("keypress", fOut);
-        _DOMElement.addEventListener("mouseout", fOut);
+    {        
+        if (_DOMElement.addEventListener)
+        {
+            _DOMElement.addEventListener("mouseover", fIn, NO);
+            _DOMElement.addEventListener("keypress", fOut, NO);
+            _DOMElement.addEventListener("mouseout", fOut, NO);
+        }
+        else if (_DOMElement.attachEvent)
+        {
+            _DOMElement.attachEvent("onmouseover", fIn);
+            _DOMElement.attachEvent("onkeypress", fOut);
+            _DOMElement.attachEvent("onmouseout", fOut);
+        }        
     }
     else
     {
-        _DOMElement.removeEventListener("mouseover", fIn);
-        _DOMElement.removeEventListener("keypress", fOut);
-        _DOMElement.removeventListener("mouseout", fOut);
+        if (_DOMElement.removeEventListener)
+        {
+            _DOMElement.removeEventListener("mouseover", fIn, NO);
+            _DOMElement.removeEventListener("keypress", fOut, NO);
+            _DOMElement.removeEventListener("mouseout", fOut, NO);
+        }
+        else if (_DOMElement.detachEvent)
+        {
+            _DOMElement.detachEvent("onmouseover", fIn);
+            _DOMElement.detachEvent("onkeypress", fOut);
+            _DOMElement.detachEvent("onmouseout", fOut);
+        }
     }
 }
 
