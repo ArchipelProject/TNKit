@@ -45,7 +45,7 @@ var currentToolTip,
 
 
     if (_toolTip)
-    {        
+    {
         if (_DOMElement.addEventListener)
         {
             _DOMElement.addEventListener("mouseover", fIn, NO);
@@ -57,7 +57,7 @@ var currentToolTip,
             _DOMElement.attachEvent("onmouseover", fIn);
             _DOMElement.attachEvent("onkeypress", fOut);
             _DOMElement.attachEvent("onmouseout", fOut);
-        }        
+        }
     }
     else
     {
