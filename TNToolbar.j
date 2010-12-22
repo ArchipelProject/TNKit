@@ -27,7 +27,8 @@
 */
 @implementation TNToolbar  : CPToolbar
 {
-    CPToolbarItem   _selectedToolbarItem   @accessors(getter=selectedToolbarItem);
+    CPArray         _customSubViews         @accessors(property=customSubViews);
+    CPToolbarItem   _selectedToolbarItem    @accessors(getter=selectedToolbarItem);
 
     BOOL            _iconSelected;
     CPArray         _sortedToolbarItems;
@@ -50,10 +51,11 @@
     {
         var bundle          = [CPBundle bundleForClass:[self class]];
 
-        _toolbarItems       = [CPDictionary dictionary];
-        _toolbarItemsOrder  = [CPDictionary dictionary];
-        _imageViewSelection = [[CPImageView alloc] initWithFrame:CPRectMake(0.0, 0.0, 60.0, 60.0)];
-        _iconSelected       = NO
+        _toolbarItems           = [CPDictionary dictionary];
+        _toolbarItemsOrder      = [CPDictionary dictionary];
+        _imageViewSelection     = [[CPImageView alloc] initWithFrame:CPRectMake(0.0, 0.0, 60.0, 60.0)];
+        _iconSelected           = NO;
+        _customSubViews         = [CPArray array];
 
         var selectedBgImage     = [[CPThreePartImage alloc] initWithImageSlices:[
                 [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-item-selected-left.png"] size:CPSizeMake(3.0, 60.0)],
@@ -86,6 +88,18 @@
     [newItem setAction:anAction];
 
     [_toolbarItems setObject:newItem forKey:anIdentifier];
+}
+
+
+#pragma mark -
+#pragma mark Accesors
+
+/*! return the actual view of the CPToolBar
+    Usefull for hacks.
+*/
+- (CPView)toolbarView
+{
+    return _toolbarView;
 }
 
 
@@ -159,6 +173,9 @@
 
     if (_iconSelected)
         [_toolbarView addSubview:_imageViewSelection positioned:CPWindowBelow relativeTo:nil];
+
+    for (var i = 0; i < [_customSubViews count]; i++)
+        [_toolbarView addSubview:[_customSubViews objectAtIndex:i]];
 }
 
 /*! reloads all the items in the toolbar
