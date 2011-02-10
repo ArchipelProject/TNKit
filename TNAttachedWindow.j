@@ -38,7 +38,9 @@ TNAttachedWindowThemeBlack = @"Black";
 @implementation TNAttachedWindow : CPWindow
 {
     BOOL            _useCloseButton     @accessors(getter=isUsingCloseButton)
+    BOOL            _closeOnBlur        @accessors(getter=isClosingOnBlur)
     id              _targetView         @accessors(property=targetView);
+    BOOL            _isClosed;
 
     CPButton        _closeButton;
     CPImage         _cursorBackgroundBottom;
@@ -84,7 +86,10 @@ TNAttachedWindowThemeBlack = @"Black";
 {
     if (self = [super initWithContentRect:aFrame styleMask:CPBorderlessWindowMask])
     {
-
+        _isClosed       = NO;
+        _closeOnBlur    = NO;
+        _useCloseButton = YES;
+        
         var bundle          = [CPBundle bundleForClass:[self class]],
             backgroundImage = [[CPNinePartImage alloc] initWithImageSlices:[
                 [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + aThemeColor + "/attached-window-top-left.png"] size:CPSizeMake(20.0, 20.0)],
@@ -130,6 +135,19 @@ TNAttachedWindowThemeBlack = @"Black";
 }
 
 #pragma mark -
+#pragma mark Window actions
+
+- (void)resignMainWindow
+{
+    if(_closeOnBlur && !_isClosed)
+    {
+        // set a close flag to avoid infinite loop
+        _isClosed = YES;
+        [self close];
+    }
+}
+
+#pragma mark -
 #pragma mark Getters and Setters
 
 /*! set if the property window should use a close button
@@ -139,6 +157,14 @@ TNAttachedWindowThemeBlack = @"Black";
 {
     _useCloseButton = shouldUseCloseButton;
     [_closeButton setHidden:!shouldUseCloseButton];
+}
+
+/*! set if the property window should close when loosing focus
+    @param shouldCloseOnBlur BOOL defining if window is closable when loosing focus
+*/
+- (void)setCloseOnBlur:(BOOL)shouldCloseOnBlur
+{
+    _closeOnBlur = shouldCloseOnBlur;
 }
 
 #pragma mark -
