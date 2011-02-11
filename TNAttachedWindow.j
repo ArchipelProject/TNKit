@@ -144,6 +144,9 @@ TNAttachedWindowThemeBlack = @"Black";
         // set a close flag to avoid infinite loop
         _isClosed = YES;
         [self close];
+        
+        if (_delegate && [_delegate respondsToSelected:@selector(didQuickEditViewClose:)])
+            [_delegate didQuickEditViewClose:self];
     }
 }
 
