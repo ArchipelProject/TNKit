@@ -32,7 +32,7 @@ TNAttachedWindowThemeWhite = @"White";
 TNAttachedWindowThemeBlack = @"Black";
 
 /*! @ingroup tnkit
-    This is a simple edit view like the one that pops up
+    This is a simple attached window like the one that pops up
     when you double click on a meeting in iCal
 */
 @implementation TNAttachedWindow : CPWindow
@@ -54,21 +54,21 @@ TNAttachedWindowThemeBlack = @"Black";
 #pragma mark Initialization
 
 /*! create and init a TNAttachedWindow with given size of and view
-    @param aSize the size of the edit view
+    @param aSize the size of the attached window
     @param aView the target view
     @return ready to use TNAttachedWindow
 */
-+ (id)quickEditWindowWithSize:(CGSize)aSize forView:(CPView)aView
++ (id)attachedWindowWithSize:(CGSize)aSize forView:(CPView)aView
 {
-    var quickEdit = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, aSize.width, aSize.height)];
+    var attachedWindow = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, aSize.width, aSize.height)];
 
-    [quickEdit attachToView:aView];
+    [attachedWindow attachToView:aView];
 
-    return quickEdit;
+    return attachedWindow;
 }
 
 /*! create and init a TNAttachedWindow with given frame
-    @param aFrame the frame of the edit view
+    @param aFrame the frame of the attached window
     @return ready to use TNAttachedWindow
 */
 - (id)initWithContentRect:(CGRect)aFrame
@@ -78,7 +78,7 @@ TNAttachedWindowThemeBlack = @"Black";
 }
 
 /*! create and init a TNAttachedWindow with given frame
-    @param aFrame the frame of the edit view
+    @param aFrame the frame of the attached window
     @param themeColor the color sheme to use  (TNAttachedWindowThemeWhite or TNAttachedWindowThemeWhite)
     @return ready to use TNAttachedWindow
 */
@@ -128,7 +128,7 @@ TNAttachedWindowThemeBlack = @"Black";
 
         [self setLevel:CPStatusWindowLevel];
         [self setMovableByWindowBackground:YES];
-        [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_editWindowDidMove:) name:CPWindowDidMoveNotification object:self];
+        [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_attachedWindowDidMove:) name:CPWindowDidMoveNotification object:self];
     }
 
     return self;
@@ -145,8 +145,8 @@ TNAttachedWindowThemeBlack = @"Black";
         _isClosed = YES;
         [self close];
         
-        if (_delegate && [_delegate respondsToSelected:@selector(didQuickEditViewClose:)])
-            [_delegate didQuickEditViewClose:self];
+        if (_delegate && [_delegate respondsToSelector:@selector(didAttachedWindowClose:)])
+            [_delegate didAttachedWindowClose:self];
     }
 }
 
@@ -271,7 +271,7 @@ TNAttachedWindowThemeBlack = @"Black";
 #pragma mark -
 #pragma mark Notification handlers
 
-- (void)_editWindowDidMove:(CPNotification)aNotification
+- (void)_attachedWindowDidMove:(CPNotification)aNotification
 {
     if (_leftMouseDownView)
     {
@@ -285,7 +285,7 @@ TNAttachedWindowThemeBlack = @"Black";
 #pragma mark Utilities
 
 /*! compute the frame needed to be placed to the given view
-    and position the edit view according to this view (gravity will be TNAttachedWindowGravityAuto)
+    and position the attached window according to this view (gravity will be TNAttachedWindowGravityAuto)
     @param aView the view where TNAttachedWindow must be attached
 */
 - (void)positionRelativeToView:(CPView)aView
@@ -294,7 +294,7 @@ TNAttachedWindowThemeBlack = @"Black";
 }
 
 /*! compute the frame needed to be placed to the given view
-    and position the edit view according to this view
+    and position the attached window according to this view
     @param aView the view where TNAttachedWindow must be attached
     @param aGravity the gravity to use
 */
@@ -339,8 +339,8 @@ TNAttachedWindowThemeBlack = @"Black";
 {
     [self close];
 
-    if (_delegate && [_delegate respondsToSelected:@selector(didQuickEditViewClose:)])
-        [_delegate didQuickEditViewClose:self];
+    if (_delegate && [_delegate respondsToSelector:@selector(didAttachedWindowClose:)])
+        [_delegate didAttachedWindowClose:self];
 }
 
 @end
