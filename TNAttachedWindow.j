@@ -89,7 +89,7 @@ TNAttachedWindowThemeBlack = @"Black";
         _isClosed       = NO;
         _closeOnBlur    = NO;
         _useCloseButton = YES;
-        
+
         var bundle          = [CPBundle bundleForClass:[self class]],
             backgroundImage = [[CPNinePartImage alloc] initWithImageSlices:[
                 [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + aThemeColor + "/attached-window-top-left.png"] size:CPSizeMake(20.0, 20.0)],
@@ -139,12 +139,12 @@ TNAttachedWindowThemeBlack = @"Black";
 
 - (void)resignMainWindow
 {
-    if(_closeOnBlur && !_isClosed)
+    if (_closeOnBlur && !_isClosed)
     {
         // set a close flag to avoid infinite loop
         _isClosed = YES;
         [self close];
-        
+
         if (_delegate && [_delegate respondsToSelector:@selector(didAttachedWindowClose:)])
             [_delegate didAttachedWindowClose:self];
     }
