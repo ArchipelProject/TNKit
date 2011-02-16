@@ -120,7 +120,6 @@ TNAttachedBlackWindowMask       = 1 << 26;
         }
 
         _closeOnBlur = (aStyleMask & CPClosableOnBlurWindowMask);
-        console.log(_closeOnBlur);
 
         [self setLevel:CPStatusWindowLevel];
         [self setMovableByWindowBackground:YES];
@@ -298,6 +297,8 @@ TNAttachedBlackWindowMask       = 1 << 26;
 {
     _targetView = aView;
     [self positionRelativeToView:_targetView];
+
+    [_targetView addObserver:self forKeyPath:@"window.frame" options:nil context:nil];
 }
 
 
@@ -311,9 +312,20 @@ TNAttachedBlackWindowMask       = 1 << 26;
 {
     [self close];
 
+    [_targetView removeObserver:self forKeyPath:@"window.frame"];
+
     if (_delegate && [_delegate respondsToSelector:@selector(didAttachedWindowClose:)])
         [_delegate didAttachedWindowClose:self];
 }
+
+- (void)observeValueForKeyPath:(CPString)aPath ofObject:(id)anObject change:(CPDictionary)theChange context:(void)aContext
+{
+    if ([aPath isEqual:@"window.frame"])
+    {
+        [self positionRelativeToView:_targetView];
+    }
+}
+
 
 @end
 
