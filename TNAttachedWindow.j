@@ -28,8 +28,12 @@ TNAttachedWindowGravityLeft    = 2;
 TNAttachedWindowGravityRight   = 3;
 TNAttachedWindowGravityAuto    = 4;
 
-TNAttachedWindowThemeWhite = @"White";
-TNAttachedWindowThemeBlack = @"Black";
+CPClosableOnBlurWindowMask      = 1 << 4;
+
+TNAttachedWhiteWindowMask       = 1 << 25;
+TNAttachedBlackWindowMask       = 1 << 26;
+
+
 
 /*! @ingroup tnkit
     This is a simple attached window like the one that pops up
@@ -37,17 +41,33 @@ TNAttachedWindowThemeBlack = @"Black";
 */
 @implementation TNAttachedWindow : CPWindow
 {
-    BOOL            _useCloseButton     @accessors(getter=isUsingCloseButton)
-    BOOL            _closeOnBlur        @accessors(getter=isClosingOnBlur)
     id              _targetView         @accessors(property=targetView);
     BOOL            _isClosed;
+    BOOL            _closeOnBlur;
 
     CPButton        _closeButton;
-    CPImage         _cursorBackgroundBottom;
-    CPImage         _cursorBackgroundLeft;
-    CPImage         _cursorBackgroundRight;
-    CPImage         _cursorBackgroundTop;
-    CPImageView     _cursorView;
+}
+
+/*! override default windowView class loader
+    @param aStyleMask the window mask
+    @return the windowView class
+*/
+
++ (Class)_windowViewClassForStyleMask:(unsigned)aStyleMask
+{
+    if (aStyleMask & CPHUDBackgroundWindowMask)
+        return _CPHUDWindowView;
+
+    else if (aStyleMask === CPBorderlessWindowMask)
+        return _CPBorderlessWindowView;
+
+    else if (aStyleMask & CPDocModalWindowMask)
+        return _CPDocModalWindowView;
+
+    else if (aStyleMask & TNAttachedWhiteWindowMask || aStyleMask & TNAttachedBlackWindowMask)
+        return _CPAttachedWindowView;
+
+    return _CPStandardWindowView;
 }
 
 #pragma mark -
@@ -73,7 +93,7 @@ TNAttachedWindowThemeBlack = @"Black";
 */
 - (id)initWithContentRect:(CGRect)aFrame
 {
-    self = [self initWithContentRect:aFrame themeColor:TNAttachedWindowThemeWhite]
+    self = [self initWithContentRect:aFrame styleMask:TNAttachedWhiteWindowMask]
     return self;
 }
 
@@ -82,52 +102,42 @@ TNAttachedWindowThemeBlack = @"Black";
     @param themeColor the color sheme to use  (TNAttachedWindowThemeWhite or TNAttachedWindowThemeWhite)
     @return ready to use TNAttachedWindow
 */
-- (id)initWithContentRect:(CGRect)aFrame themeColor:(int)aThemeColor
+- (id)initWithContentRect:(CGRect)aFrame styleMask:(unsigned)aStyleMask
 {
-    if (self = [super initWithContentRect:aFrame styleMask:CPBorderlessWindowMask])
+    if (self = [super initWithContentRect:aFrame styleMask:aStyleMask])
     {
         _isClosed       = NO;
-        _closeOnBlur    = NO;
-        _useCloseButton = YES;
+
+        if (aStyleMask & TNAttachedWhiteWindowMask)
+            themeColor = @"White";
+
+        else if (aStyleMask & TNAttachedBlackWindowMask)
+             themeColor = @"Black";
 
         var bundle          = [CPBundle bundleForClass:[self class]],
-            backgroundImage = [[CPNinePartImage alloc] initWithImageSlices:[
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + aThemeColor + "/attached-window-top-left.png"] size:CPSizeMake(20.0, 20.0)],
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + aThemeColor + "/attached-window-top.png"] size:CPSizeMake(1.0, 20.0)],
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + aThemeColor + "/attached-window-top-right.png"] size:CPSizeMake(20.0, 20.0)],
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + aThemeColor + "/attached-window-left.png"] size:CPSizeMake(20.0, 1.0)],
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + aThemeColor + "/attached-window-center.png"] size:CPSizeMake(1.0, 1.0)],
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + aThemeColor + "/attached-window-right.png"] size:CPSizeMake(20.0, 1.0)],
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + aThemeColor + "/attached-window-bottom-left.png"] size:CPSizeMake(20.0, 20.0)],
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + aThemeColor + "/attached-window-bottom.png"] size:CPSizeMake(1.0, 20.0)],
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + aThemeColor + "/attached-window-bottom-right.png"] size:CPSizeMake(20.0, 20.0)]
-            ]],
-            buttonClose = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + aThemeColor + "/attached-window-button-close.png"] size:CPSizeMake(15.0, 15.0)],
-            buttonClosePressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + aThemeColor + "/attached-window-button-close-pressed.png"] size:CPSizeMake(15.0, 15.0)];
+            buttonClose = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-button-close.png"] size:CPSizeMake(15.0, 15.0)],
+            buttonClosePressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-button-close-pressed.png"] size:CPSizeMake(15.0, 15.0)];
 
-        _closeButton = [[CPButton alloc] initWithFrame:CPRectMake(15.0, 15.0, 14.0, 14.0)];
-        [_closeButton setImageScaling:CPScaleProportionally];
-        [_closeButton setBordered:NO];
-        [_closeButton setImage:buttonClose]; // this avoid the blinking..
-        [_closeButton setValue:buttonClose forThemeAttribute:@"image"];
-        [_closeButton setValue:buttonClosePressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
-        [_closeButton setTarget:self];
-        [_closeButton setAction:@selector(close:)];
-        [[self contentView] addSubview:_closeButton];
+        if (aStyleMask & CPClosableWindowMask)
+        {
+            _closeButton = [[CPButton alloc] initWithFrame:CPRectMake(5.0, 5.0, 14.0, 14.0)];
+            [_closeButton setImageScaling:CPScaleProportionally];
+            [_closeButton setBordered:NO];
+            [_closeButton setImage:buttonClose]; // this avoid the blinking..
+            [_closeButton setValue:buttonClose forThemeAttribute:@"image"];
+            [_closeButton setValue:buttonClosePressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
+            [_closeButton setTarget:self];
+            [_closeButton setAction:@selector(close:)];
+            [[self contentView] addSubview:_closeButton];
+        }
 
-
-        _cursorBackgroundLeft   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + aThemeColor + "/attached-window-arrow-left.png"]];
-        _cursorBackgroundRight  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + aThemeColor + "/attached-window-arrow-right.png"]];
-        _cursorBackgroundTop    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + aThemeColor + "/attached-window-arrow-top.png"]];
-        _cursorBackgroundBottom = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + aThemeColor + "/attached-window-arrow-bottom.png"]];
-
-        _cursorView = [[CPImageView alloc] initWithFrame:CPRectMakeZero()];
-
-        [[self contentView] setBackgroundColor:[CPColor colorWithPatternImage:backgroundImage]];
-        [[self contentView] addSubview:_cursorView];
+        _closeOnBlur = (aStyleMask & CPClosableOnBlurWindowMask);
+        console.log(_closeOnBlur);
 
         [self setLevel:CPStatusWindowLevel];
         [self setMovableByWindowBackground:YES];
+        [self setHasShadow:NO];
+
         [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_attachedWindowDidMove:) name:CPWindowDidMoveNotification object:self];
     }
 
@@ -148,26 +158,6 @@ TNAttachedWindowThemeBlack = @"Black";
         if (_delegate && [_delegate respondsToSelector:@selector(didAttachedWindowClose:)])
             [_delegate didAttachedWindowClose:self];
     }
-}
-
-#pragma mark -
-#pragma mark Getters and Setters
-
-/*! set if the property window should use a close button
-    @param shouldUseCloseButton BOOL defining if window use close button or not
-*/
-- (void)setUseCloseButton:(BOOL)shouldUseCloseButton
-{
-    _useCloseButton = shouldUseCloseButton;
-    [_closeButton setHidden:!shouldUseCloseButton];
-}
-
-/*! set if the property window should close when loosing focus
-    @param shouldCloseOnBlur BOOL defining if window is closable when loosing focus
-*/
-- (void)setCloseOnBlur:(BOOL)shouldCloseOnBlur
-{
-    _closeOnBlur = shouldCloseOnBlur;
 }
 
 #pragma mark -
@@ -244,26 +234,20 @@ TNAttachedWindowThemeBlack = @"Black";
         }
     }
 
+    [_windowView setGravity:gravity];
+
     switch (gravity)
     {
         case TNAttachedWindowGravityRight:
-            [_cursorView setFrame:CPRectMake(2.0, CPRectGetHeight([self frame]) / 2.0 - 12.0, 10.0, 20.0)];
-            [_cursorView setImage:_cursorBackgroundLeft];
             return originRight;
 
         case TNAttachedWindowGravityLeft:
-            [_cursorView setFrame:CPRectMake(CPRectGetWidth([self frame]) - 11.0, CPRectGetHeight([self frame]) / 2.0 - 12.0, 10.0, 20.0)];
-            [_cursorView setImage:_cursorBackgroundRight];
             return originLeft;
 
         case TNAttachedWindowGravityDown:
-            [_cursorView setFrame:CPRectMake(CPRectGetWidth([self frame]) / 2.0 - 10.0, 2.0, 20.0, 10.0)];
-            [_cursorView setImage:_cursorBackgroundTop];
             return originBottom;
 
         case TNAttachedWindowGravityUp:
-            [_cursorView setFrame:CPRectMake(CPRectGetWidth([self frame]) / 2.0 - 10.0, CPRectGetHeight([self frame]) - 14.0, 20.0, 10.0)];
-            [_cursorView setImage:_cursorBackgroundBottom];
             return originTop;
     }
 }
@@ -275,8 +259,8 @@ TNAttachedWindowThemeBlack = @"Black";
 {
     if (_leftMouseDownView)
     {
-        [_cursorView setHidden:YES];
-        [self setLevel:CPNormalWindowLevel ];
+        [[_windowView cursorView] setHidden:YES];
+        [self setLevel:CPNormalWindowLevel];
     }
 }
 
@@ -341,6 +325,117 @@ TNAttachedWindowThemeBlack = @"Black";
 
     if (_delegate && [_delegate respondsToSelector:@selector(didAttachedWindowClose:)])
         [_delegate didAttachedWindowClose:self];
+}
+
+@end
+
+
+@implementation _CPAttachedWindowView : _CPWindowView
+{
+    CPImage         _cursorBackgroundBottom;
+    CPImage         _cursorBackgroundLeft;
+    CPImage         _cursorBackgroundRight;
+    CPImage         _cursorBackgroundTop;
+
+    CPImageView     _cursorView                 @accessors(property=cursorView);
+}
+
++ (CGRect)contentRectForFrameRect:(CGRect)aFrameRect
+{
+    var contentRect = CGRectMakeCopy(aFrameRect);
+
+    // @todo change border art and remove this pixel perfect adaptation :
+    // return CGRectInset(contentRect, 20, 20);
+
+    contentRect.origin.x += 13;
+    contentRect.origin.y += 12;
+    contentRect.size.width -= 25;
+    contentRect.size.height -= 27;
+    return contentRect;
+}
+
++ (CGRect)frameRectForContentRect:(CGRect)aContentRect
+{
+    var frameRect = CGRectMakeCopy(aContentRect);
+
+    // @todo change border art and remove this pixel perfect adaptation
+    //return CGRectOffset(frameRect, 20, 20);
+
+    frameRect.origin.x -= 13;
+    frameRect.origin.y -= 12;
+    frameRect.size.width += 25;
+    frameRect.size.height += 27;
+    return frameRect;
+}
+
+- (id)initWithFrame:(CPRect)aFrame styleMask:(unsigned)aStyleMask
+{
+    self = [super initWithFrame:aFrame styleMask:aStyleMask];
+
+    if (self)
+    {
+        var bounds = [self bounds],
+            themeColor = @"White";
+
+        if (_styleMask & TNAttachedWhiteWindowMask)
+            themeColor = @"White";
+
+        else if (_styleMask & TNAttachedBlackWindowMask)
+             themeColor = @"Black";
+
+        var bundle = [CPBundle bundleForClass:TNAttachedWindow];
+
+        _cursorBackgroundLeft   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-arrow-left.png"]];
+        _cursorBackgroundRight  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-arrow-right.png"]];
+        _cursorBackgroundTop    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-arrow-top.png"]];
+        _cursorBackgroundBottom = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-arrow-bottom.png"]];
+
+        _cursorView = [[CPImageView alloc] initWithFrame:CPRectMakeZero()];
+
+        var backgroundColor = [CPColor colorWithPatternImage:[[CPNinePartImage alloc] initWithImageSlices:
+            [
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-top-left.png"] size:CPSizeMake(20.0, 20.0)],
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-top.png"] size:CPSizeMake(1.0, 20.0)],
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-top-right.png"] size:CPSizeMake(20.0, 20.0)],
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-left.png"] size:CPSizeMake(20.0, 1.0)],
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-center.png"] size:CPSizeMake(1.0, 1.0)],
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-right.png"] size:CPSizeMake(20.0, 1.0)],
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-bottom-left.png"] size:CPSizeMake(20.0, 20.0)],
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-bottom.png"] size:CPSizeMake(1.0, 20.0)],
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-bottom-right.png"] size:CPSizeMake(20.0, 20.0)]
+            ]]];
+
+        [self setBackgroundColor:backgroundColor];
+        [self addSubview:_cursorView];
+    }
+
+    return self;
+}
+
+- (void)setGravity:(unsigned)aGravity
+{
+    switch (aGravity)
+    {
+        case TNAttachedWindowGravityRight:
+            [_cursorView setFrame:CPRectMake(2.0, CPRectGetHeight([self frame]) / 2.0 - 12.0, 10.0, 20.0)];
+            [_cursorView setImage:_cursorBackgroundLeft];
+            break;
+
+        case TNAttachedWindowGravityLeft:
+            [_cursorView setFrame:CPRectMake(CPRectGetWidth([self frame]) - 11.0, CPRectGetHeight([self frame]) / 2.0 - 12.0, 10.0, 20.0)];
+            [_cursorView setImage:_cursorBackgroundRight];
+            break;
+
+        case TNAttachedWindowGravityDown:
+            [_cursorView setFrame:CPRectMake(CPRectGetWidth([self frame]) / 2.0 - 10.0, 2.0, 20.0, 10.0)];
+            [_cursorView setImage:_cursorBackgroundTop];
+            break;
+
+        case TNAttachedWindowGravityUp:
+            [_cursorView setFrame:CPRectMake(CPRectGetWidth([self frame]) / 2.0 - 10.0, CPRectGetHeight([self frame]) - 14.0, 20.0, 10.0)];
+            [_cursorView setImage:_cursorBackgroundBottom];
+            break;
+    }
 }
 
 @end
