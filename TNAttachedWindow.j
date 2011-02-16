@@ -55,19 +55,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
 
 + (Class)_windowViewClassForStyleMask:(unsigned)aStyleMask
 {
-    if (aStyleMask & CPHUDBackgroundWindowMask)
-        return _CPHUDWindowView;
-
-    else if (aStyleMask === CPBorderlessWindowMask)
-        return _CPBorderlessWindowView;
-
-    else if (aStyleMask & CPDocModalWindowMask)
-        return _CPDocModalWindowView;
-
-    else if (aStyleMask & TNAttachedWhiteWindowMask || aStyleMask & TNAttachedBlackWindowMask)
-        return _CPAttachedWindowView;
-
-    return _CPStandardWindowView;
+    return _CPAttachedWindowView;
 }
 
 #pragma mark -
