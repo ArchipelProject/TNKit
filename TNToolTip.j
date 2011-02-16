@@ -34,7 +34,7 @@
 */
 + (TNToolTip)toolTipWithString:(CPString)aString forView:(CPView)aView
 {
-    var tooltip = [[TNToolTip alloc] initWithString:aString themeColor:TNAttachedWindowThemeWhite];
+    var tooltip = [[TNToolTip alloc] initWithString:aString styleMask:TNAttachedWhiteWindowMask];
 
     [tooltip attachToView:aView];
 
@@ -47,7 +47,7 @@
 */
 + (TNToolTip)blackToolTipWithString:(CPString)aString forView:(CPView)aView
 {
-    var tooltip = [[TNToolTip alloc] initWithString:aString themeColor:TNAttachedWindowThemeBlack];
+    var tooltip = [[TNToolTip alloc] initWithString:aString styleMask:TNAttachedWhiteWindowMask];
 
     [tooltip attachToView:aView];
 
@@ -57,9 +57,9 @@
 /*! returns an initialized TNToolTip with string
     @param aString the content of the tooltip
 */
-- (id)initWithString:(CPString)aString themeColor:(int)aThemeColor
+- (id)initWithString:(CPString)aString styleMask:(unsigned)aStyleMask
 {
-    if (self = [super initWithContentRect:CPRectMake(0.0, 0.0, 200.0, 0.0) themeColor:aThemeColor])
+    if (self = [super initWithContentRect:CPRectMake(0.0, 0.0, 200.0, 0.0) styleMask:aStyleMask])
     {
         _content = [CPTextField labelWithTitle:aString];
 
@@ -69,15 +69,14 @@
 
         [_content setLineBreakMode:CPLineBreakByWordWrapping];
         [_content setFrameSize:size];
-        [_content setFrameOrigin:CPPointMake(20.0, 20.0)];
+        [_content setFrameOrigin:CPPointMake(10.0, 10.0)];
 
-        size.width += 30;
-        size.height += 40;
+        size.width += 40;
+        size.height += 45;
 
         [[self contentView] addSubview:_content];
         [self setFrameSize:size];
         [self setMovableByWindowBackground:NO];
-        [self setUseCloseButton:NO];
     }
 
     return self;
