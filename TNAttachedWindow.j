@@ -318,6 +318,9 @@ TNAttachedBlackWindowMask       = 1 << 26;
         [_delegate didAttachedWindowClose:self];
 }
 
+/*! update the TNAttachedWindow frame if a resize event is observed
+
+*/
 - (void)observeValueForKeyPath:(CPString)aPath ofObject:(id)anObject change:(CPDictionary)theChange context:(void)aContext
 {
     if ([aPath isEqual:@"window.frame"])
@@ -326,10 +329,11 @@ TNAttachedBlackWindowMask       = 1 << 26;
     }
 }
 
-
 @end
 
-
+/*! @ingroup tnkit
+    A custom CPWindowView than manage border with cursor
+*/
 @implementation _CPAttachedWindowView : _CPWindowView
 {
     CPImage         _cursorBackgroundBottom;
