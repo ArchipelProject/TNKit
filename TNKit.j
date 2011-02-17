@@ -18,15 +18,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-@import "TNTextFieldStepper.j"
+@import "TNAlert.j"
 @import "TNAnimation.j"
+@import "TNAttachedWindow.j"
+@import "TNCategories.j"
+@import "TNLocalizationCenter.j";
 @import "TNOutlineViewDataSource.j"
 @import "TNTableViewDataSource.j"
-@import "TNAlert.j"
-@import "TNAttachedWindow.j"
+@import "TNTextFieldStepper.j"
 @import "TNToolbar.j"
 @import "TNToolTip.j"
-@import "TNCategories.j"
 
 
 /*! @mainpage
