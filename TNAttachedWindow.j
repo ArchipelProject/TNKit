@@ -87,7 +87,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
 
 /*! create and init a TNAttachedWindow with given frame
     @param aFrame the frame of the attached window
-    @param themeColor the color sheme to use  (TNAttachedWindowThemeWhite or TNAttachedWindowThemeWhite)
+    @param styleMask the window style mask  (combine CPClosableWindowMask, TNAttachedWhiteWindowMask, TNAttachedBlackWindowMask and CPClosableOnBlurWindowMask)
     @return ready to use TNAttachedWindow
 */
 - (id)initWithContentRect:(CGRect)aFrame styleMask:(unsigned)aStyleMask
@@ -134,6 +134,9 @@ TNAttachedBlackWindowMask       = 1 << 26;
 #pragma mark -
 #pragma mark Window actions
 
+/*! called when the window is loowing focus and close the window
+    if CPClosableOnBlurWindowMask is setted
+*/
 - (void)resignMainWindow
 {
     if (_closeOnBlur && !_isClosed)
@@ -290,7 +293,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
     [self makeKeyAndOrderFront:nil];
 }
 
-/*! set the  _targetView and attach the TNAttachedWindow to it
+/*! set the _targetView and attach the TNAttachedWindow to it
     @param aView the view where TNAttachedWindow must be attached
 */
 - (void)attachToView:(CPView)aView
@@ -331,8 +334,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
 
 @end
 
-/*! @ingroup tnkit
-    A custom CPWindowView than manage border with cursor
+/*! a custom CPWindowView that manage border and cursor
 */
 @implementation _CPAttachedWindowView : _CPWindowView
 {
@@ -344,11 +346,14 @@ TNAttachedBlackWindowMask       = 1 << 26;
     CPImageView     _cursorView                 @accessors(property=cursorView);
 }
 
+/*! compute the contentView frame from a given window frame
+    @param aFrameRect the window frame
+*/
 + (CGRect)contentRectForFrameRect:(CGRect)aFrameRect
 {
     var contentRect = CGRectMakeCopy(aFrameRect);
 
-    // @todo change border art and remove this pixel perfect adaptation :
+    // @todo change border art and remove this pixel perfect adaptation
     // return CGRectInset(contentRect, 20, 20);
 
     contentRect.origin.x += 13;
@@ -358,6 +363,9 @@ TNAttachedBlackWindowMask       = 1 << 26;
     return contentRect;
 }
 
+/*! compute the window frame from a given contentView frame
+    @param aContentRect the contentView frame
+*/
 + (CGRect)frameRectForContentRect:(CGRect)aContentRect
 {
     var frameRect = CGRectMakeCopy(aContentRect);
@@ -416,6 +424,9 @@ TNAttachedBlackWindowMask       = 1 << 26;
     return self;
 }
 
+/*! set the position of the cursorView
+    @param aGravity the cursorView position
+*/
 - (void)setGravity:(unsigned)aGravity
 {
     switch (aGravity)
