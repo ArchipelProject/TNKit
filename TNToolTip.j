@@ -70,6 +70,8 @@
         [_content setLineBreakMode:CPLineBreakByWordWrapping];
         [_content setFrameSize:size];
         [_content setFrameOrigin:CPPointMake(10.0, 10.0)];
+        [_content setTextShadowOffset:CGSizeMake(0.0, 1.0)];
+        [_content setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color"];
 
         size.width += 40;
         size.height += 45;
