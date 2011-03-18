@@ -102,7 +102,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
         else if (aStyleMask & TNAttachedBlackWindowMask)
              themeColor = @"Black";
 
-        var bundle          = [CPBundle bundleForClass:[self class]],
+        var bundle = [CPBundle bundleForClass:[self class]],
             buttonClose = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-button-close.png"] size:CPSizeMake(15.0, 15.0)],
             buttonClosePressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-button-close-pressed.png"] size:CPSizeMake(15.0, 15.0)];
 
@@ -158,8 +158,12 @@ TNAttachedBlackWindowMask       = 1 << 26;
     var frameView = [aView frame],
         currentView = aView,
         origin = [aView frameOrigin],
+        nativeRect = [[[CPApp mainWindow] platformWindow] nativeContentRect],
         lastView;
 
+    // if somebody succeed to use the conversion function of CPView
+    // to get this working, please do. And succeed before saying
+    // you know how you would do!
     while (currentView = [currentView superview])
     {
         origin.x += [currentView frameOrigin].x;
@@ -194,14 +198,14 @@ TNAttachedBlackWindowMask       = 1 << 26;
 
     if (gravity === TNAttachedWindowGravityAuto)
     {
-        var nativeRect          = [[[lastView window] platformWindow] nativeContentRect],
-            frameCopy           = CPRectCreateCopy([self frame]);
+        var frameCopy = CPRectCreateCopy([self frame]);
 
         nativeRect.origin.x = 0.0;
         nativeRect.origin.y = 0.0;
 
         var tests = [originRight, originLeft, originTop, originBottom];
 
+        gravity = TNAttachedWindowGravityRight;
         for (var i = 0; i < tests.length; i++)
         {
             frameCopy.origin = tests[i];
@@ -209,37 +213,71 @@ TNAttachedBlackWindowMask       = 1 << 26;
             if (CPRectContainsRect(nativeRect, frameCopy))
             {
                 if (CPPointEqualToPoint(tests[i], originRight))
+                {
                     gravity = TNAttachedWindowGravityRight
+                    break;
+                }
                 else if (CPPointEqualToPoint(tests[i], originLeft))
+                {
                     gravity = TNAttachedWindowGravityLeft
+                    break;
+                }
                 else if (CPPointEqualToPoint(tests[i], originTop))
+                {
                     gravity = TNAttachedWindowGravityUp
+                    break;
+                }
                 else if (CPPointEqualToPoint(tests[i], originBottom))
+                {
                     gravity = TNAttachedWindowGravityDown
-
-                break;
+                    break;
+                }
             }
-            else
-                gravity = TNAttachedWindowGravityRight;
         }
+    }
+
+    var originToBeReturned;
+    switch (gravity)
+    {
+        case TNAttachedWindowGravityRight:
+            originToBeReturned = originRight;
+            break;
+        case TNAttachedWindowGravityLeft:
+            originToBeReturned = originLeft;
+            break;
+        case TNAttachedWindowGravityDown:
+            originToBeReturned = originBottom;
+            break;
+        case TNAttachedWindowGravityUp:
+            originToBeReturned = originTop;
+            break;
     }
 
     [_windowView setGravity:gravity];
 
-    switch (gravity)
+    var o = originToBeReturned;
+    if (o.x < 0)
     {
-        case TNAttachedWindowGravityRight:
-            return originRight;
-
-        case TNAttachedWindowGravityLeft:
-            return originLeft;
-
-        case TNAttachedWindowGravityDown:
-            return originBottom;
-
-        case TNAttachedWindowGravityUp:
-            return originTop;
+        [_windowView setGravity:nil];
+        o.x = 0;
     }
+    if (o.x + CPRectGetWidth([self frame]) > nativeRect.size.width)
+    {
+        [_windowView setGravity:nil];
+        o.x = nativeRect.size.width - CPRectGetWidth([self frame]);
+    }
+    if (o.y < 0)
+    {
+        [_windowView setGravity:nil];
+        o.y = 0;
+    }
+    if (o.y + CPRectGetHeight([self frame]) > nativeRect.size.height)
+    {
+        [_windowView setGravity:nil];
+        o.y = nativeRect.size.height - CPRectGetHeight([self frame]);
+    }
+
+    return originToBeReturned;
 }
 
 #pragma mark -
@@ -284,9 +322,9 @@ TNAttachedBlackWindowMask       = 1 << 26;
     {
         offsetY = point.y;
         point.y = 0;
-        var cursorPoint = [_cursorView frameOrigin];
+        var cursorPoint = [[_windowView cursorView] frameOrigin];
         cursorPoint.y += offsetY;
-        [_cursorView setFrameOrigin:cursorPoint];
+        [[_windowView cursorView] setFrameOrigin:cursorPoint];
     }
 
     [self setFrameOrigin:point];
@@ -434,22 +472,29 @@ TNAttachedBlackWindowMask       = 1 << 26;
         case TNAttachedWindowGravityRight:
             [_cursorView setFrame:CPRectMake(2.0, CPRectGetHeight([self frame]) / 2.0 - 12.0, 10.0, 20.0)];
             [_cursorView setImage:_cursorBackgroundLeft];
+            [_cursorView setHidden:NO];
             break;
 
         case TNAttachedWindowGravityLeft:
             [_cursorView setFrame:CPRectMake(CPRectGetWidth([self frame]) - 11.0, CPRectGetHeight([self frame]) / 2.0 - 12.0, 10.0, 20.0)];
             [_cursorView setImage:_cursorBackgroundRight];
+            [_cursorView setHidden:NO];
             break;
 
         case TNAttachedWindowGravityDown:
             [_cursorView setFrame:CPRectMake(CPRectGetWidth([self frame]) / 2.0 - 10.0, 2.0, 20.0, 10.0)];
             [_cursorView setImage:_cursorBackgroundTop];
+            [_cursorView setHidden:NO];
             break;
 
         case TNAttachedWindowGravityUp:
             [_cursorView setFrame:CPRectMake(CPRectGetWidth([self frame]) / 2.0 - 10.0, CPRectGetHeight([self frame]) - 14.0, 20.0, 10.0)];
             [_cursorView setImage:_cursorBackgroundBottom];
+            [_cursorView setHidden:NO];
             break;
+
+        default:
+            [_cursorView setHidden:YES];
     }
 }
 
