@@ -37,6 +37,7 @@
     var tooltip = [[TNToolTip alloc] initWithString:aString styleMask:TNAttachedWhiteWindowMask];
 
     [tooltip attachToView:aView];
+    [tooltip resignMainWindow];
 
     return tooltip;
 }
@@ -50,6 +51,9 @@
     var tooltip = [[TNToolTip alloc] initWithString:aString styleMask:TNAttachedWhiteWindowMask];
 
     [tooltip attachToView:aView];
+    [tooltip resignMainWindow];
+
+    _oldResponder = aView;
 
     return tooltip;
 }
