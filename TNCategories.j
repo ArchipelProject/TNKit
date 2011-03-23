@@ -86,6 +86,8 @@ var currentToolTip,
     if (currentToolTipTimer)
     {
         [currentToolTipTimer invalidate];
+        if (currentToolTip)
+            [currentToolTip close:nil];
         currentToolTip = nil;
     }
 
@@ -111,6 +113,9 @@ var currentToolTip,
 
 - (void)showToolTip:(CPTimer)aTimer
 {
+    if (currentToolTip)
+        [currentToolTip close:nil];
+
     currentToolTip = [TNToolTip toolTipWithString:_toolTip forView:self];
 }
 
