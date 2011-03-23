@@ -40,7 +40,7 @@ framework ("TNKit", function(task)
     task.setEmail("antoine.mercadal @nospam@ inframonde.eu");
     task.setSummary("TNKit");
     task.setSources(new FileList("*.j", "TNKit/*.j"));
-    task.setResources(new FileList("Resources/*"));
+    task.setResources(new FileList("Resources/**"));
     task.setInfoPlistPath("Info.plist");
 
     if (configuration === "Debug")
