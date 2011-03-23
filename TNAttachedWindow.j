@@ -174,6 +174,14 @@ TNAttachedBlackWindowMask       = 1 << 26;
     origin.x += [[lastView window] frame].origin.x;
     origin.y += [[lastView window] frame].origin.y;
 
+    // take care of the scrolling point
+    if ([aView enclosingScrollView])
+    {
+        var offsetPoint = [[[aView enclosingScrollView] contentView] boundsOrigin];
+        origin.x -= offsetPoint.x;
+        origin.y -= offsetPoint.y;
+    }
+
     var originLeft      = CPPointCreateCopy(origin),
         originRight     = CPPointCreateCopy(origin),
         originTop       = CPPointCreateCopy(origin),
