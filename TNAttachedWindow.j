@@ -388,7 +388,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
     CPImage         _cursorBackgroundLeft;
     CPImage         _cursorBackgroundRight;
     CPImage         _cursorBackgroundTop;
-	unsigned		gravity						@accessors;
+	unsigned		_gravity					@accessors(property=gravity);
     CPImageView     _cursorView                 @accessors(property=cursorView);
 }
 
@@ -458,17 +458,17 @@ TNAttachedBlackWindowMask       = 1 << 26;
 	innerRect.size.width -= strokeWidth * 2;
 	innerRect.size.height -= strokeWidth * 2;
 	
-	//compensate for teh shadow blur
+	//compensate for the shadow blur
 	innerRect.origin.x += shadowBlur;
 	innerRect.origin.y += shadowBlur;
 	innerRect.size.width -= shadowBlur * 2;
 	innerRect.size.height -= shadowBlur * 2;
 	
-	    //set teh shadow
-    CGContextSetShadow(context, CGSizeMake(0,0), 20);
+	//set the shadow
+	CGContextSetShadow(context, CGSizeMake(0,0), 20);
 	CGContextSetShadowWithColor(context, shadowSize, shadowBlur, shadowColor);
 
-	switch (gravity)
+	switch (_gravity)
     {
         case TNAttachedWindowGravityLeft:
             innerRect.size.width -= arrowHeight;
@@ -493,7 +493,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
     CGContextClosePath(context);
     
     //Start the arrow
-    switch (gravity)
+    switch (_gravity)
     {
         case TNAttachedWindowGravityLeft:
             CGContextMoveToPoint(context, innerRect.size.width + innerRect.origin.x, (innerRect.size.height / 2 - (arrowWidth / 2)) + innerRect.origin.y);
