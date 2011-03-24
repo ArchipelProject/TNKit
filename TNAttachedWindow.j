@@ -441,11 +441,11 @@ TNAttachedBlackWindowMask       = 1 << 26;
 		radius = 5,
 		arrowWidth = 15,
 		arrowHeight = 10,
-		strokeWidth = 2;
+		strokeWidth = 2,
 		backgroundColor = (_styleMask & TNAttachedWhiteWindowMask) ? [CPColor whiteColor] : [CPColor colorWithHexString:@"222"],
 		shadowColor = [[CPColor blackColor] colorWithAlphaComponent:.1],
 		strokeColor = [CPColor colorWithHexString:@"ADEDFF"],
-		shadowSize = CGSizeMake(0, 0);
+		shadowSize = CGSizeMake(0, 0),
 		shadowBlur = 5;
 	
 	CGContextSetStrokeColor(context, strokeColor);
