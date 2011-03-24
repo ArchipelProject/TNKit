@@ -388,7 +388,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
     CPImage         _cursorBackgroundLeft;
     CPImage         _cursorBackgroundRight;
     CPImage         _cursorBackgroundTop;
-
+	unsigned		_gravity;
     CPImageView     _cursorView                 @accessors(property=cursorView);
 }
 
@@ -429,44 +429,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
 - (id)initWithFrame:(CPRect)aFrame styleMask:(unsigned)aStyleMask
 {
     self = [super initWithFrame:aFrame styleMask:aStyleMask];
-
-    if (self)
-    {
-        var bounds = [self bounds],
-            themeColor = @"White";
-
-        if (_styleMask & TNAttachedWhiteWindowMask)
-            themeColor = @"White";
-
-        else if (_styleMask & TNAttachedBlackWindowMask)
-             themeColor = @"Black";
-
-        var bundle = [CPBundle bundleForClass:TNAttachedWindow];
-
-        _cursorBackgroundLeft   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-arrow-left.png"]];
-        _cursorBackgroundRight  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-arrow-right.png"]];
-        _cursorBackgroundTop    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-arrow-top.png"]];
-        _cursorBackgroundBottom = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-arrow-bottom.png"]];
-
-        _cursorView = [[CPImageView alloc] initWithFrame:CPRectMakeZero()];
-
-        var backgroundColor = [CPColor colorWithPatternImage:[[CPNinePartImage alloc] initWithImageSlices:
-            [
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-top-left.png"] size:CPSizeMake(20.0, 20.0)],
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-top.png"] size:CPSizeMake(1.0, 20.0)],
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-top-right.png"] size:CPSizeMake(20.0, 20.0)],
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-left.png"] size:CPSizeMake(20.0, 1.0)],
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-center.png"] size:CPSizeMake(1.0, 1.0)],
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-right.png"] size:CPSizeMake(20.0, 1.0)],
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-bottom-left.png"] size:CPSizeMake(20.0, 20.0)],
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-bottom.png"] size:CPSizeMake(1.0, 20.0)],
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-bottom-right.png"] size:CPSizeMake(20.0, 20.0)]
-            ]]];
-
-        [self setBackgroundColor:backgroundColor];
-        [self addSubview:_cursorView];
-    }
-
+    
     return self;
 }
 
@@ -475,35 +438,117 @@ TNAttachedBlackWindowMask       = 1 << 26;
 */
 - (void)setGravity:(unsigned)aGravity
 {
-    switch (aGravity)
+	_gravity = aGravity;
+}
+
+- (void)drawRect:(CGRect)aRect
+{
+
+	[super drawRect:aRect];
+	
+	var context = [[CPGraphicsContext currentContext] graphicsPort];
+	var radius = 5;
+	var gravity = _gravity;
+	var arrowWidth = 15;
+	var arrowHeight = 10;
+	var strokeWidth = 2;
+	
+	if (_styleMask & TNAttachedWhiteWindowMask)
+        var backgroundColor = [CPColor whiteColor];
+
+	else if (_styleMask & TNAttachedBlackWindowMask)
+		var backgroundColor = [CPColor colorWithHexString:@"222"];
+             
+	var shadowColor = [CPColor blackColor];
+	
+	
+	var strokeColor = [CPColor colorWithHexString:@"ADEDFF"];
+	shadowColor = [shadowColor colorWithAlphaComponent:.1];
+	
+	var shadowSize = CGSizeMake(0, 0);
+	var shadowBlur = 5;
+	
+	CGContextSetStrokeColor(context, strokeColor);
+	CGContextSetLineWidth(context, strokeWidth);
+	 
+	CGContextBeginPath(context);
+	var innerRect = aRect;
+	innerRect.origin.x += strokeWidth;
+	innerRect.origin.y += strokeWidth;
+	innerRect.size.width -= strokeWidth * 2;
+	innerRect.size.height -= strokeWidth * 2;
+	
+	//compensate for teh shadow blur
+	innerRect.origin.x += shadowBlur;
+	innerRect.origin.y += shadowBlur;
+	innerRect.size.width -= shadowBlur * 2;
+	innerRect.size.height -= shadowBlur * 2;
+	
+	    //set teh shadow
+    CGContextSetShadow(context, CGSizeMake(0,0), 20);
+	CGContextSetShadowWithColor( context, shadowSize, shadowBlur, shadowColor );
+
+	switch (gravity)
     {
-        case TNAttachedWindowGravityRight:
-            [_cursorView setFrame:CPRectMake(2.0, CPRectGetHeight([self frame]) / 2.0 - 12.0, 10.0, 20.0)];
-            [_cursorView setImage:_cursorBackgroundLeft];
-            [_cursorView setHidden:NO];
-            break;
-
         case TNAttachedWindowGravityLeft:
-            [_cursorView setFrame:CPRectMake(CPRectGetWidth([self frame]) - 11.0, CPRectGetHeight([self frame]) / 2.0 - 12.0, 10.0, 20.0)];
-            [_cursorView setImage:_cursorBackgroundRight];
-            [_cursorView setHidden:NO];
+            innerRect.size.width -= arrowHeight;
             break;
 
-        case TNAttachedWindowGravityDown:
-            [_cursorView setFrame:CPRectMake(CPRectGetWidth([self frame]) / 2.0 - 10.0, 2.0, 20.0, 10.0)];
-            [_cursorView setImage:_cursorBackgroundTop];
-            [_cursorView setHidden:NO];
+        case TNAttachedWindowGravityRight:
+            innerRect.size.width -= arrowHeight;
+            innerRect.origin.x += arrowHeight;
             break;
 
         case TNAttachedWindowGravityUp:
-            [_cursorView setFrame:CPRectMake(CPRectGetWidth([self frame]) / 2.0 - 10.0, CPRectGetHeight([self frame]) - 14.0, 20.0, 10.0)];
-            [_cursorView setImage:_cursorBackgroundBottom];
-            [_cursorView setHidden:NO];
+            innerRect.size.height -= arrowHeight;
             break;
 
-        default:
-            [_cursorView setHidden:YES];
+        case TNAttachedWindowGravityDown:
+            innerRect.size.height -= arrowHeight;
+            innerRect.origin.y += arrowHeight;
+            break;
     }
+    	
+    CGContextAddPath(context, CGPathWithRoundedRectangleInRect( innerRect, radius, radius, YES, YES, YES, YES ));
+    CGContextClosePath(context);
+    
+    //Start the arrow
+    switch (gravity)
+    {
+        case TNAttachedWindowGravityLeft:
+            CGContextMoveToPoint(context, innerRect.size.width + innerRect.origin.x, ( innerRect.size.height / 2 - ( arrowWidth / 2 ) ) + innerRect.origin.y );
+            CGContextAddLineToPoint(context, innerRect.size.width + arrowHeight + innerRect.origin.x, ( innerRect.size.height / 2 ) + innerRect.origin.y );
+            CGContextAddLineToPoint(context, innerRect.size.width + innerRect.origin.x, ( innerRect.size.height / 2 + ( arrowWidth / 2 ) ) + innerRect.origin.y );
+            break;
+
+        case TNAttachedWindowGravityRight:
+            CGContextMoveToPoint(context, innerRect.origin.x, ( innerRect.size.height / 2 - ( arrowWidth / 2 ) ) + innerRect.origin.y );
+            CGContextAddLineToPoint(context, innerRect.origin.x - arrowHeight, ( innerRect.size.height / 2 ) + innerRect.origin.y );
+            CGContextAddLineToPoint(context, innerRect.origin.x, ( innerRect.size.height / 2 + ( arrowWidth / 2 ) + innerRect.origin.y ) );
+            break;
+
+        case TNAttachedWindowGravityDown:
+            CGContextMoveToPoint(context, ( innerRect.size.width / 2 - ( arrowWidth / 2 ) ) + innerRect.origin.x, innerRect.origin.y );
+            CGContextAddLineToPoint(context, ( innerRect.size.width / 2 ) + innerRect.origin.x, innerRect.origin.y - arrowHeight );
+            CGContextAddLineToPoint(context, ( innerRect.size.width / 2 ) + ( arrowWidth / 2 ) + innerRect.origin.x , innerRect.origin.y );
+            break;
+
+        case TNAttachedWindowGravityUp:
+            CGContextMoveToPoint(context, ( innerRect.size.width / 2 - ( arrowWidth / 2 ) ) + innerRect.origin.x, innerRect.size.height + innerRect.origin.y);
+            CGContextAddLineToPoint(context, ( innerRect.size.width / 2 ) + innerRect.origin.x, innerRect.size.height + innerRect.origin.y + arrowHeight);
+            CGContextAddLineToPoint(context, ( innerRect.size.width / 2 ) + ( arrowWidth / 2 ) + innerRect.origin.x , innerRect.size.height + innerRect.origin.y );
+            break;
+    }
+    
+
+    
+	//Draw it
+	CGContextStrokePath(context);
+	
+	[backgroundColor setFill];
+	
+	//Draw it
+	CGContextFillPath(context);
 }
 
 @end
