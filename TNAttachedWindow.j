@@ -388,7 +388,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
     CPImage         _cursorBackgroundLeft;
     CPImage         _cursorBackgroundRight;
     CPImage         _cursorBackgroundTop;
-	unsigned		_gravity;
+	unsigned		gravity						@accessors;
     CPImageView     _cursorView                 @accessors(property=cursorView);
 }
 
@@ -433,40 +433,20 @@ TNAttachedBlackWindowMask       = 1 << 26;
     return self;
 }
 
-/*! set the position of the cursorView
-    @param aGravity the cursorView position
-*/
-- (void)setGravity:(unsigned)aGravity
-{
-	_gravity = aGravity;
-}
-
 - (void)drawRect:(CGRect)aRect
 {
-
 	[super drawRect:aRect];
 	
-	var context = [[CPGraphicsContext currentContext] graphicsPort];
-	var radius = 5;
-	var gravity = _gravity;
-	var arrowWidth = 15;
-	var arrowHeight = 10;
-	var strokeWidth = 2;
-	
-	if (_styleMask & TNAttachedWhiteWindowMask)
-        var backgroundColor = [CPColor whiteColor];
-
-	else if (_styleMask & TNAttachedBlackWindowMask)
-		var backgroundColor = [CPColor colorWithHexString:@"222"];
-             
-	var shadowColor = [CPColor blackColor];
-	
-	
-	var strokeColor = [CPColor colorWithHexString:@"ADEDFF"];
-	shadowColor = [shadowColor colorWithAlphaComponent:.1];
-	
-	var shadowSize = CGSizeMake(0, 0);
-	var shadowBlur = 5;
+	var context = [[CPGraphicsContext currentContext] graphicsPort],
+		radius = 5,
+		arrowWidth = 15,
+		arrowHeight = 10,
+		strokeWidth = 2;
+		backgroundColor = (_styleMask & TNAttachedWhiteWindowMask) ? [CPColor whiteColor] : [CPColor colorWithHexString:@"222"],
+		shadowColor = [[CPColor blackColor] colorWithAlphaComponent:.1],
+		strokeColor = [CPColor colorWithHexString:@"ADEDFF"],
+		shadowSize = CGSizeMake(0, 0);
+		shadowBlur = 5;
 	
 	CGContextSetStrokeColor(context, strokeColor);
 	CGContextSetLineWidth(context, strokeWidth);
@@ -486,7 +466,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
 	
 	    //set teh shadow
     CGContextSetShadow(context, CGSizeMake(0,0), 20);
-	CGContextSetShadowWithColor( context, shadowSize, shadowBlur, shadowColor );
+	CGContextSetShadowWithColor(context, shadowSize, shadowBlur, shadowColor);
 
 	switch (gravity)
     {
@@ -509,38 +489,36 @@ TNAttachedBlackWindowMask       = 1 << 26;
             break;
     }
     	
-    CGContextAddPath(context, CGPathWithRoundedRectangleInRect( innerRect, radius, radius, YES, YES, YES, YES ));
+    CGContextAddPath(context, CGPathWithRoundedRectangleInRect(innerRect, radius, radius, YES, YES, YES, YES));
     CGContextClosePath(context);
     
     //Start the arrow
     switch (gravity)
     {
         case TNAttachedWindowGravityLeft:
-            CGContextMoveToPoint(context, innerRect.size.width + innerRect.origin.x, ( innerRect.size.height / 2 - ( arrowWidth / 2 ) ) + innerRect.origin.y );
-            CGContextAddLineToPoint(context, innerRect.size.width + arrowHeight + innerRect.origin.x, ( innerRect.size.height / 2 ) + innerRect.origin.y );
-            CGContextAddLineToPoint(context, innerRect.size.width + innerRect.origin.x, ( innerRect.size.height / 2 + ( arrowWidth / 2 ) ) + innerRect.origin.y );
+            CGContextMoveToPoint(context, innerRect.size.width + innerRect.origin.x, (innerRect.size.height / 2 - (arrowWidth / 2)) + innerRect.origin.y);
+            CGContextAddLineToPoint(context, innerRect.size.width + arrowHeight + innerRect.origin.x, (innerRect.size.height / 2) + innerRect.origin.y);
+            CGContextAddLineToPoint(context, innerRect.size.width + innerRect.origin.x, (innerRect.size.height / 2 + (arrowWidth / 2)) + innerRect.origin.y);
             break;
 
         case TNAttachedWindowGravityRight:
-            CGContextMoveToPoint(context, innerRect.origin.x, ( innerRect.size.height / 2 - ( arrowWidth / 2 ) ) + innerRect.origin.y );
-            CGContextAddLineToPoint(context, innerRect.origin.x - arrowHeight, ( innerRect.size.height / 2 ) + innerRect.origin.y );
-            CGContextAddLineToPoint(context, innerRect.origin.x, ( innerRect.size.height / 2 + ( arrowWidth / 2 ) + innerRect.origin.y ) );
+            CGContextMoveToPoint(context, innerRect.origin.x, (innerRect.size.height / 2 - (arrowWidth / 2)) + innerRect.origin.y);
+            CGContextAddLineToPoint(context, innerRect.origin.x - arrowHeight, (innerRect.size.height / 2) + innerRect.origin.y);
+            CGContextAddLineToPoint(context, innerRect.origin.x, (innerRect.size.height / 2 + (arrowWidth / 2) + innerRect.origin.y));
             break;
 
         case TNAttachedWindowGravityDown:
-            CGContextMoveToPoint(context, ( innerRect.size.width / 2 - ( arrowWidth / 2 ) ) + innerRect.origin.x, innerRect.origin.y );
-            CGContextAddLineToPoint(context, ( innerRect.size.width / 2 ) + innerRect.origin.x, innerRect.origin.y - arrowHeight );
-            CGContextAddLineToPoint(context, ( innerRect.size.width / 2 ) + ( arrowWidth / 2 ) + innerRect.origin.x , innerRect.origin.y );
+            CGContextMoveToPoint(context, (innerRect.size.width / 2 - (arrowWidth / 2)) + innerRect.origin.x, innerRect.origin.y);
+            CGContextAddLineToPoint(context, (innerRect.size.width / 2) + innerRect.origin.x, innerRect.origin.y - arrowHeight);
+            CGContextAddLineToPoint(context, (innerRect.size.width / 2) + (arrowWidth / 2) + innerRect.origin.x , innerRect.origin.y);
             break;
 
         case TNAttachedWindowGravityUp:
-            CGContextMoveToPoint(context, ( innerRect.size.width / 2 - ( arrowWidth / 2 ) ) + innerRect.origin.x, innerRect.size.height + innerRect.origin.y);
-            CGContextAddLineToPoint(context, ( innerRect.size.width / 2 ) + innerRect.origin.x, innerRect.size.height + innerRect.origin.y + arrowHeight);
-            CGContextAddLineToPoint(context, ( innerRect.size.width / 2 ) + ( arrowWidth / 2 ) + innerRect.origin.x , innerRect.size.height + innerRect.origin.y );
+            CGContextMoveToPoint(context, (innerRect.size.width / 2 - (arrowWidth / 2)) + innerRect.origin.x, innerRect.size.height + innerRect.origin.y);
+            CGContextAddLineToPoint(context, (innerRect.size.width / 2) + innerRect.origin.x, innerRect.size.height + innerRect.origin.y + arrowHeight);
+            CGContextAddLineToPoint(context, (innerRect.size.width / 2) + (arrowWidth / 2) + innerRect.origin.x , innerRect.size.height + innerRect.origin.y);
             break;
     }
-    
-
     
 	//Draw it
 	CGContextStrokePath(context);
