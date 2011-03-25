@@ -37,6 +37,7 @@
     var mask = ([[CPBundle bundleForClass:TNToolTip] objectForInfoDictionaryKey:@"TNToolTipDefaultMask"] == @"white") ? TNAttachedWhiteWindowMask : TNAttachedBlackWindowMask,
         tooltip = [[TNToolTip alloc] initWithString:aString styleMask:mask];
 
+    [tooltip setAlphaValue:[[CPBundle bundleForClass:TNToolTip] objectForInfoDictionaryKey:@"TNToolTipOpacity"]];
     [tooltip attachToView:aView];
     [tooltip resignMainWindow];
 

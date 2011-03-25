@@ -506,7 +506,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
     }
 
     CGContextAddPath(context, CGPathWithRoundedRectangleInRect(aRect, radius, radius, YES, YES, YES, YES));
-    CGContextDrawLinearGradient(context, gradient, aRect.origin, CGPointMake(0.0, 200.0), 0);
+    CGContextDrawLinearGradient(context, gradient, CGPointMake(CPRectGetMidX(aRect), 0.0), CGPointMake(CPRectGetMidX(aRect), aRect.size.height), 0);
     CGContextClosePath(context);
 
     //Start the arrow

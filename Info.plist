@@ -24,7 +24,7 @@
     <key>TNAttachedWindowWhiteMaskTopColor</key>
     <string>ffffff</string>
     <key>TNAttachedWindowWhiteMaskBottomColor</key>
-    <string>d4d4d4</string>
+    <string>ebebeb</string>
     <key>TNAttachedWindowWhiteMaskBorderColor</key>
     <string>ADEDFF</string>
 
@@ -46,5 +46,10 @@
     <key>TNToolTipDefaultMask</key>
     <string>white</string>
 
+    <!--
+        set the opacity of the tooltip (from 0.0: invisible to 1.0: not transparent)
+    -->
+    <key>TNToolTipOpacity</key>
+    <real>1.0</real>
 </dict>
 </plist>
