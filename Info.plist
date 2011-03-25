@@ -2,13 +2,49 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CPBundleIdentifier</key>
-	<string>org.archipelproject.tnkit</string>
-	<key>CPBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CPBundleName</key>
-	<string>TNKit</string>
-	<key>CPBundlePackageType</key>
-	<string>FMWK</string>
+    <key>CPBundleIdentifier</key>
+    <string>org.archipelproject.tnkit</string>
+    <key>CPBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CPBundleName</key>
+    <string>TNKit</string>
+    <key>CPBundlePackageType</key>
+    <string>FMWK</string>
+
+    <!--
+        if set to 1, will use a glowing effect
+    -->
+    <key>TNAttachedWindowUseGlowEffect</key>
+    <integer>1</integer>
+
+
+    <!--
+        default color configuration for the black attached window
+    -->
+    <key>TNAttachedWindowWhiteMaskTopColor</key>
+    <string>ffffff</string>
+    <key>TNAttachedWindowWhiteMaskBottomColor</key>
+    <string>d4d4d4</string>
+    <key>TNAttachedWindowWhiteMaskBorderColor</key>
+    <string>ADEDFF</string>
+
+    <!--
+        default color configuration for the white attached window
+    -->
+    <key>TNAttachedWindowBlackMaskTopColor</key>
+    <string>363636</string>
+    <key>TNAttachedWindowBlackMaskBottomColor</key>
+    <string>212121</string>
+    <key>TNAttachedWindowBlackMaskBorderColor</key>
+    <string>131313</string>
+
+    <!--
+        default mask of the TNToolTio
+            - white
+            - black
+    -->
+    <key>TNToolTipDefaultMask</key>
+    <string>white</string>
+
 </dict>
 </plist>

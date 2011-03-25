@@ -34,26 +34,11 @@
 */
 + (TNToolTip)toolTipWithString:(CPString)aString forView:(CPView)aView
 {
-    var tooltip = [[TNToolTip alloc] initWithString:aString styleMask:TNAttachedWhiteWindowMask];
+    var mask = ([[CPBundle bundleForClass:TNToolTip] objectForInfoDictionaryKey:@"TNToolTipDefaultMask"] == @"white") ? TNAttachedWhiteWindowMask : TNAttachedBlackWindowMask,
+        tooltip = [[TNToolTip alloc] initWithString:aString styleMask:mask];
 
     [tooltip attachToView:aView];
     [tooltip resignMainWindow];
-
-    return tooltip;
-}
-
-/*! returns an initialized black TNToolTip with string and attach it to given view
-    @param aString the content of the tooltip
-    @param aView the view where the tooltip will be attached
-*/
-+ (TNToolTip)blackToolTipWithString:(CPString)aString forView:(CPView)aView
-{
-    var tooltip = [[TNToolTip alloc] initWithString:aString styleMask:TNAttachedWhiteWindowMask];
-
-    [tooltip attachToView:aView];
-    [tooltip resignMainWindow];
-
-    _oldResponder = aView;
 
     return tooltip;
 }
@@ -75,7 +60,8 @@
         [_content setFrameSize:size];
         [_content setFrameOrigin:CPPointMake(10.0, 10.0)];
         [_content setTextShadowOffset:CGSizeMake(0.0, 1.0)];
-        [_content setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color"];
+        [_content setTextColor:(_styleMask & TNAttachedWhiteWindowMask) ? [CPColor blackColor] : [CPColor whiteColor]]
+        [_content setValue:(_styleMask & TNAttachedWhiteWindowMask) ? [CPColor whiteColor] : [CPColor colorWithHexString:@"5b5b5b"]  forThemeAttribute:@"text-shadow-color"];
 
         size.width += 40;
         size.height += 45;

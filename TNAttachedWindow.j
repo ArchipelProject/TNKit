@@ -384,12 +384,17 @@ TNAttachedBlackWindowMask       = 1 << 26;
 */
 @implementation _CPAttachedWindowView : _CPWindowView
 {
+    unsigned        _gravity                    @accessors(property=gravity);
+    CPImageView     _cursorView                 @accessors(property=cursorView);
+
+    BOOL            _useGlowingEffect;
+    CPColor         _backgroundTopColor;
+    CPColor         _backgroundBottomColor;
+    CPColor         _strokeColor;
     CPImage         _cursorBackgroundBottom;
     CPImage         _cursorBackgroundLeft;
     CPImage         _cursorBackgroundRight;
     CPImage         _cursorBackgroundTop;
-	unsigned		_gravity					@accessors(property=gravity);
-    CPImageView     _cursorView                 @accessors(property=cursorView);
 }
 
 /*! compute the contentView frame from a given window frame
@@ -428,105 +433,113 @@ TNAttachedBlackWindowMask       = 1 << 26;
 
 - (id)initWithFrame:(CPRect)aFrame styleMask:(unsigned)aStyleMask
 {
-    self = [super initWithFrame:aFrame styleMask:aStyleMask];
-    
+    if (self = [super initWithFrame:aFrame styleMask:aStyleMask])
+    {
+        var bundle = [CPBundle bundleForClass:[self class]];
+
+        _strokeColor = [CPColor colorWithHexString:[bundle objectForInfoDictionaryKey:(_styleMask & TNAttachedWhiteWindowMask) ? @"TNAttachedWindowWhiteMaskBorderColor" : @"TNAttachedWindowBlackMaskBorderColor"]];
+        _useGlowingEffect = !![bundle objectForInfoDictionaryKey:@"TNAttachedWindowUseGlowEffect"];
+        _backgroundTopColor = [CPColor colorWithHexString:[bundle objectForInfoDictionaryKey:(_styleMask & TNAttachedWhiteWindowMask) ? @"TNAttachedWindowWhiteMaskTopColor" : @"TNAttachedWindowBlackMaskTopColor"]];
+        _backgroundBottomColor = [CPColor colorWithHexString:[bundle objectForInfoDictionaryKey:(_styleMask & TNAttachedWhiteWindowMask) ? @"TNAttachedWindowWhiteMaskBottomColor" : @"TNAttachedWindowBlackMaskBottomColor"]];
+    }
+
     return self;
 }
 
 - (void)drawRect:(CGRect)aRect
 {
-	[super drawRect:aRect];
-	
-	var context = [[CPGraphicsContext currentContext] graphicsPort],
-		radius = 5,
-		arrowWidth = 15,
-		arrowHeight = 10,
-		strokeWidth = 2,
-		backgroundColor = (_styleMask & TNAttachedWhiteWindowMask) ? [CPColor whiteColor] : [CPColor colorWithHexString:@"222"],
-		shadowColor = [[CPColor blackColor] colorWithAlphaComponent:.1],
-		strokeColor = [CPColor colorWithHexString:@"ADEDFF"],
-		shadowSize = CGSizeMake(0, 0),
-		shadowBlur = 5;
-	
-	CGContextSetStrokeColor(context, strokeColor);
-	CGContextSetLineWidth(context, strokeWidth);
-	 
-	CGContextBeginPath(context);
-	var innerRect = aRect;
-	innerRect.origin.x += strokeWidth;
-	innerRect.origin.y += strokeWidth;
-	innerRect.size.width -= strokeWidth * 2;
-	innerRect.size.height -= strokeWidth * 2;
-	
-	//compensate for the shadow blur
-	innerRect.origin.x += shadowBlur;
-	innerRect.origin.y += shadowBlur;
-	innerRect.size.width -= shadowBlur * 2;
-	innerRect.size.height -= shadowBlur * 2;
-	
-	//set the shadow
-	CGContextSetShadow(context, CGSizeMake(0,0), 20);
-	CGContextSetShadowWithColor(context, shadowSize, shadowBlur, shadowColor);
+    [super drawRect:aRect];
 
-	switch (_gravity)
+    var context = [[CPGraphicsContext currentContext] graphicsPort],
+        gradientColor = [[_backgroundTopColor redComponent], [_backgroundTopColor greenComponent], [_backgroundTopColor blueComponent],1.0, [_backgroundBottomColor redComponent], [_backgroundBottomColor greenComponent], [_backgroundBottomColor blueComponent],1.0],
+        gradient = CGGradientCreateWithColorComponents(CGColorSpaceCreateDeviceRGB(), gradientColor, [0,1], 2);
+        radius = 5,
+        arrowWidth = 15,
+        arrowHeight = 10,
+        strokeWidth = 2;
+
+    CGContextSetStrokeColor(context, _strokeColor);
+    CGContextSetLineWidth(context, strokeWidth);
+    CGContextBeginPath(context);
+
+    aRect.origin.x += strokeWidth;
+    aRect.origin.y += strokeWidth;
+    aRect.size.width -= strokeWidth * 2;
+    aRect.size.height -= strokeWidth * 2;
+
+    if (_useGlowingEffect)
+    {
+        var shadowColor = [[CPColor blackColor] colorWithAlphaComponent:.1],
+            shadowSize = CGSizeMake(0, 0),
+            shadowBlur = 5;
+
+        //compensate for the shadow blur
+        aRect.origin.x += shadowBlur;
+        aRect.origin.y += shadowBlur;
+        aRect.size.width -= shadowBlur * 2;
+        aRect.size.height -= shadowBlur * 2;
+
+        //set the shadow
+        CGContextSetShadow(context, CGSizeMake(0,0), 20);
+        CGContextSetShadowWithColor(context, shadowSize, shadowBlur, shadowColor);
+    }
+
+    switch (_gravity)
     {
         case TNAttachedWindowGravityLeft:
-            innerRect.size.width -= arrowHeight;
+            aRect.size.width -= arrowHeight;
             break;
 
         case TNAttachedWindowGravityRight:
-            innerRect.size.width -= arrowHeight;
-            innerRect.origin.x += arrowHeight;
+            aRect.size.width -= arrowHeight;
+            aRect.origin.x += arrowHeight;
             break;
 
         case TNAttachedWindowGravityUp:
-            innerRect.size.height -= arrowHeight;
+            aRect.size.height -= arrowHeight;
             break;
 
         case TNAttachedWindowGravityDown:
-            innerRect.size.height -= arrowHeight;
-            innerRect.origin.y += arrowHeight;
+            aRect.size.height -= arrowHeight;
+            aRect.origin.y += arrowHeight;
             break;
     }
-    	
-    CGContextAddPath(context, CGPathWithRoundedRectangleInRect(innerRect, radius, radius, YES, YES, YES, YES));
+
+    CGContextAddPath(context, CGPathWithRoundedRectangleInRect(aRect, radius, radius, YES, YES, YES, YES));
+    CGContextDrawLinearGradient(context, gradient, aRect.origin, CGPointMake(0.0, 200.0), 0);
     CGContextClosePath(context);
-    
+
     //Start the arrow
     switch (_gravity)
     {
         case TNAttachedWindowGravityLeft:
-            CGContextMoveToPoint(context, innerRect.size.width + innerRect.origin.x, (innerRect.size.height / 2 - (arrowWidth / 2)) + innerRect.origin.y);
-            CGContextAddLineToPoint(context, innerRect.size.width + arrowHeight + innerRect.origin.x, (innerRect.size.height / 2) + innerRect.origin.y);
-            CGContextAddLineToPoint(context, innerRect.size.width + innerRect.origin.x, (innerRect.size.height / 2 + (arrowWidth / 2)) + innerRect.origin.y);
+            CGContextMoveToPoint(context, aRect.size.width + aRect.origin.x, (aRect.size.height / 2 - (arrowWidth / 2)) + aRect.origin.y);
+            CGContextAddLineToPoint(context, aRect.size.width + arrowHeight + aRect.origin.x, (aRect.size.height / 2) + aRect.origin.y);
+            CGContextAddLineToPoint(context, aRect.size.width + aRect.origin.x, (aRect.size.height / 2 + (arrowWidth / 2)) + aRect.origin.y);
             break;
 
         case TNAttachedWindowGravityRight:
-            CGContextMoveToPoint(context, innerRect.origin.x, (innerRect.size.height / 2 - (arrowWidth / 2)) + innerRect.origin.y);
-            CGContextAddLineToPoint(context, innerRect.origin.x - arrowHeight, (innerRect.size.height / 2) + innerRect.origin.y);
-            CGContextAddLineToPoint(context, innerRect.origin.x, (innerRect.size.height / 2 + (arrowWidth / 2) + innerRect.origin.y));
+            CGContextMoveToPoint(context, aRect.origin.x, (aRect.size.height / 2 - (arrowWidth / 2)) + aRect.origin.y);
+            CGContextAddLineToPoint(context, aRect.origin.x - arrowHeight, (aRect.size.height / 2) + aRect.origin.y);
+            CGContextAddLineToPoint(context, aRect.origin.x, (aRect.size.height / 2 + (arrowWidth / 2) + aRect.origin.y));
             break;
 
         case TNAttachedWindowGravityDown:
-            CGContextMoveToPoint(context, (innerRect.size.width / 2 - (arrowWidth / 2)) + innerRect.origin.x, innerRect.origin.y);
-            CGContextAddLineToPoint(context, (innerRect.size.width / 2) + innerRect.origin.x, innerRect.origin.y - arrowHeight);
-            CGContextAddLineToPoint(context, (innerRect.size.width / 2) + (arrowWidth / 2) + innerRect.origin.x , innerRect.origin.y);
+            CGContextMoveToPoint(context, (aRect.size.width / 2 - (arrowWidth / 2)) + aRect.origin.x, aRect.origin.y);
+            CGContextAddLineToPoint(context, (aRect.size.width / 2) + aRect.origin.x, aRect.origin.y - arrowHeight);
+            CGContextAddLineToPoint(context, (aRect.size.width / 2) + (arrowWidth / 2) + aRect.origin.x , aRect.origin.y);
             break;
 
         case TNAttachedWindowGravityUp:
-            CGContextMoveToPoint(context, (innerRect.size.width / 2 - (arrowWidth / 2)) + innerRect.origin.x, innerRect.size.height + innerRect.origin.y);
-            CGContextAddLineToPoint(context, (innerRect.size.width / 2) + innerRect.origin.x, innerRect.size.height + innerRect.origin.y + arrowHeight);
-            CGContextAddLineToPoint(context, (innerRect.size.width / 2) + (arrowWidth / 2) + innerRect.origin.x , innerRect.size.height + innerRect.origin.y);
+            CGContextMoveToPoint(context, (aRect.size.width / 2 - (arrowWidth / 2)) + aRect.origin.x, aRect.size.height + aRect.origin.y);
+            CGContextAddLineToPoint(context, (aRect.size.width / 2) + aRect.origin.x, aRect.size.height + aRect.origin.y + arrowHeight);
+            CGContextAddLineToPoint(context, (aRect.size.width / 2) + (arrowWidth / 2) + aRect.origin.x , aRect.size.height + aRect.origin.y);
             break;
     }
-    
-	//Draw it
-	CGContextStrokePath(context);
-	
-	[backgroundColor setFill];
-	
-	//Draw it
-	CGContextFillPath(context);
+
+    //Draw it
+    CGContextStrokePath(context);
+    CGContextFillPath(context);
 }
 
 @end
