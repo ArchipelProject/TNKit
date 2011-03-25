@@ -452,7 +452,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
 
     var context = [[CPGraphicsContext currentContext] graphicsPort],
         gradientColor = [[_backgroundTopColor redComponent], [_backgroundTopColor greenComponent], [_backgroundTopColor blueComponent],1.0, [_backgroundBottomColor redComponent], [_backgroundBottomColor greenComponent], [_backgroundBottomColor blueComponent],1.0],
-        gradient = CGGradientCreateWithColorComponents(CGColorSpaceCreateDeviceRGB(), gradientColor, [0,1], 2);
+        gradient = CGGradientCreateWithColorComponents(CGColorSpaceCreateDeviceRGB(), gradientColor, [0,1], 2),
         radius = 5,
         arrowWidth = 15,
         arrowHeight = 10,
