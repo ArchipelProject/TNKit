@@ -108,16 +108,62 @@ var currentToolTip,
         [currentToolTip close:nil];
         currentToolTip = nil;
     }
-
 }
 
 - (void)showToolTip:(CPTimer)aTimer
 {
     if (currentToolTip)
         [currentToolTip close:nil];
-
     currentToolTip = [TNToolTip toolTipWithString:_toolTip forView:self];
 }
 
-
 @end
+
+/*! READ ME:
+    this category should be included in cappuccino
+    the current pull request is here https://github.com/280north/cappuccino/pull/1191
+    if you don't want to pull this in your Cappuccino clone,
+    uncomment the following category to make toolTips working on CPToolBar
+*/
+// @implementation _CPToolbarView (ToolTip)
+//
+// - (void)reloadToolbarItems
+// {
+//     var TOOLBAR_TOP_MARGIN          = 5.0,
+//          TOOLBAR_ITEM_MARGIN         = 10.0,
+//          TOOLBAR_EXTRA_ITEMS_WIDTH   = 20.0;
+//
+//     // Get rid of all our current subviews.
+//     var subviews = [self subviews],
+//         count = subviews.length;
+//
+//     while (count--)
+//         [subviews[count] removeFromSuperview];
+//
+//     // Populate with new subviews.
+//     var items = [_toolbar items],
+//         index = 0;
+//
+//     count = items.length;
+//
+//     _minWidth = TOOLBAR_ITEM_MARGIN;
+//     _viewsForToolbarItems = { };
+//
+//     for (; index < count; ++index)
+//     {
+//         var item = items[index],
+//             view = [[_CPToolbarItemView alloc] initWithToolbarItem:item toolbar:self];
+//
+//         _viewsForToolbarItems[[item UID]] = view;
+//
+//         if ([item toolTip] && [view respondsToSelector:@selector(setToolTip:)])
+//             [view setToolTip:[item toolTip]];
+//
+//         [self addSubview:view];
+//
+//         _minWidth += [view minSize].width + TOOLBAR_ITEM_MARGIN;
+//     }
+//
+//     [self tile];
+// }
+// @end

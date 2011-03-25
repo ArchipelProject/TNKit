@@ -71,25 +71,6 @@
     return self;
 }
 
-/*! add a new CPToolbarItem
-    @param anIdentifier CPString containing the identifier
-    @param aLabel CPString containing the label
-    @param anImage CPImage containing the icon of the item
-    @param aTarget an object that will be the target of the item
-    @param anAction a selector of the aTarget to perform on click
-*/
-- (void)addItemWithIdentifier:(CPString)anIdentifier label:(CPString)aLabel icon:(CPImage)anImage target:(id)aTarget action:(SEL)anAction
-{
-    var newItem = [[CPToolbarItem alloc] initWithItemIdentifier:anIdentifier];
-
-    [newItem setLabel:aLabel];
-    [newItem setImage:[[CPImage alloc] initWithContentsOfFile:anImage size:CPSizeMake(32,32)]];
-    [newItem setTarget:aTarget];
-    [newItem setAction:anAction];
-
-    [_toolbarItems setObject:newItem forKey:anIdentifier];
-}
-
 
 #pragma mark -
 #pragma mark Accesors
@@ -121,8 +102,9 @@
     @param anImage CPImage containing the icon of the item
     @param aTarget an object that will be the target of the item
     @param anAction a selector of the aTarget to perform on click
+    @param toolTip the toolTip
 */
-- (CPToolbarItem)addItemWithIdentifier:(CPString)anIdentifier label:(CPString)aLabel view:(CPView)aView target:(id)aTarget action:(SEL)anAction
+- (CPToolbarItem)addItemWithIdentifier:(CPString)anIdentifier label:(CPString)aLabel view:(CPView)aView target:(id)aTarget action:(SEL)anAction toolTip:(CPString)aToolTip
 {
     var newItem = [[CPToolbarItem alloc] initWithItemIdentifier:anIdentifier];
 
@@ -130,11 +112,61 @@
     [newItem setView:aView];
     [newItem setTarget:aTarget];
     [newItem setAction:anAction];
+    [newItem setToolTip:aToolTip];
 
     [_toolbarItems setObject:newItem forKey:anIdentifier];
 
-    return newItem
+    return newItem;
 }
+
+/*! add a new CPToolbarItem with a custom view
+    @param anIdentifier CPString containing the identifier
+    @param aLabel CPString containing the label
+    @param anImage CPImage containing the icon of the item
+    @param aTarget an object that will be the target of the item
+    @param anAction a selector of the aTarget to perform on click
+*/
+- (CPToolbarItem)addItemWithIdentifier:(CPString)anIdentifier label:(CPString)aLabel view:(CPView)aView target:(id)aTarget action:(SEL)anAction
+{
+    return [self addItemWithIdentifier:anIdentifier label:aLabel view:aView target:aTarget action:anAction toolTip:nil];
+}
+
+
+/*! add a new CPToolbarItem
+    @param anIdentifier CPString containing the identifier
+    @param aLabel CPString containing the label
+    @param anImage CPImage containing the icon of the item
+    @param aTarget an object that will be the target of the item
+    @param anAction a selector of the aTarget to perform on click
+    @param toolTip the toolTip
+*/
+- (CPToolbarItem)addItemWithIdentifier:(CPString)anIdentifier label:(CPString)aLabel icon:(CPImage)anImage target:(id)aTarget action:(SEL)anAction toolTip:(CPString)aToolTip
+{
+    var newItem = [[CPToolbarItem alloc] initWithItemIdentifier:anIdentifier];
+
+    [newItem setLabel:aLabel];
+    [newItem setImage:[[CPImage alloc] initWithContentsOfFile:anImage size:CPSizeMake(32,32)]];
+    [newItem setTarget:aTarget];
+    [newItem setAction:anAction];
+    [newItem setToolTip:aToolTip];
+
+    [_toolbarItems setObject:newItem forKey:anIdentifier];
+
+    return newItem;
+}
+
+/*! add a new CPToolbarItem
+    @param anIdentifier CPString containing the identifier
+    @param aLabel CPString containing the label
+    @param anImage CPImage containing the icon of the item
+    @param aTarget an object that will be the target of the item
+    @param anAction a selector of the aTarget to perform on click
+*/
+- (CPToolbarItem)addItemWithIdentifier:(CPString)anIdentifier label:(CPString)aLabel icon:(CPImage)anImage target:(id)aTarget action:(SEL)anAction
+{
+    return [self addItemWithIdentifier:anIdentifier label:aLabel icon:anImage target:aTarget action:anAction toolTip:nil];
+}
+
 
 /*! define the position of a given existing CPToolbarItem according to its identifier
     @param anIndentifier CPString containing the identifier
