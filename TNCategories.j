@@ -18,7 +18,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-@import <AppKit/AppKit.j>
+@import <Foundation/Foundation.j>
+
+@import <AppKit/CPControl.j>
+
 @import "TNToolTip.j";
 
 var currentToolTip,

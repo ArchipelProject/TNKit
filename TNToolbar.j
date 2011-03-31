@@ -19,7 +19,13 @@
  */
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
+
+@import <AppKit/CPImage.j>
+@import <AppKit/CPImageView.j>
+@import <AppKit/CPToolbar.j>
+@import <AppKit/CPToolbarItem.j>
+@import <AppKit/CPView.j>
+
 
 
 /*! @ingroup tnkit

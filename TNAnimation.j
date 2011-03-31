@@ -20,6 +20,9 @@
 
 @import <Foundation/Foundation.j>
 
+@import <AppKit/CPAnimation.j>
+
+
 
 /*! @ingroup tnkit
 

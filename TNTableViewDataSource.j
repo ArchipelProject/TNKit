@@ -18,6 +18,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+@import <Foundation/Foundation.j>
+
+@import <AppKit/CPSearchField.j>
+@import <AppKit/CPTableView.j>
+
+
 /*! @ingroup tnkit
     Simple table view datasource with filtering support
     Exemple of uses

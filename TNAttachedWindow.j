@@ -19,8 +19,13 @@
  */
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
 
+@import <AppKit/CPButton.j>
+@import <AppKit/CPColor.j>
+@import <AppKit/CPImage.j>
+@import <AppKit/CPImageView.j>
+@import <AppKit/CPView.j>
+@import <AppKit/CPWindow.j>
 
 TNAttachedWindowGravityUp      = 0;
 TNAttachedWindowGravityDown    = 1;

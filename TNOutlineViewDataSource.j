@@ -19,8 +19,6 @@
  */
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
-
 
 /*! @ingroup tnkit
     datasource of the snaphot outline view

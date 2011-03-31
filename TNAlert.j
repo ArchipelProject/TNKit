@@ -18,6 +18,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+@import <Foundation/Foundation.j>
+
+@import <AppKit/CPAlert.j>
 
 /*! @ingroup tnkit
     A very easy to use alert without all the NSAlert mess
@@ -25,11 +28,11 @@
 @implementation TNAlert : CPObject
 {
     CPAlert _alert      @accessors(getter=alert);
-    SEL     _helpAction @accessors(getter=helpAction);
-    id      _helpTarget @accessors(getter=helpTarget);
     CPArray _actions    @accessors(getter=actions);
+    id      _helpTarget @accessors(getter=helpTarget);
     id      _target     @accessors(property=target);
     id      _userInfo   @accessors(property=userInfo);
+    SEL     _helpAction @accessors(getter=helpAction);
 }
 
 

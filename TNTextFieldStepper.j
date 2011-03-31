@@ -18,6 +18,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+@import <Foundation/Foundation.j>
+
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPStepper.j>
+
+
 var TNStepperButtonsSize = CPSizeMake(19, 13);
 
 /*! exctracted from Cappuccino's CPTheme because this rocks

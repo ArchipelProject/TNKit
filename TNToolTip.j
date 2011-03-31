@@ -18,7 +18,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+@import <Foundation/Foundation.j>
+
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPView.j>
+
 @import "TNAttachedWindow.j"
+
+
 
 /*! @ingroup TNKit
     subclass of TNAttachedWindow in order to build quick tooltip
