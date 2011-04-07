@@ -65,7 +65,9 @@
         _frontView._DOMElement.style.WebkitPerspective = 1000;
         _frontView._DOMElement.style.WebkitTransformStyle = "preserve-3d";
         _frontView._DOMElement.style.WebkitTransition = _animationDuration + "s";
-
+        
+        [_backView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+        [_frontView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
         [self addSubview:_backView];
         [self addSubview:_frontView];
     }
@@ -140,17 +142,27 @@
 - (void)showFront
 {
     _flipped = NO;
-
-    _frontView._DOMElement.addEventListener(@"webkitTransitionEnd",  function(e){
+    
+    try
+    {
+        _frontView._DOMElement.addEventListener(@"webkitTransitionEnd",  function(e){
+            [_backView removeFromSuperview];
+            [_frontView removeFromSuperview];
+            [self addSubview:_backView];
+            [self addSubview:_frontView];
+            this.removeEventListener(@"webkitTransitionEnd");
+        });
+        
+        _frontView._DOMElement.style.WebkitTransform = "rotateY(0deg)";
+        _backView._DOMElement.style.WebkitTransform = "rotateY(180deg)";
+    }
+    catch(e)
+    {
         [_backView removeFromSuperview];
         [_frontView removeFromSuperview];
         [self addSubview:_backView];
         [self addSubview:_frontView];
-        this.removeEventListener(@"webkitTransitionEnd");
-    });
-
-    _frontView._DOMElement.style.WebkitTransform = "rotateY(0deg)";
-    _backView._DOMElement.style.WebkitTransform = "rotateY(180deg)";
+    }
 }
 
 /*! show the back view
@@ -158,16 +170,26 @@
 - (void)showBack
 {
     _flipped = YES;
-
-    _frontView._DOMElement.addEventListener("webkitTransitionEnd",  function(e){
+    
+    try
+    {
+        _frontView._DOMElement.addEventListener("webkitTransitionEnd",  function(e){
+            [_backView removeFromSuperview];
+            [_frontView removeFromSuperview];
+            [self addSubview:_frontView];
+            [self addSubview:_backView];
+            this.removeEventListener(@"webkitTransitionEnd");
+        });
+        _frontView._DOMElement.style.WebkitTransform = "rotateY(180deg)";
+        _backView._DOMElement.style.WebkitTransform = "rotateY(0deg)";
+    }
+    catch(e)
+    {
         [_backView removeFromSuperview];
         [_frontView removeFromSuperview];
         [self addSubview:_frontView];
         [self addSubview:_backView];
-        this.removeEventListener(@"webkitTransitionEnd");
-    });
-    _frontView._DOMElement.style.WebkitTransform = "rotateY(180deg)";
-    _backView._DOMElement.style.WebkitTransform = "rotateY(0deg)";
+    }
 }
 
 
