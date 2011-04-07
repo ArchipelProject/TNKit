@@ -65,7 +65,7 @@
         _frontView._DOMElement.style.WebkitPerspective = 1000;
         _frontView._DOMElement.style.WebkitTransformStyle = "preserve-3d";
         _frontView._DOMElement.style.WebkitTransition = _animationDuration + "s";
-        
+
         [_backView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
         [_frontView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
         [self addSubview:_backView];
@@ -142,7 +142,7 @@
 - (void)showFront
 {
     _flipped = NO;
-    
+
     try
     {
         _frontView._DOMElement.addEventListener(@"webkitTransitionEnd",  function(e){
@@ -152,7 +152,7 @@
             [self addSubview:_frontView];
             this.removeEventListener(@"webkitTransitionEnd");
         });
-        
+
         _frontView._DOMElement.style.WebkitTransform = "rotateY(0deg)";
         _backView._DOMElement.style.WebkitTransform = "rotateY(180deg)";
     }
@@ -170,7 +170,7 @@
 - (void)showBack
 {
     _flipped = YES;
-    
+
     try
     {
         _frontView._DOMElement.addEventListener("webkitTransitionEnd",  function(e){
