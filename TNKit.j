@@ -22,6 +22,7 @@
 @import "TNAnimation.j"
 @import "TNAttachedWindow.j"
 @import "TNCategories.j"
+@import "TNFlipView.j"
 @import "TNLocalizationCenter.j";
 @import "TNOutlineViewDataSource.j"
 @import "TNTableViewDataSource.j"
