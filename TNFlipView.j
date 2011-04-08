@@ -215,3 +215,41 @@
 }
 
 @end
+
+
+@implementation TNFlipView (CPCoding)
+
+/*! CPCoder compliance
+*/
+- (id)initWithCoder:(CPCoder)aCoder
+{
+    self = [super initWithCoder:aCoder];
+
+    if (self)
+    {
+        _flipped                    = [aCoder decodeObjectForKey:@"_flipped"];
+        _backView                   = [aCoder decodeObjectForKey:@"_backView"];
+        _frontView                  = [aCoder decodeObjectForKey:@"_frontView"];
+        _animationDuration          = [aCoder decodeObjectForKey:@"_animationDuration"];
+        _currentBackViewContent     = [aCoder decodeObjectForKey:@"_currentBackViewContent"];
+        _currentFrontViewContent    = [aCoder decodeObjectForKey:@"_currentFrontViewContent"];
+    }
+
+    return self;
+}
+
+/*! CPCoder compliance
+*/
+- (void)encodeWithCoder:(CPCoder)aCoder
+{
+    [super encodeWithCoder:aCoder];
+
+    [aCoder encodeObject:_flipped forKey:@"_flipped"];
+    [aCoder encodeObject:_backView forKey:@"_backView"];
+    [aCoder encodeObject:_frontView forKey:@"_frontView"];
+    [aCoder encodeObject:_animationDuration forKey:@"_animationDuration"];
+    [aCoder encodeObject:_currentBackViewContent forKey:@"_currentBackViewContent"];
+    [aCoder encodeObject:_currentFrontViewContent forKey:@"_currentFrontViewContent"];
+}
+
+@end
