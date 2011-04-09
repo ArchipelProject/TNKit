@@ -142,8 +142,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
         [self setMovableByWindowBackground:YES];
         [self setHasShadow:NO];
 
-        // FIXME: seems that without this, the drawRect method is not called. I don't now why
-        [self setFrameSize:aFrame.size];
+        [_windowView setNeedsDisplay:YES];
 
         [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_attachedWindowDidMove:) name:CPWindowDidMoveNotification object:self];
     }
@@ -307,15 +306,18 @@ TNAttachedBlackWindowMask       = 1 << 26;
     return originToBeReturned;
 }
 
+
 #pragma mark -
 #pragma mark Notification handlers
 
 - (void)_attachedWindowDidMove:(CPNotification)aNotification
 {
-    if (_leftMouseDownView)
+    if ([_windowView isMouseDownPressed])
     {
-        [[_windowView cursorView] setHidden:YES];
+        [_windowView hideCursor];
         [self setLevel:CPNormalWindowLevel];
+        [_closeButton setFrameOrigin:CPPointMake(1.0, 1.0)]
+        [[CPNotificationCenter defaultCenter] removeObserver:self name:CPWindowDidMoveNotification object:self];
     }
 }
 
@@ -403,8 +405,8 @@ TNAttachedBlackWindowMask       = 1 << 26;
 */
 @implementation _CPAttachedWindowView : _CPWindowView
 {
+    BOOL            _mouseDownPressed           @accessors(getter=isMouseDownPressed);
     unsigned        _gravity                    @accessors(property=gravity);
-    CPImageView     _cursorView                 @accessors(property=cursorView);
 
     BOOL            _useGlowingEffect;
     CPColor         _backgroundTopColor;
@@ -414,6 +416,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
     CPImage         _cursorBackgroundLeft;
     CPImage         _cursorBackgroundRight;
     CPImage         _cursorBackgroundTop;
+    CPSize          _cursorSize;
 }
 
 /*! compute the contentView frame from a given window frame
@@ -430,6 +433,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
     contentRect.origin.y += 12;
     contentRect.size.width -= 25;
     contentRect.size.height -= 27;
+
     return contentRect;
 }
 
@@ -460,10 +464,18 @@ TNAttachedBlackWindowMask       = 1 << 26;
         _useGlowingEffect = !![bundle objectForInfoDictionaryKey:@"TNAttachedWindowUseGlowEffect"];
         _backgroundTopColor = [CPColor colorWithHexString:[bundle objectForInfoDictionaryKey:(_styleMask & TNAttachedWhiteWindowMask) ? @"TNAttachedWindowWhiteMaskTopColor" : @"TNAttachedWindowBlackMaskTopColor"]];
         _backgroundBottomColor = [CPColor colorWithHexString:[bundle objectForInfoDictionaryKey:(_styleMask & TNAttachedWhiteWindowMask) ? @"TNAttachedWindowWhiteMaskBottomColor" : @"TNAttachedWindowBlackMaskBottomColor"]];
+        _cursorSize = CPSizeMake(15, 10);
     }
 
     return self;
 }
+
+- (void)hideCursor
+{
+    _cursorSize = CPSizeMakeZero();
+    [self setNeedsDisplay:YES];
+}
+
 
 - (void)drawRect:(CGRect)aRect
 {
@@ -473,8 +485,8 @@ TNAttachedBlackWindowMask       = 1 << 26;
         gradientColor = [[_backgroundTopColor redComponent], [_backgroundTopColor greenComponent], [_backgroundTopColor blueComponent],1.0, [_backgroundBottomColor redComponent], [_backgroundBottomColor greenComponent], [_backgroundBottomColor blueComponent],1.0],
         gradient = CGGradientCreateWithColorComponents(CGColorSpaceCreateDeviceRGB(), gradientColor, [0,1], 2),
         radius = 5,
-        arrowWidth = 15,
-        arrowHeight = 10,
+        arrowWidth = _cursorSize.width,
+        arrowHeight = _cursorSize.height,
         strokeWidth = 2;
 
     CGContextSetStrokeColor(context, _strokeColor);
@@ -559,6 +571,19 @@ TNAttachedBlackWindowMask       = 1 << 26;
     //Draw it
     CGContextStrokePath(context);
     CGContextFillPath(context);
+}
+
+
+- (void)mouseDown:(CPEvent)anEvent
+{
+    _mouseDownPressed = YES;
+    [super mouseDown:anEvent];
+}
+
+- (void)mouseUp:(CPEvent)anEvent
+{
+    _mouseDownPressed = NO;
+    [super mouseUp:anEvent];
 }
 
 @end
