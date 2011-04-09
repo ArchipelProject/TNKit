@@ -63,6 +63,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
     return _CPAttachedWindowView;
 }
 
+
 #pragma mark -
 #pragma mark Initialization
 
@@ -73,7 +74,18 @@ TNAttachedBlackWindowMask       = 1 << 26;
 */
 + (id)attachedWindowWithSize:(CGSize)aSize forView:(CPView)aView
 {
-    var attachedWindow = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, aSize.width, aSize.height)];
+    return [TNAttachedWindow attachedWindowWithSize:aSize forView:aView styleMask:TNAttachedWhiteWindowMask];
+}
+
+/*! create and init a TNAttachedWindow with given size of and view
+    @param aSize the size of the attached window
+    @param aView the target view
+    @return ready to use TNAttachedWindow
+    @param styleMask the window style mask  (combine CPClosableWindowMask, TNAttachedWhiteWindowMask, TNAttachedBlackWindowMask and CPClosableOnBlurWindowMask)
+*/
++ (id)attachedWindowWithSize:(CGSize)aSize forView:(CPView)aView styleMask:(int)aMask
+{
+    var attachedWindow = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, aSize.width, aSize.height) styleMask:aMask];
 
     [attachedWindow attachToView:aView];
 
@@ -113,7 +125,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
 
         if (aStyleMask & CPClosableWindowMask)
         {
-            _closeButton = [[CPButton alloc] initWithFrame:CPRectMake(5.0, 5.0, 14.0, 14.0)];
+            _closeButton = [[CPButton alloc] initWithFrame:CPRectMake(8.0, 1.0, 14.0, 14.0)];
             [_closeButton setImageScaling:CPScaleProportionally];
             [_closeButton setBordered:NO];
             [_closeButton setImage:buttonClose]; // this avoid the blinking..
@@ -129,6 +141,9 @@ TNAttachedBlackWindowMask       = 1 << 26;
         [self setLevel:CPStatusWindowLevel];
         [self setMovableByWindowBackground:YES];
         [self setHasShadow:NO];
+
+        // FIXME: seems that without this, the drawRect method is not called. I don't now why
+        [self setFrameSize:aFrame.size];
 
         [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_attachedWindowDidMove:) name:CPWindowDidMoveNotification object:self];
     }
@@ -167,8 +182,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
         lastView;
 
     // if somebody succeed to use the conversion function of CPView
-    // to get this working, please do. And succeed before saying
-    // you know how you would do!
+    // to get this working, please do.
     while (currentView = [currentView superview])
     {
         origin.x += [currentView frameOrigin].x;
