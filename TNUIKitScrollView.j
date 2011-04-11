@@ -22,82 +22,35 @@
 @import <AppKit/CPScroller.j>
 
 
-/*! exctracted from Cappuccino's CPTheme because this rocks
+/*! @ingroup TNKit
+    an iPhone/Mac OS X Lion like scrollview
 */
-function PatternColor()
-{
-    if (arguments.length < 3)
-    {
-        var slices = arguments[0],
-            imageSlices = [],
-            bundle = [CPBundle bundleForClass:TNUIKitScrollView];
-
-        for (var i = 0; i < slices.length; ++i)
-        {
-            var slice = slices[i];
-
-            imageSlices.push(slice ? [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:slice[0]] size:CGSizeMake(slice[1], slice[2])] : nil);
-        }
-
-        if (arguments.length == 2)
-            return [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:imageSlices isVertical:arguments[1]]];
-        else
-            return [CPColor colorWithPatternImage:[[CPNinePartImage alloc] initWithImageSlices:imageSlices]];
-    }
-    else if (arguments.length == 3)
-    {
-        return [CPColor colorWithPatternImage:PatternImage(arguments[0], arguments[1], arguments[2])];
-    }
-    else
-    {
-        return nil;
-    }
-}
-
-
 @implementation TNUIKitScrollView : CPScrollView
 
 - (TNUIKitScrollView)initWithFrame:(CPRect)aFrame
 {
     if (self = [super initWithFrame:aFrame])
     {
-        var knobColorVertical = PatternColor(
-            [
-                ["TNUIKitScrollView/scroller-vertical-knob-top.png", 8.0, 5.0],
-                ["TNUIKitScrollView/scroller-vertical-knob-center.png", 8.0, 1.0],
-                ["TNUIKitScrollView/scroller-vertical-knob-bottom.png", 8.0, 5.0]
-            ],YES),
-            knobColorHorizontal = PatternColor(
-            [
-                ["TNUIKitScrollView/scroller-horizontal-knob-left.png", 5.0, 8.0],
-                ["TNUIKitScrollView/scroller-horizontal-knob-center.png", 1.0, 8.0],
-                ["TNUIKitScrollView/scroller-horizontal-knob-right.png", 5.0, 8.0]
-            ],NO);
+        [_verticalScroller setFrameSize:CPSizeMake(10.0, 10)];
+        [_horizontalScroller setFrameSize:CPSizeMake(10.0, 10)];
 
-        [_verticalScroller setValue:[CPNumber numberWithInt:10] forThemeAttribute:@"scroller-width"];
         [_verticalScroller setValue:[CPNull null] forThemeAttribute:@"decrement-line-color"];
         [_verticalScroller setValue:[CPNull null] forThemeAttribute:@"increment-line-color"];
         [_verticalScroller setValue:[CPNull null] forThemeAttribute:@"knob-slot-color"];
-        [_verticalScroller setValue:CGInsetMake(2, 1, 2, 1) forThemeAttribute:@"track-inset"];
-        [_verticalScroller setValue:CGInsetMake(4, 1, 2, 1) forThemeAttribute:@"knob-inset"];
+        [_verticalScroller setValue:CGInsetMake(10, 2, 10, 1) forThemeAttribute:@"track-inset"];
+        [_verticalScroller setValue:CGInsetMake(2, 2, 2, 0) forThemeAttribute:@"knob-inset"];
         [_verticalScroller setValue:CPSizeMake(10, 0) forThemeAttribute:@"increment-line-size"];
         [_verticalScroller setValue:CPSizeMake(10, 0) forThemeAttribute:@"decrement-line-size"];
-        [_verticalScroller setValue:knobColorVertical forThemeAttribute:@"knob-color"];
+        [_verticalScroller setValue:TNKnobColorVertical forThemeAttribute:@"knob-color"];
 
-        [_horizontalScroller setValue:[CPNumber numberWithInt:10] forThemeAttribute:@"scroller-width"];
         [_horizontalScroller setValue:[CPNull null] forThemeAttribute:@"decrement-line-color"];
         [_horizontalScroller setValue:[CPNull null] forThemeAttribute:@"increment-line-color"];
         [_horizontalScroller setValue:[CPNull null] forThemeAttribute:@"knob-slot-color"];
-        [_horizontalScroller setValue:CGInsetMake(1, 2, 1, 2) forThemeAttribute:@"track-inset"];
-        [_horizontalScroller setValue:CGInsetMake(1, 2, 1, 4) forThemeAttribute:@"knob-inset"];
+        [_horizontalScroller setValue:CGInsetMake(0.0, 0.0, 2.0, 0.0) forThemeAttribute:@"track-inset"];
+        [_horizontalScroller setValue:CGInsetMake(0, 2, 2, 2) forThemeAttribute:@"knob-inset"];
         [_horizontalScroller setValue:CPSizeMake(10, 0) forThemeAttribute:@"increment-line-size"];
         [_horizontalScroller setValue:CPSizeMake(10, 0) forThemeAttribute:@"decrement-line-size"];
-        [_horizontalScroller setValue:knobColorHorizontal forThemeAttribute:@"knob-color"];
-
-
-        // put the scrolles on to
-        [_verticalScroller setFrameSize:CPSizeMake(10.0, 10)];
-        [_horizontalScroller setFrameSize:CPSizeMake(10.0, 10)];
+        [_horizontalScroller setValue:TNKnobColorHorizontal forThemeAttribute:@"knob-color"];
         [self setNeedsDisplay:YES];
     }
 
@@ -226,3 +179,49 @@ function PatternColor()
 }
 
 @end
+
+
+/*! exctracted from Cappuccino's CPTheme because this rocks
+*/
+function PatternColor()
+{
+    if (arguments.length < 3)
+    {
+        var slices = arguments[0],
+            imageSlices = [],
+            bundle = [CPBundle bundleForClass:TNUIKitScrollView];
+
+        for (var i = 0; i < slices.length; ++i)
+        {
+            var slice = slices[i];
+
+            imageSlices.push(slice ? [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:slice[0]] size:CGSizeMake(slice[1], slice[2])] : nil);
+        }
+
+        if (arguments.length == 2)
+            return [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:imageSlices isVertical:arguments[1]]];
+        else
+            return [CPColor colorWithPatternImage:[[CPNinePartImage alloc] initWithImageSlices:imageSlices]];
+    }
+    else if (arguments.length == 3)
+    {
+        return [CPColor colorWithPatternImage:PatternImage(arguments[0], arguments[1], arguments[2])];
+    }
+    else
+    {
+        return nil;
+    }
+}
+
+var TNKnobColorVertical = PatternColor(
+    [
+        ["TNUIKitScrollView/scroller-vertical-knob-top.png", 8.0, 5.0],
+        ["TNUIKitScrollView/scroller-vertical-knob-center.png", 8.0, 1.0],
+        ["TNUIKitScrollView/scroller-vertical-knob-bottom.png", 8.0, 5.0]
+    ],YES),
+    TNKnobColorHorizontal = PatternColor(
+    [
+        ["TNUIKitScrollView/scroller-horizontal-knob-left.png", 5.0, 8.0],
+        ["TNUIKitScrollView/scroller-horizontal-knob-center.png", 1.0, 8.0],
+        ["TNUIKitScrollView/scroller-horizontal-knob-right.png", 5.0, 8.0]
+    ],NO);
