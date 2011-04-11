@@ -29,6 +29,7 @@
 @import "TNTextFieldStepper.j"
 @import "TNToolbar.j"
 @import "TNToolTip.j"
+@import "TNUIKitScrollView.j"
 
 
 /*! @mainpage
