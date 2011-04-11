@@ -143,8 +143,6 @@ TNAttachedBlackWindowMask       = 1 << 26;
         [self setHasShadow:NO];
 
         [_windowView setNeedsDisplay:YES];
-
-        [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_attachedWindowDidMove:) name:CPWindowDidMoveNotification object:self];
     }
 
     return self;
@@ -316,7 +314,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
     {
         [_windowView hideCursor];
         [self setLevel:CPNormalWindowLevel];
-        [_closeButton setFrameOrigin:CPPointMake(1.0, 1.0)]
+        [_closeButton setFrameOrigin:CPPointMake(1.0, 1.0)];
         [[CPNotificationCenter defaultCenter] removeObserver:self name:CPWindowDidMoveNotification object:self];
     }
 }
@@ -357,6 +355,10 @@ TNAttachedBlackWindowMask       = 1 << 26;
     }
 
     [self setFrameOrigin:point];
+    [_windowView showCursor];
+    [self setLevel:CPStatusWindowLevel];
+    [_closeButton setFrameOrigin:CPPointMake(8.0, 1.0)];
+    [_windowView setNeedsDisplay:YES];
     [self makeKeyAndOrderFront:nil];
 }
 
@@ -388,6 +390,15 @@ TNAttachedBlackWindowMask       = 1 << 26;
         [_delegate didAttachedWindowClose:self];
 }
 
+/*! order front the window as usual and add listener for CPWindowDidMoveNotification
+    @param sender the sender of the action
+*/
+- (IBAction)makeKeyAndOrderFront:(is)aSender
+{
+    [super makeKeyAndOrderFront:aSender];
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_attachedWindowDidMove:) name:CPWindowDidMoveNotification object:self];
+}
+
 /*! update the TNAttachedWindow frame if a resize event is observed
 
 */
@@ -405,7 +416,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
 */
 @implementation _CPAttachedWindowView : _CPWindowView
 {
-    BOOL            _mouseDownPressed           @accessors(getter=isMouseDownPressed);
+    BOOL            _mouseDownPressed           @accessors(getter=isMouseDownPressed, setter=setMouseDownPressed:);
     unsigned        _gravity                    @accessors(property=gravity);
 
     BOOL            _useGlowingEffect;
@@ -474,6 +485,13 @@ TNAttachedBlackWindowMask       = 1 << 26;
 {
     _cursorSize = CPSizeMakeZero();
     [self setNeedsDisplay:YES];
+}
+
+- (void)showCursor
+{
+    _cursorSize = CPSizeMake(15, 10);
+    [self setNeedsDisplay:YES];
+    _mouseDownPressed = NO;
 }
 
 
