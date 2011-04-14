@@ -119,7 +119,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
         else if (aStyleMask & TNAttachedBlackWindowMask)
              themeColor = @"Black";
 
-        var bundle = [CPBundle bundleForClass:[self class]],
+        var bundle = [CPBundle bundleForClass:_CPAttachedWindowView],
             buttonClose = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-button-close.png"] size:CPSizeMake(15.0, 15.0)],
             buttonClosePressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-button-close-pressed.png"] size:CPSizeMake(15.0, 15.0)];
 
@@ -440,10 +440,10 @@ TNAttachedBlackWindowMask       = 1 << 26;
     // @todo change border art and remove this pixel perfect adaptation
     // return CGRectInset(contentRect, 20, 20);
 
-    contentRect.origin.x += 13;
-    contentRect.origin.y += 12;
-    contentRect.size.width -= 25;
-    contentRect.size.height -= 27;
+    contentRect.origin.x += 18;
+    contentRect.origin.y += 17;
+    contentRect.size.width -= 35;
+    contentRect.size.height -= 37;
 
     return contentRect;
 }
@@ -458,10 +458,10 @@ TNAttachedBlackWindowMask       = 1 << 26;
     // @todo change border art and remove this pixel perfect adaptation
     //return CGRectOffset(frameRect, 20, 20);
 
-    frameRect.origin.x -= 13;
-    frameRect.origin.y -= 12;
-    frameRect.size.width += 25;
-    frameRect.size.height += 27;
+    frameRect.origin.x -= 18;
+    frameRect.origin.y -= 17;
+    frameRect.size.width += 35;
+    frameRect.size.height += 37;
     return frameRect;
 }
 
@@ -533,26 +533,11 @@ TNAttachedBlackWindowMask       = 1 << 26;
         CGContextSetShadowWithColor(context, shadowSize, shadowBlur, shadowColor);
     }
 
-    switch (_gravity)
-    {
-        case TNAttachedWindowGravityLeft:
-            aRect.size.width -= arrowHeight;
-            break;
-
-        case TNAttachedWindowGravityRight:
-            aRect.size.width -= arrowHeight;
-            aRect.origin.x += arrowHeight;
-            break;
-
-        case TNAttachedWindowGravityUp:
-            aRect.size.height -= arrowHeight;
-            break;
-
-        case TNAttachedWindowGravityDown:
-            aRect.size.height -= arrowHeight;
-            aRect.origin.y += arrowHeight;
-            break;
-    }
+    //Remodulate size and origin
+    aRect.size.width -= 10;
+    aRect.origin.x += 5;
+    aRect.size.height -= 10;
+    aRect.origin.y += 5;   
 
     CGContextAddPath(context, CGPathWithRoundedRectangleInRect(aRect, radius, radius, YES, YES, YES, YES));
     CGContextDrawLinearGradient(context, gradient, CGPointMake(CPRectGetMidX(aRect), 0.0), CGPointMake(CPRectGetMidX(aRect), aRect.size.height), 0);
