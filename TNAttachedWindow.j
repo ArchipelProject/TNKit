@@ -529,7 +529,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
     aRect.size.width -= 10;
     aRect.origin.x += 5;
     aRect.size.height -= 10;
-    aRect.origin.y += 5;   
+    aRect.origin.y += 5;
 
     CGContextAddPath(context, CGPathWithRoundedRectangleInRect(aRect, radius, radius, YES, YES, YES, YES));
     CGContextDrawLinearGradient(context, gradient, CGPointMake(CPRectGetMidX(aRect), 0.0), CGPointMake(CPRectGetMidX(aRect), aRect.size.height), 0);
