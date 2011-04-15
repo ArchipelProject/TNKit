@@ -44,7 +44,7 @@
             - black
     -->
     <key>TNToolTipDefaultMask</key>
-    <string>white</string>
+    <string>black</string>
 
     <!--
         set the opacity of the tooltip (from 0.0: invisible to 1.0: not transparent)

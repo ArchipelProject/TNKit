@@ -35,6 +35,9 @@
     CPTextField _content;
 }
 
+#pragma mark -
+#pragma mark Class Methods
+
 /*! returns an initialized TNToolTip with string and attach it to given view
     @param aString the content of the tooltip
     @param aView the view where the tooltip will be attached
@@ -51,31 +54,60 @@
     return tooltip;
 }
 
+/*! compute a cool size for the given string
+    @param aToolTipSize the original wanted tool tip size
+    @param aText the wanted text
+    @return CPArray containing the computer toolTipSize and textFrameSize
+*/
++ (CPSize)computeCorrectSize:(CPSize)aToolTipSize text:(CPString)aText
+{
+    var font = [CPFont systemFontOfSize:12.0],
+        textFrameSize = [aText sizeWithFont:font inWidth:(aToolTipSize.width - 10)];
+
+    if (textFrameSize.height < 100)
+    {
+        aToolTipSize.height = textFrameSize.height + 10;
+        return [aToolTipSize, textFrameSize];
+    }
+
+    var newWidth        = aToolTipSize.width + ((parseInt(textFrameSize.height - 100) / 30) * 30);
+    textFrameSize       = [aText sizeWithFont:font inWidth:newWidth - 10];
+    aToolTipSize.width  = newWidth + 5;
+    aToolTipSize.height = textFrameSize.height + 10;
+
+    return [aToolTipSize, textFrameSize];
+}
+
+
+#pragma mark -
+#pragma mark Initialization
+
 /*! returns an initialized TNToolTip with string
     @param aString the content of the tooltip
 */
 - (id)initWithString:(CPString)aString styleMask:(unsigned)aStyleMask
 {
-    if (self = [super initWithContentRect:CPRectMake(0.0, 0.0, 200.0, 0.0) styleMask:aStyleMask])
+    var toolTipFrame = CPRectMake(0.0, 0.0, 250.0, 30.0),
+        layout = [TNToolTip computeCorrectSize:toolTipFrame.size text:aString],
+        textFrameSize = layout[1];
+
+    toolTipFrame.size = layout[0];
+
+    if (self = [super initWithContentRect:toolTipFrame styleMask:aStyleMask])
     {
+        textFrameSize.height += 4;
+
         _content = [CPTextField labelWithTitle:aString];
-
-        var size = [aString sizeWithFont:[_content font] inWidth:200.0];
-
-        size.height += 5;
-
-        [_content setLineBreakMode:CPLineBreakByWordWrapping];
-        [_content setFrameSize:size];
-        [_content setFrameOrigin:CPPointMake(10.0, 10.0)];
+        [_content setLineBreakMode:CPLineBreakByCharWrapping];
+        [_content setAlignment:CPJustifiedTextAlignment];
+        [_content setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
+        [_content setFrameOrigin:CPPointMake(5.0, 5.0)];
+        [_content setFrameSize:textFrameSize];
         [_content setTextShadowOffset:CGSizeMake(0.0, 1.0)];
         [_content setTextColor:(_styleMask & TNAttachedWhiteWindowMask) ? [CPColor blackColor] : [CPColor whiteColor]]
         [_content setValue:(_styleMask & TNAttachedWhiteWindowMask) ? [CPColor whiteColor] : [CPColor colorWithHexString:@"5b5b5b"]  forThemeAttribute:@"text-shadow-color"];
 
-        size.width += 40;
-        size.height += 45;
-
         [[self contentView] addSubview:_content];
-        [self setFrameSize:size];
         [self setMovableByWindowBackground:NO];
     }
 
