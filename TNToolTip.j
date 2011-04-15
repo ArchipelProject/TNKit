@@ -105,7 +105,7 @@
         [_content setFrameSize:textFrameSize];
         [_content setTextShadowOffset:CGSizeMake(0.0, 1.0)];
         [_content setTextColor:(_styleMask & TNAttachedWhiteWindowMask) ? [CPColor blackColor] : [CPColor whiteColor]]
-        [_content setValue:(_styleMask & TNAttachedWhiteWindowMask) ? [CPColor whiteColor] : [CPColor colorWithHexString:@"5b5b5b"]  forThemeAttribute:@"text-shadow-color"];
+        [_content setValue:(_styleMask & TNAttachedWhiteWindowMask) ? [CPColor whiteColor] : [CPColor blackColor]  forThemeAttribute:@"text-shadow-color"];
 
         [[self contentView] addSubview:_content];
         [self setMovableByWindowBackground:NO];
