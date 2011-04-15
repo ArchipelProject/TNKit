@@ -357,7 +357,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
     [self setFrameOrigin:point];
     [_windowView showCursor];
     [self setLevel:CPStatusWindowLevel];
-    [_closeButton setFrameOrigin:CPPointMake(8.0, 1.0)];
+    [_closeButton setFrameOrigin:CPPointMake(1.0, 1.0)];
     [_windowView setNeedsDisplay:YES];
     [self makeKeyAndOrderFront:nil];
 }
