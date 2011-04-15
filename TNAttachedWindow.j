@@ -342,17 +342,9 @@ TNAttachedBlackWindowMask       = 1 << 26;
     var frameView = [aView frame],
         posX = frameView.origin.x + CPRectGetWidth(frameView),
         posY = frameView.origin.y + (CPRectGetHeight(frameView) / 2.0) - (CPRectGetHeight([self frame]) / 2.0),
-        point = [self computeOrigin:aView gravity:aGravity],
-        offsetY = 0;
+        point = [self computeOrigin:aView gravity:aGravity];
 
-    if (point.y < 0)
-    {
-        offsetY = point.y;
-        point.y = 0;
-        var cursorPoint = [[_windowView cursorView] frameOrigin];
-        cursorPoint.y += offsetY;
-        [[_windowView cursorView] setFrameOrigin:cursorPoint];
-    }
+    point.y = MAX(point.y, 0);
 
     [self setFrameOrigin:point];
     [_windowView showCursor];
