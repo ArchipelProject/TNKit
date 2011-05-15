@@ -21,14 +21,12 @@
 @import "TNAlert.j"
 @import "TNAnimation.j"
 @import "TNAttachedWindow.j"
-@import "TNCategories.j"
 @import "TNFlipView.j"
 @import "TNLocalizationCenter.j";
 @import "TNOutlineViewDataSource.j"
 @import "TNTableViewDataSource.j"
 @import "TNTextFieldStepper.j"
 @import "TNToolbar.j"
-@import "TNToolTip.j"
 @import "TNUIKitScrollView.j"
 
 
