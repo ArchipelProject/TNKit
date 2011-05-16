@@ -60,7 +60,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
 
 + (Class)_windowViewClassForStyleMask:(unsigned)aStyleMask
 {
-    return _CPAttachedWindowView;
+    return _TNAttachedWindowView;
 }
 
 
@@ -119,7 +119,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
         else if (aStyleMask & TNAttachedBlackWindowMask)
              themeColor = @"Black";
 
-        var bundle = [CPBundle bundleForClass:_CPAttachedWindowView],
+        var bundle = [CPBundle bundleForClass:_TNAttachedWindowView],
             buttonClose = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-button-close.png"] size:CPSizeMake(15.0, 15.0)],
             buttonClosePressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNAttachedWindow/" + themeColor + "/attached-window-button-close-pressed.png"] size:CPSizeMake(15.0, 15.0)];
 
@@ -406,7 +406,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
 
 /*! a custom CPWindowView that manage border and cursor
 */
-@implementation _CPAttachedWindowView : _CPWindowView
+@implementation _TNAttachedWindowView : _CPWindowView
 {
     BOOL            _mouseDownPressed           @accessors(getter=isMouseDownPressed, setter=setMouseDownPressed:);
     unsigned        _gravity                    @accessors(property=gravity);
