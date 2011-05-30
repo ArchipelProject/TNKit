@@ -79,37 +79,18 @@
     return self;
 }
 
-
-#pragma mark -
-#pragma mark Accesors
-
-/*! return the actual view of the CPToolBar
-    Usefull for hacks.
+/*! initialize the class with HUD Style
+    @return a initialized instance of TNToolbar
 */
-- (CPView)toolbarView
+- (id)initWithHUDStyle
 {
-    return _toolbarView;
-}
-
-#pragma mark -
-#pragma mark Style
-
-/*! set HUD style
-*/
-
-- (void)setIsHUD:(BOOL)shouldBeHUD
-{
-    if (_isHUD === shouldBeHUD)
-        return;
-
-    _isHUD = shouldBeHUD;
-    [_toolbarView FIXME_setIsHUD:shouldBeHUD];
-
-    if (_isHUD)
+    if (self = [self init])
     {
         var bundle = [CPBundle bundleForClass:[self class]];
 
-        [_toolbarView setBackgroundColor:
+        _isHUD = YES;
+
+        [[self _toolbarView] setBackgroundColor:
             [CPColor colorWithPatternImage:
                 [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-hud-background.png"] size:CGSizeMake(1.0, 59.0)]]];
 
@@ -121,6 +102,19 @@
 
         [_imageViewSelection setBackgroundColor:[CPColor colorWithPatternImage:selectedBgImage]];
     }
+
+    return self;
+}
+
+#pragma mark -
+#pragma mark Accesors
+
+/*! return the actual view of the CPToolBar
+    Usefull for hacks.
+*/
+- (CPView)toolbarView
+{
+    return _toolbarView;
 }
 
 #pragma mark -
@@ -248,11 +242,14 @@
     for (var i = 0; i < [_customSubViews count]; i++)
         [_toolbarView addSubview:[_customSubViews objectAtIndex:i]];
 
-    var items = [self items],
-        count = [items count];
+    if (_isHUD)
+    {
+        var items = [self items],
+            count = [items count];
 
-    while (count--)
-        [[_toolbarView viewForItem:items[count]] FIXME_setIsHUD:_isHUD];
+        while (count--)
+            [[_toolbarView viewForItem:items[count]] FIXME_setIsHUD:YES];
+    }
 }
 
 /*! reloads all the items in the toolbar
