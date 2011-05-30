@@ -41,6 +41,8 @@
     CPDictionary    _toolbarItems;
     CPDictionary    _toolbarItemsOrder;
     CPImageView     _imageViewSelection;
+
+    BOOL            _isHUD;
 }
 
 
@@ -77,6 +79,32 @@
     return self;
 }
 
+/*! initialize the class with HUD Style
+    @return a initialized instance of TNToolbar
+*/
+- (id)initWithHUDStyle
+{
+    if (self = [self init])
+    {
+        var bundle = [CPBundle bundleForClass:[self class]];
+
+        _isHUD = YES;
+
+        [[self _toolbarView] setBackgroundColor:
+            [CPColor colorWithPatternImage:
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-hud-background.png"] size:CGSizeMake(1.0, 59.0)]]];
+
+        var selectedBgImage     = [[CPThreePartImage alloc] initWithImageSlices:[
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-hud-item-selected-left.png"] size:CPSizeMake(1.0, 60.0)],
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-hud-item-selected-center.png"] size:CPSizeMake(1.0, 60.0)],
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-hud-item-selected-right.png"] size:CPSizeMake(1.0, 60.0)]
+            ] isVertical:NO];
+
+        [_imageViewSelection setBackgroundColor:[CPColor colorWithPatternImage:selectedBgImage]];
+    }
+
+    return self;
+}
 
 #pragma mark -
 #pragma mark Accesors
@@ -88,7 +116,6 @@
 {
     return _toolbarView;
 }
-
 
 #pragma mark -
 #pragma mark Content management
@@ -214,6 +241,15 @@
 
     for (var i = 0; i < [_customSubViews count]; i++)
         [_toolbarView addSubview:[_customSubViews objectAtIndex:i]];
+
+    if (_isHUD)
+    {
+        var items = [self items],
+            count = [items count];
+
+        while (count--)
+            [[_toolbarView viewForItem:items[count]] FIXME_setIsHUD:YES];
+    }
 }
 
 /*! reloads all the items in the toolbar
