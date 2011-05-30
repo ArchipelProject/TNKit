@@ -41,6 +41,8 @@
     CPDictionary    _toolbarItems;
     CPDictionary    _toolbarItemsOrder;
     CPImageView     _imageViewSelection;
+
+    BOOL            _isHUD;
 }
 
 
@@ -89,6 +91,37 @@
     return _toolbarView;
 }
 
+#pragma mark -
+#pragma mark Style
+
+/*! set HUD style
+*/
+
+- (void)setIsHUD:(BOOL)shouldBeHUD
+{
+    if (_isHUD === shouldBeHUD)
+        return;
+
+    _isHUD = shouldBeHUD;
+    [_toolbarView FIXME_setIsHUD:shouldBeHUD];
+
+    if (_isHUD)
+    {
+        var bundle = [CPBundle bundleForClass:[self class]];
+
+        [_toolbarView setBackgroundColor:
+            [CPColor colorWithPatternImage:
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-hud-background.png"] size:CGSizeMake(1.0, 59.0)]]];
+
+        var selectedBgImage     = [[CPThreePartImage alloc] initWithImageSlices:[
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-hud-item-selected-left.png"] size:CPSizeMake(1.0, 60.0)],
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-hud-item-selected-center.png"] size:CPSizeMake(1.0, 60.0)],
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-hud-item-selected-right.png"] size:CPSizeMake(1.0, 60.0)]
+            ] isVertical:NO];
+
+        [_imageViewSelection setBackgroundColor:[CPColor colorWithPatternImage:selectedBgImage]];
+    }
+}
 
 #pragma mark -
 #pragma mark Content management
@@ -214,6 +247,12 @@
 
     for (var i = 0; i < [_customSubViews count]; i++)
         [_toolbarView addSubview:[_customSubViews objectAtIndex:i]];
+
+    var items = [self items],
+        count = [items count];
+
+    while (count--)
+        [[_toolbarView viewForItem:items[count]] FIXME_setIsHUD:_isHUD];
 }
 
 /*! reloads all the items in the toolbar
