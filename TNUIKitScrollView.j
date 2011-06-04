@@ -16,20 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-//@import <Foundation/Foundation.j>
+@import <Foundation/Foundation.j>
 
-//@import <AppKit/CPScrollView.j>
-//@import <AppKit/CPScroller.j>
+@import <AppKit/CPScrollView.j>
+@import <AppKit/CPScroller.j>
 
 
 /*! @ingroup TNKit
     an iPhone/Mac OS X Lion like scrollview
 */
-@implementation SGScrollView : CPScrollView
+@implementation TNUIKitScrollView : CPScrollView
 
-- (SGScrollView)initWithFrame:(CPRect)aFrame
+- (TNUIKitScrollView)initWithFrame:(CPRect)aFrame
 {
-    CPLog.debug(@"%s %s  LOADING WITH FRAME",[self class],_cmd);
     if (self = [super initWithFrame:aFrame])
     {
         [self setupScrollbars];
@@ -39,7 +38,6 @@
 
 - (id)initWithCoder:(CPCoder)aCoder
 {
-    CPLog.debug(@"%s %s  LOADING WITH CODER",[self class],_cmd);    
     if (self = [super initWithCoder:aCoder])
     {
         [self setupScrollbars];
