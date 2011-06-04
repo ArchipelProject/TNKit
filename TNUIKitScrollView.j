@@ -27,25 +27,7 @@
 */
 @implementation TNUIKitScrollView : CPScrollView
 
-- (TNUIKitScrollView)initWithFrame:(CPRect)aFrame
-{
-    if (self = [super initWithFrame:aFrame])
-    {
-        [self setupScrollbars];
-    }
-    return self;
-}
-
-- (id)initWithCoder:(CPCoder)aCoder
-{
-    if (self = [super initWithCoder:aCoder])
-    {
-        [self setupScrollbars];
-    }   
-    return self;
-}
-
--(void)setupScrollbars
+- (void)setupScrollbars
 {
     [_verticalScroller setFrameSize:CPSizeMake(10.0, 10)];
     [_horizontalScroller setFrameSize:CPSizeMake(10.0, 10)];
@@ -67,7 +49,7 @@
     [_horizontalScroller setValue:CPSizeMake(10, 0) forThemeAttribute:@"increment-line-size"];
     [_horizontalScroller setValue:CPSizeMake(10, 0) forThemeAttribute:@"decrement-line-size"];
     [_horizontalScroller setValue:TNKnobColorHorizontal forThemeAttribute:@"knob-color"];
-    [self setNeedsDisplay:YES]; 
+    [self setNeedsDisplay:YES];
 }
 
 - (void)reflectScrolledClipView:(CPClipView)aClipView
@@ -194,6 +176,28 @@
 @end
 
 
+@implementation TNUIKitScrollView (CPCoding)
+
+- (TNUIKitScrollView)initWithFrame:(CPRect)aFrame
+{
+    if (self = [super initWithFrame:aFrame])
+    {
+        [self setupScrollbars];
+    }
+    return self;
+}
+
+- (id)initWithCoder:(CPCoder)aCoder
+{
+    if (self = [super initWithCoder:aCoder])
+    {
+        [self setupScrollbars];
+    }
+    return self;
+}
+
+@end
+
 /*! exctracted from Cappuccino's CPTheme because this rocks
 */
 function PatternColor()
@@ -231,10 +235,10 @@ var TNKnobColorVertical = PatternColor(
         ["TNUIKitScrollView/scroller-vertical-knob-top.png", 8.0, 5.0],
         ["TNUIKitScrollView/scroller-vertical-knob-center.png", 8.0, 1.0],
         ["TNUIKitScrollView/scroller-vertical-knob-bottom.png", 8.0, 5.0]
-    ],YES),
+    ], YES),
     TNKnobColorHorizontal = PatternColor(
     [
         ["TNUIKitScrollView/scroller-horizontal-knob-left.png", 5.0, 8.0],
         ["TNUIKitScrollView/scroller-horizontal-knob-center.png", 1.0, 8.0],
         ["TNUIKitScrollView/scroller-horizontal-knob-right.png", 5.0, 8.0]
-    ],NO);
+    ], NO);
