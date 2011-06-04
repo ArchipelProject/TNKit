@@ -31,30 +31,43 @@
 {
     if (self = [super initWithFrame:aFrame])
     {
-        [_verticalScroller setFrameSize:CPSizeMake(10.0, 10)];
-        [_horizontalScroller setFrameSize:CPSizeMake(10.0, 10)];
-
-        [_verticalScroller setValue:[CPNull null] forThemeAttribute:@"decrement-line-color"];
-        [_verticalScroller setValue:[CPNull null] forThemeAttribute:@"increment-line-color"];
-        [_verticalScroller setValue:[CPNull null] forThemeAttribute:@"knob-slot-color"];
-        [_verticalScroller setValue:CGInsetMake(10, 2, 10, 1) forThemeAttribute:@"track-inset"];
-        [_verticalScroller setValue:CGInsetMake(2, 2, 2, 0) forThemeAttribute:@"knob-inset"];
-        [_verticalScroller setValue:CPSizeMake(10, 0) forThemeAttribute:@"increment-line-size"];
-        [_verticalScroller setValue:CPSizeMake(10, 0) forThemeAttribute:@"decrement-line-size"];
-        [_verticalScroller setValue:TNKnobColorVertical forThemeAttribute:@"knob-color"];
-
-        [_horizontalScroller setValue:[CPNull null] forThemeAttribute:@"decrement-line-color"];
-        [_horizontalScroller setValue:[CPNull null] forThemeAttribute:@"increment-line-color"];
-        [_horizontalScroller setValue:[CPNull null] forThemeAttribute:@"knob-slot-color"];
-        [_horizontalScroller setValue:CGInsetMake(0.0, 0.0, 2.0, 0.0) forThemeAttribute:@"track-inset"];
-        [_horizontalScroller setValue:CGInsetMake(0, 2, 2, 2) forThemeAttribute:@"knob-inset"];
-        [_horizontalScroller setValue:CPSizeMake(10, 0) forThemeAttribute:@"increment-line-size"];
-        [_horizontalScroller setValue:CPSizeMake(10, 0) forThemeAttribute:@"decrement-line-size"];
-        [_horizontalScroller setValue:TNKnobColorHorizontal forThemeAttribute:@"knob-color"];
-        [self setNeedsDisplay:YES];
+        [self setupScrollbars];
     }
-
     return self;
+}
+
+- (id)initWithCoder:(CPCoder)aCoder
+{
+    if (self = [super initWithCoder:aCoder])
+    {
+        [self setupScrollbars];
+    }   
+    return self;
+}
+
+-(void)setupScrollbars
+{
+    [_verticalScroller setFrameSize:CPSizeMake(10.0, 10)];
+    [_horizontalScroller setFrameSize:CPSizeMake(10.0, 10)];
+
+    [_verticalScroller setValue:[CPNull null] forThemeAttribute:@"decrement-line-color"];
+    [_verticalScroller setValue:[CPNull null] forThemeAttribute:@"increment-line-color"];
+    [_verticalScroller setValue:[CPNull null] forThemeAttribute:@"knob-slot-color"];
+    [_verticalScroller setValue:CGInsetMake(10, 2, 10, 1) forThemeAttribute:@"track-inset"];
+    [_verticalScroller setValue:CGInsetMake(2, 2, 2, 0) forThemeAttribute:@"knob-inset"];
+    [_verticalScroller setValue:CPSizeMake(10, 0) forThemeAttribute:@"increment-line-size"];
+    [_verticalScroller setValue:CPSizeMake(10, 0) forThemeAttribute:@"decrement-line-size"];
+    [_verticalScroller setValue:TNKnobColorVertical forThemeAttribute:@"knob-color"];
+
+    [_horizontalScroller setValue:[CPNull null] forThemeAttribute:@"decrement-line-color"];
+    [_horizontalScroller setValue:[CPNull null] forThemeAttribute:@"increment-line-color"];
+    [_horizontalScroller setValue:[CPNull null] forThemeAttribute:@"knob-slot-color"];
+    [_horizontalScroller setValue:CGInsetMake(0.0, 0.0, 2.0, 0.0) forThemeAttribute:@"track-inset"];
+    [_horizontalScroller setValue:CGInsetMake(0, 2, 2, 2) forThemeAttribute:@"knob-inset"];
+    [_horizontalScroller setValue:CPSizeMake(10, 0) forThemeAttribute:@"increment-line-size"];
+    [_horizontalScroller setValue:CPSizeMake(10, 0) forThemeAttribute:@"decrement-line-size"];
+    [_horizontalScroller setValue:TNKnobColorHorizontal forThemeAttribute:@"knob-color"];
+    [self setNeedsDisplay:YES]; 
 }
 
 - (void)reflectScrolledClipView:(CPClipView)aClipView
