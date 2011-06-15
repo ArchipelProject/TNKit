@@ -112,11 +112,13 @@
 {
     if (_timerScrollersHide)
         [_timerScrollersHide invalidate];
+    if (![_verticalScroller isHidden])
+        [_verticalScroller fadeIn];
+    if (![_horizontalScroller isHidden])
+        [_horizontalScroller fadeIn];
+    if (![_horizontalScroller isHidden] || ![_verticalScroller isHidden])
+        _timerScrollersHide = [CPTimer scheduledTimerWithTimeInterval:1.2 target:self selector:@selector(_hideScrollers:) userInfo:nil repeats:NO];
 
-    [_verticalScroller fadeIn];
-    [_horizontalScroller fadeIn];
-
-    _timerScrollersHide = [CPTimer scheduledTimerWithTimeInterval:1.2 target:self selector:@selector(_hideScrollers:) userInfo:nil repeats:NO];
     [super scrollWheel:anEvent];
 }
 
