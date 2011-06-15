@@ -23,33 +23,144 @@
 
 
 /*! @ingroup TNKit
+    an iPhone/Mac OS X Lion like scrollers
+*/
+@implementation TNUIKitScroller : CPScroller
+{
+    CPViewAnimation     _animationScroller;
+    CPDictionary        _paramAnimFadeOut;
+}
+
++ (float)scrollerWidth
+{
+    return 10.0;
+}
+
+- (id)initWithFrame:(CGRect)aFrame
+{
+    if (self = [super initWithFrame:aFrame])
+    {
+        [self setValue:[CPNull null] forThemeAttribute:@"decrement-line-color"];
+        [self setValue:[CPNull null] forThemeAttribute:@"increment-line-color"];
+        [self setValue:[CPNull null] forThemeAttribute:@"knob-slot-color"];
+        [self setValue:CPSizeMake(10, 0) forThemeAttribute:@"increment-line-size"];
+        [self setValue:CPSizeMake(10, 0) forThemeAttribute:@"decrement-line-size"];
+        [self setValue:10.0 forThemeAttribute:@"scroller-width"];
+
+        if ([self isVertical])
+        {
+            [self setValue:CGInsetMake(10, 2, 10, 1) forThemeAttribute:@"track-inset"];
+            [self setValue:CGInsetMake(2, 2, 2, 0) forThemeAttribute:@"knob-inset"];
+            [self setValue:TNKnobColorVertical forThemeAttribute:@"knob-color"];
+        }
+        else
+        {
+            [self setValue:CGInsetMake(0.0, 0.0, 2.0, 0.0) forThemeAttribute:@"track-inset"];
+            [self setValue:CGInsetMake(0, 2, 2, 2) forThemeAttribute:@"knob-inset"];
+            [self setValue:TNKnobColorHorizontal forThemeAttribute:@"knob-color"];
+        }
+
+        _paramAnimFadeOut   = [CPDictionary dictionaryWithObjects:[self, CPViewAnimationFadeOutEffect]
+                                                          forKeys:[CPViewAnimationTargetKey, CPViewAnimationEffectKey]];
+
+        _animationScroller = [[CPViewAnimation alloc] initWithDuration:0.2 animationCurve:CPAnimationEaseInOut];
+
+        [_animationScroller setViewAnimations:[_paramAnimFadeOut]];
+        [_animationScroller setDelegate:self];
+        [self setAlphaValue:0.0];
+    }
+
+    return self;
+}
+
+- (void)mouseEntered:(CPEvent)anEvent
+{
+    [self fadeIn];
+}
+
+- (void)mouseExited:(CPEvent)anEvent
+{
+    [self fadeOut];
+}
+
+- (void)fadeIn
+{
+    [self setAlphaValue:1.0];
+}
+
+- (void)fadeOut
+{
+    [_animationScroller startAnimation];
+}
+
+- (void)animationDidEnd:(CPAnimation)animation
+{
+    [self setHidden:NO];
+}
+
+@end
+
+/*! @ingroup TNKit
     an iPhone/Mac OS X Lion like scrollview
 */
 @implementation TNUIKitScrollView : CPScrollView
-
-- (void)setupScrollbars
 {
-    [_verticalScroller setFrameSize:CPSizeMake(10.0, 10)];
-    [_horizontalScroller setFrameSize:CPSizeMake(10.0, 10)];
+    CPTimer _timerScrollersHide;
+}
 
-    [_verticalScroller setValue:[CPNull null] forThemeAttribute:@"decrement-line-color"];
-    [_verticalScroller setValue:[CPNull null] forThemeAttribute:@"increment-line-color"];
-    [_verticalScroller setValue:[CPNull null] forThemeAttribute:@"knob-slot-color"];
-    [_verticalScroller setValue:CGInsetMake(10, 2, 10, 1) forThemeAttribute:@"track-inset"];
-    [_verticalScroller setValue:CGInsetMake(2, 2, 2, 0) forThemeAttribute:@"knob-inset"];
-    [_verticalScroller setValue:CPSizeMake(10, 0) forThemeAttribute:@"increment-line-size"];
-    [_verticalScroller setValue:CPSizeMake(10, 0) forThemeAttribute:@"decrement-line-size"];
-    [_verticalScroller setValue:TNKnobColorVertical forThemeAttribute:@"knob-color"];
+- (void)scrollWheel:(CPEvent)anEvent
+{
+    if (_timerScrollersHide)
+        [_timerScrollersHide invalidate];
 
-    [_horizontalScroller setValue:[CPNull null] forThemeAttribute:@"decrement-line-color"];
-    [_horizontalScroller setValue:[CPNull null] forThemeAttribute:@"increment-line-color"];
-    [_horizontalScroller setValue:[CPNull null] forThemeAttribute:@"knob-slot-color"];
-    [_horizontalScroller setValue:CGInsetMake(0.0, 0.0, 2.0, 0.0) forThemeAttribute:@"track-inset"];
-    [_horizontalScroller setValue:CGInsetMake(0, 2, 2, 2) forThemeAttribute:@"knob-inset"];
-    [_horizontalScroller setValue:CPSizeMake(10, 0) forThemeAttribute:@"increment-line-size"];
-    [_horizontalScroller setValue:CPSizeMake(10, 0) forThemeAttribute:@"decrement-line-size"];
-    [_horizontalScroller setValue:TNKnobColorHorizontal forThemeAttribute:@"knob-color"];
-    [self setNeedsDisplay:YES];
+    [_verticalScroller fadeIn];
+    [_horizontalScroller fadeIn];
+
+    _timerScrollersHide = [CPTimer scheduledTimerWithTimeInterval:1.2 target:self selector:@selector(_hideScrollers:) userInfo:nil repeats:NO];
+    [super scrollWheel:anEvent];
+}
+
+- (void)_hideScrollers:(CPTimer)theTimer
+{
+    [_verticalScroller fadeOut];
+    [_horizontalScroller fadeOut];
+    _timerScrollersHide = nil;
+}
+
+- (void)setHasHorizontalScroller:(BOOL)shouldHaveHorizontalScroller
+{
+    if (_hasHorizontalScroller === shouldHaveHorizontalScroller)
+        return;
+
+    _hasHorizontalScroller = shouldHaveHorizontalScroller;
+
+    if (_hasHorizontalScroller && !_horizontalScroller)
+    {
+        var bounds = [self _insetBounds];
+
+        [self setHorizontalScroller:[[TNUIKitScroller alloc] initWithFrame:CGRectMake(0.0, 0.0, MAX(CGRectGetWidth(bounds), [TNUIKitScroller scrollerWidth] + 1), [TNUIKitScroller scrollerWidth])]];
+        [[self horizontalScroller] setFrameSize:CGSizeMake(CGRectGetWidth(bounds), [TNUIKitScroller scrollerWidth])];
+    }
+
+    [self reflectScrolledClipView:_contentView];
+}
+
+- (void)setHasVerticalScroller:(BOOL)shouldHaveVerticalScroller
+{
+    if (_hasVerticalScroller === shouldHaveVerticalScroller)
+        return;
+
+    _hasVerticalScroller = shouldHaveVerticalScroller;
+
+    if (_hasVerticalScroller && !_verticalScroller)
+    {
+        var bounds = [self _insetBounds];
+
+        [self setVerticalScroller:[[TNUIKitScroller alloc] initWithFrame:CGRectMake(0.0, 0.0, [TNUIKitScroller scrollerWidth], MAX(CGRectGetHeight(bounds), [TNUIKitScroller scrollerWidth] + 1))]];
+        [[self verticalScroller] setFrameSize:CGSizeMake([TNUIKitScroller scrollerWidth], CGRectGetHeight(bounds))];
+    }
+
+    [self reflectScrolledClipView:_contentView];
 }
 
 - (void)reflectScrolledClipView:(CPClipView)aClipView
@@ -70,11 +181,6 @@
         {
             [_verticalScroller setHidden:YES];
             [_horizontalScroller setHidden:YES];
-        }
-        else
-        {
-//            [_verticalScroller setEnabled:NO];
-//            [_horizontalScroller setEnabled:NO];
         }
 
         [_contentView setFrame:[self _insetBounds]];
@@ -171,29 +277,6 @@
     [[self bottomCornerView] setBackgroundColor:[self currentValueForThemeAttribute:@"bottom-corner-color"]];
 
     --_recursionCount;
-}
-
-@end
-
-
-@implementation TNUIKitScrollView (CPCoding)
-
-- (TNUIKitScrollView)initWithFrame:(CPRect)aFrame
-{
-    if (self = [super initWithFrame:aFrame])
-    {
-        [self setupScrollbars];
-    }
-    return self;
-}
-
-- (id)initWithCoder:(CPCoder)aCoder
-{
-    if (self = [super initWithCoder:aCoder])
-    {
-        [self setupScrollbars];
-    }
-    return self;
 }
 
 @end
