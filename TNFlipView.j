@@ -89,12 +89,12 @@ TNFlipViewCurrentBrowserEngine = (typeof(document.body.style.WebkitTransform) !=
         _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].backfaceVisibility] = "hidden";
         _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].perspective] = 1000;
         _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transformStyle] = "preserve-3d";
-        _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transitionTimingFunction] = "linear";
+        _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transitionTimingFunction] = "ease";
         
         _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].backfaceVisibility] = "hidden";
         _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].perspective] = 1000;
         _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transformStyle] = "preserve-3d";
-        _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transitionTimingFunction] = "linear";
+        _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transitionTimingFunction] = "ease";
 
         [self setAnimationStyle:TNFlipViewAnimationStyleRotate direction:TNFlipViewAnimationStyleTranslateHorizontal];
 
