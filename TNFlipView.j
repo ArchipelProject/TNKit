@@ -22,6 +22,31 @@
 
 @import <AppKit/CPView.j>
 
+var CSSProperties = {
+    "webkit" : {
+        "transform": "WebkitTransform",
+        "backfaceVisibility": "WebkitBackfaceVisibility",
+        "perspective": "WebkitPerspective",
+        "transformStyle": "WebkitTransformStyle",
+        "transition": "WebkitTransition",
+        "transitionEnd": "webkitTransitionEnd"
+    },
+    "gecko" : {
+        "transform": "MozTransform",
+        "backfaceVisibility": "MozBackfaceVisibility",
+        "perspective": "MozPerspective",
+        "transformStyle": "MozTransformStyle",
+        "transition": "MozTransition",
+        "transitionEnd": "transitionend"
+    }
+};
+
+TNFlipViewAnimationStyleRotate = 1;
+TNFlipViewAnimationStyleTranslate = 2;
+TNFlipViewAnimationStyleTranslateHorizontal = 1;
+TNFlipViewAnimationStyleTranslateVertical = 2;
+
+TNFlipViewCurrentBrowserEngine = (typeof(document.body.style.WebkitTransform) != "undefined") ? "webkit" : "gecko";
 
 /*! @ingroup TNKit
     this widget allow to set a back view and a front view and
@@ -34,6 +59,8 @@
     CPView  _backView           @accessors(property=backView);
     CPView  _frontView          @accessors(property=frontView);
     float   _animationDuration  @accessors(getter=animationDuration);
+    int     _animationDirection @accessors(getter=animationDirection);
+    int     _animationStyle     @accessors(getter=animationStyle);
 
     CPView  _currentBackViewContent;
     CPView  _currentFrontViewContent;
@@ -50,20 +77,22 @@
 {
     if (self = [super initWithFrame:aRect])
     {
-        _animationDuration = 0.5;
+        _animationDuration  = 0.5;
+        _flipped            = NO;
+        animationDirection  = TNFlipViewAnimationStyleTranslateHorizontal;
 
         _backView = [[CPView alloc] initWithFrame:[self bounds]];
         _frontView = [[CPView alloc] initWithFrame:[self bounds]];
 
-        _backView._DOMElement.style.WebkitTransform = "rotateY(180deg)";
-        _backView._DOMElement.style.WebkitBackfaceVisibility = "hidden";
-        _backView._DOMElement.style.WebkitPerspective = 1000;
-        _backView._DOMElement.style.WebkitTransformStyle = "preserve-3d";
+        _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].backfaceVisibility] = "hidden";
+        _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].perspective] = 1000;
+        _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transformStyle] = "preserve-3d";
 
-        _frontView._DOMElement.style.WebkitTransform = "rotateY(0deg)";
-        _frontView._DOMElement.style.WebkitBackfaceVisibility = "hidden";
-        _frontView._DOMElement.style.WebkitPerspective = 1000;
-        _frontView._DOMElement.style.WebkitTransformStyle = "preserve-3d";
+        _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].backfaceVisibility] = "hidden";
+        _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].perspective] = 1000;
+        _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transformStyle] = "preserve-3d";
+
+        [self setAnimationStyle:TNFlipViewAnimationStyleRotate direction:TNFlipViewAnimationStyleTranslateHorizontal];
 
         [_backView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
         [_frontView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
@@ -77,6 +106,52 @@
 
 #pragma mark -
 #pragma mark Setters and getters
+
+/*! set the animation style
+    style can be TNFlipViewAnimationStyleRotate or TNFlipViewAnimationStyleTranslateHorizontal.
+    If style is TNFlipViewAnimationStyleTranslate you can add a direction
+    (TNFlipViewAnimationStyleTranslateHorizontal or TNFlipViewAnimationStyleTranslateVertical)
+    @param anAnimationStyle the animation style
+    @param aDirection the animation direction
+*/
+- (void)setAnimationStyle:(int)anAnimationStyle direction:(int)aDirection
+{
+    if ((anAnimationStyle == _animationStyle) && (aDirection == _animationDirection))
+        return;
+
+    _animationStyle = anAnimationStyle;
+    _animationDirection = aDirection || (_animationDirection ? _animationDirection : TNFlipViewAnimationStyleTranslateHorizontal);
+
+    switch (_animationStyle)
+    {
+        case TNFlipViewAnimationStyleTranslate:
+            var CSSFunction = (_animationDirection == TNFlipViewAnimationStyleTranslateHorizontal) ? "translateX" : "translateY";
+            if (_flipped)
+            {
+                _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transform] = CSSFunction + "(0px)";
+                _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transform] = CSSFunction + "(-"+[self frameSize].width+"px)";
+            }
+            else
+            {
+                _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transform] = CSSFunction + "(0px)";
+                _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transform] = CSSFunction + "("+[self frameSize].width+"px)";
+            }
+            break;
+
+        case TNFlipViewAnimationStyleRotate:
+            if (_flipped)
+            {
+                _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transform] = "rotateY(180deg)";
+                _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transform] = "rotateY(0deg)";
+            }
+            else
+            {
+                _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transform] = "rotateY(0deg)";
+                _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transform] = "rotateY(180deg)";
+            }
+            break;
+    }
+}
 
 /*! set the durationof the flip animation
     @param aDuration the duratiom
@@ -142,21 +217,34 @@
 
     try
     {
-        _frontView._DOMElement.style.WebkitTransition = _animationDuration + "s";
-        _backView._DOMElement.style.WebkitTransition = _animationDuration + "s";
+        _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transition] = _animationDuration + "s";
+        _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transition] = _animationDuration + "s";
 
-        _frontView._DOMElement.addEventListener(@"webkitTransitionEnd",  function(e){
+        _frontView._DOMElement.addEventListener(CSSProperties[TNFlipViewCurrentBrowserEngine].transitionEnd,  function(e){
             [_backView removeFromSuperview];
             [_frontView removeFromSuperview];
             [self addSubview:_backView];
             [self addSubview:_frontView];
-            _frontView._DOMElement.style.WebkitTransition = "0s";
-            _backView._DOMElement.style.WebkitTransition = "0s";
-            this.removeEventListener(@"webkitTransitionEnd");
-        });
+            _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transition] = "0s";
+            _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transition] = "0s";
+            this.removeEventListener(CSSProperties[TNFlipViewCurrentBrowserEngine].transitionEnd);
+        }, YES);
 
-        _frontView._DOMElement.style.WebkitTransform = "rotateY(0deg)";
-        _backView._DOMElement.style.WebkitTransform = "rotateY(180deg)";
+        if (TNFlipViewCurrentBrowserEngine == "gecko")
+            _animationStyle = TNFlipViewAnimationStyleTranslate;
+
+        switch (_animationStyle)
+        {
+            case TNFlipViewAnimationStyleTranslate:
+                var CSSFunction = (_animationDirection == TNFlipViewAnimationStyleTranslateHorizontal) ? "translateX" : "translateY";
+                _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transform] = CSSFunction + "(0px)";
+                _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transform] = CSSFunction + "("+[self frameSize].width+"px)";
+                break;
+            case TNFlipViewAnimationStyleRotate:
+                _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transform] = "rotateY(0deg)";
+                _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transform] = "rotateY(180deg)";
+                break;
+        }
     }
     catch(e)
     {
@@ -175,20 +263,35 @@
 
     try
     {
-        _frontView._DOMElement.style.WebkitTransition = _animationDuration + "s";
-        _backView._DOMElement.style.WebkitTransition = _animationDuration + "s";
+        _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transition] = _animationDuration + "s";
+        _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transition] = _animationDuration + "s";
 
-        _frontView._DOMElement.addEventListener("webkitTransitionEnd",  function(e){
+        _frontView._DOMElement.addEventListener(CSSProperties[TNFlipViewCurrentBrowserEngine].transitionEnd,  function(e){
             [_backView removeFromSuperview];
             [_frontView removeFromSuperview];
             [self addSubview:_frontView];
             [self addSubview:_backView];
-            _frontView._DOMElement.style.WebkitTransition = "0s";
-            _backView._DOMElement.style.WebkitTransition = "0s";
+            _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transition] = "0s";
+            _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transition] = "0s";
             this.removeEventListener(@"webkitTransitionEnd");
-        });
-        _frontView._DOMElement.style.WebkitTransform = "rotateY(180deg)";
-        _backView._DOMElement.style.WebkitTransform = "rotateY(0deg)";
+        }, YES);
+
+        if (TNFlipViewCurrentBrowserEngine == "gecko")
+            _animationStyle = TNFlipViewAnimationStyleTranslate;
+
+        switch (_animationStyle)
+        {
+            case TNFlipViewAnimationStyleTranslate:
+                var CSSFunction = (_animationDirection == TNFlipViewAnimationStyleTranslateHorizontal) ? "translateX" : "translateY";
+                _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transform] = CSSFunction + "(-"+[self frameSize].width+"px)";
+                _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transform] = CSSFunction + "(0px)";
+                break;
+            case TNFlipViewAnimationStyleRotate:
+                _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transform] = "rotateY(180deg)";
+                _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transform] = "rotateY(0deg)";
+                break;
+        }
+
     }
     catch(e)
     {
