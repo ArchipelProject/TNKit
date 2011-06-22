@@ -1,5 +1,5 @@
 /*
- * TNToolTip.j
+ * TNFlipView.j
  *
  * Copyright (C) 2010  Antoine Mercadal <antoine.mercadal@inframonde.eu>
  *
@@ -29,6 +29,7 @@ var CSSProperties = {
         "perspective": "WebkitPerspective",
         "transformStyle": "WebkitTransformStyle",
         "transition": "WebkitTransition",
+        "transitionTimingFunction": "WebkitTransitionTimingFunction",
         "transitionEnd": "webkitTransitionEnd"
     },
     "gecko" : {
@@ -37,6 +38,7 @@ var CSSProperties = {
         "perspective": "MozPerspective",
         "transformStyle": "MozTransformStyle",
         "transition": "MozTransition",
+        "transitionTimingFunction": "MozTransitionTimingFunction",
         "transitionEnd": "transitionend"
     }
 };
@@ -87,10 +89,12 @@ TNFlipViewCurrentBrowserEngine = (typeof(document.body.style.WebkitTransform) !=
         _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].backfaceVisibility] = "hidden";
         _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].perspective] = 1000;
         _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transformStyle] = "preserve-3d";
-
+        _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transitionTimingFunction] = "linear";
+        
         _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].backfaceVisibility] = "hidden";
         _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].perspective] = 1000;
         _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transformStyle] = "preserve-3d";
+        _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transitionTimingFunction] = "linear";
 
         [self setAnimationStyle:TNFlipViewAnimationStyleRotate direction:TNFlipViewAnimationStyleTranslateHorizontal];
 
