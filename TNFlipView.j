@@ -125,16 +125,17 @@ TNFlipViewCurrentBrowserEngine = (typeof(document.body.style.WebkitTransform) !=
     switch (_animationStyle)
     {
         case TNFlipViewAnimationStyleTranslate:
-            var CSSFunction = (_animationDirection == TNFlipViewAnimationStyleTranslateHorizontal) ? "translateX" : "translateY";
+            var CSSFunction = (_animationDirection == TNFlipViewAnimationStyleTranslateHorizontal) ? "translateX" : "translateY",
+                offset = (_animationDirection == TNFlipViewAnimationStyleTranslateHorizontal) ? [self frameSize].width : [self frameSize].height;
             if (_flipped)
             {
                 _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transform] = CSSFunction + "(0px)";
-                _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transform] = CSSFunction + "(-"+[self frameSize].width+"px)";
+                _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transform] = CSSFunction + "(-" + offset + "px)";
             }
             else
             {
                 _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transform] = CSSFunction + "(0px)";
-                _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transform] = CSSFunction + "("+[self frameSize].width+"px)";
+                _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transform] = CSSFunction + "(" + offset + "px)";
             }
             break;
 
@@ -237,8 +238,9 @@ TNFlipViewCurrentBrowserEngine = (typeof(document.body.style.WebkitTransform) !=
         {
             case TNFlipViewAnimationStyleTranslate:
                 var CSSFunction = (_animationDirection == TNFlipViewAnimationStyleTranslateHorizontal) ? "translateX" : "translateY";
+                    offset = (_animationDirection == TNFlipViewAnimationStyleTranslateHorizontal) ? [self frameSize].width : [self frameSize].height;
                 _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transform] = CSSFunction + "(0px)";
-                _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transform] = CSSFunction + "("+[self frameSize].width+"px)";
+                _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transform] = CSSFunction + "(" + offset + "px)";
                 break;
             case TNFlipViewAnimationStyleRotate:
                 _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transform] = "rotateY(0deg)";
@@ -282,8 +284,9 @@ TNFlipViewCurrentBrowserEngine = (typeof(document.body.style.WebkitTransform) !=
         switch (_animationStyle)
         {
             case TNFlipViewAnimationStyleTranslate:
-                var CSSFunction = (_animationDirection == TNFlipViewAnimationStyleTranslateHorizontal) ? "translateX" : "translateY";
-                _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transform] = CSSFunction + "(-"+[self frameSize].width+"px)";
+                var CSSFunction = (_animationDirection == TNFlipViewAnimationStyleTranslateHorizontal) ? "translateX" : "translateY",
+                    offset = (_animationDirection == TNFlipViewAnimationStyleTranslateHorizontal) ? [self frameSize].width : [self frameSize].height;
+                _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transform] = CSSFunction + "(-" + offset + "px)";
                 _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transform] = CSSFunction + "(0px)";
                 break;
             case TNFlipViewAnimationStyleRotate:
