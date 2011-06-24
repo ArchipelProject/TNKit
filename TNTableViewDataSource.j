@@ -303,7 +303,7 @@
 
     var identifier = [aCol identifier];
 
-    return [[_filteredContent objectAtIndex:aRow] valueForKey:identifier];
+    return [[_filteredContent objectAtIndex:aRow] valueForKeyPath:identifier];
 }
 
 - (void)tableView:(CPTableView)aTableView sortDescriptorsDidChange:(CPArray)oldDescriptors
@@ -334,7 +334,7 @@
 
     var identifier = [aCol identifier];
 
-    [[_filteredContent objectAtIndex:aRow] setValue:aValue forKey:identifier];
+    [[_filteredContent objectAtIndex:aRow] setValue:aValue forKeyPath:identifier];
 }
 
 @end
