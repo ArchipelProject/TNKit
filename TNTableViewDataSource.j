@@ -140,7 +140,7 @@
 */
 - (void)setContent:(CPArray)aContent
 {
-    _content = [aContent copy];
+    _content = aContent;
     _filteredContent = [aContent copy];
 
     _needsFilter = YES;
