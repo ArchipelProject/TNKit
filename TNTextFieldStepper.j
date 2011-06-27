@@ -20,11 +20,12 @@
 
 @import <Foundation/Foundation.j>
 
+@import <AppKit/CPGeometry.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPStepper.j>
 
 
-var TNStepperButtonsSize = CPSizeMake(19, 13);
+var TNStepperButtonsSize;
 
 /*! exctracted from Cappuccino's CPTheme because this rocks
 */
@@ -108,6 +109,9 @@ function PatternColor()
     {
         [_buttonUp setAutoresizingMask:CPViewMinXMargin];
         [_buttonDown setAutoresizingMask:CPViewMinXMargin];
+
+        if (!TNStepperButtonsSize)
+            TNStepperButtonsSize = CPSizeMake(19, 13);
 
         _textField = [[CPTextField alloc] initWithFrame:CPRectMake(0, 0, aFrame.size.width - TNStepperButtonsSize.width, aFrame.size.height)];
         [_textField setBezeled:YES];
