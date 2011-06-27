@@ -187,6 +187,7 @@ TNFlipViewCurrentBrowserEngine = (typeof(document.body.style.WebkitTransform) !=
     }
 
     _currentBackViewContent = aView;
+    [_currentBackViewContent setFrame:[self bounds]];
     [_backView addSubview:aView];
 }
 
@@ -207,6 +208,7 @@ TNFlipViewCurrentBrowserEngine = (typeof(document.body.style.WebkitTransform) !=
         return;
     }
     _currentFrontViewContent = aView;
+    [_currentFrontViewContent setFrame:[self bounds]];
     [_frontView addSubview:aView];
 }
 
