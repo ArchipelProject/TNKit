@@ -90,7 +90,7 @@ TNFlipViewCurrentBrowserEngine = (typeof(document.body.style.WebkitTransform) !=
         _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].perspective] = 1000;
         _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transformStyle] = "preserve-3d";
         _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transitionTimingFunction] = "ease";
-        
+
         _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].backfaceVisibility] = "hidden";
         _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].perspective] = 1000;
         _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transformStyle] = "preserve-3d";
@@ -243,7 +243,7 @@ TNFlipViewCurrentBrowserEngine = (typeof(document.body.style.WebkitTransform) !=
         switch (_animationStyle)
         {
             case TNFlipViewAnimationStyleTranslate:
-                var CSSFunction = (_animationDirection == TNFlipViewAnimationStyleTranslateHorizontal) ? "translateX" : "translateY";
+                var CSSFunction = (_animationDirection == TNFlipViewAnimationStyleTranslateHorizontal) ? "translateX" : "translateY",
                     offset = (_animationDirection == TNFlipViewAnimationStyleTranslateHorizontal) ? [self frameSize].width : [self frameSize].height;
                 _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transform] = CSSFunction + "(0px)";
                 _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transform] = CSSFunction + "(" + offset + "px)";

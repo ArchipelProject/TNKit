@@ -389,7 +389,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
 {
     [super makeKeyAndOrderFront:aSender];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_attachedWindowDidMove:) name:CPWindowDidMoveNotification object:self];
-    
+
     _isClosed = NO;
 }
 
