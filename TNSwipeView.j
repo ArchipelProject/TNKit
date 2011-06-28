@@ -160,18 +160,16 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
     {
         var _currentDraggingPoint = [_mainView convertPointFromBase:[anEvent globalLocation]];
 
-        _mainView._DOMElement.style[CSSProperties[TNSwipeViewBrowserEngine].transition] =  @"0.1s";
-
         if (_translationFunction == TNSwipeViewCSSTranslateFunctionX)
         {
             _currentDraggingPoint.x -= _initialTrackingPoint.x;
-            [self _setSlideValue:_currentDraggingPoint.x speed:0.1 shouldCommit:NO];
+            [self _setSlideValue:_currentDraggingPoint.x speed:0.05 shouldCommit:NO];
 
         }
         else
         {
             _currentDraggingPoint.y -= _initialTrackingPoint.y;
-            [self _setSlideValue:_currentDraggingPoint.y speed:0.1 shouldCommit:NO];
+            [self _setSlideValue:_currentDraggingPoint.y speed:0.05 shouldCommit:NO];
         }
     }
     else
@@ -257,6 +255,21 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
     }
 }
 
+- (void)setFrame:(CPRect)aFrame
+{
+    var currentFrameWidth = [self frameSize].width,
+        widthOffset;
+
+    [super setFrame:aFrame];
+
+    if (_currentViewIndex == 0)
+        return;
+
+    widthOffset = aFrame.size.width - currentFrameWidth;
+    [_mainView setFrameOrigin:CPPointMake(([_mainView frameOrigin].x - (widthOffset * _currentViewIndex)) , 0)];
+}
+
+
 
 #pragma mark -
 #pragma mark Utilities
@@ -269,6 +282,7 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
 
     if (shouldCommit)
     {
+        // yeah yeah, we'll try to fix this later...
         _animationGuardTimer = [CPTimer scheduledTimerWithTimeInterval:1.0
                                                                 target:self
                                                               selector:@selector(resetAnimating:)
