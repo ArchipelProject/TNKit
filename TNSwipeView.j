@@ -68,6 +68,7 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
     CPPoint     _initialTrackingPoint;
     CPView      _mainView;
     Function    _validateFunction;
+    CPTimer     _animationGuardTimer;
     int         _currentViewIndex;
 }
 
@@ -94,7 +95,6 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
             this.removeEventListener(CSSProperties[TNSwipeViewBrowserEngine].transitionEnd, _validateFunction, YES);
             _mainView._DOMElement.style[CSSProperties[TNSwipeViewBrowserEngine].transition] = "0s";
             [self _commitAnimation];
-            _isAnimating = NO;
         };
 
         [_mainView setAutoresizingMask:CPViewHeightSizable];
@@ -119,6 +119,17 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
     return self
 }
 
+
+#pragma mark -
+#pragma mark Notification handlers
+
+- (void)resetAnimating:(CPTimer)aTimer
+{
+    _isAnimating = NO;
+    _animationGuardTimer = nil;
+}
+
+
 #pragma mark -
 #pragma mark Getters / Setters
 
@@ -137,11 +148,9 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
 
 - (void)mouseDown:(CPEvent)anEvent
 {
-    if (!_isAnimating)
-    {
-        _initialTrackingPoint = [_mainView convertPointFromBase:[anEvent globalLocation]];
-        _generalInitialTrackingPoint = [self convertPointFromBase:[anEvent globalLocation]];
-    }
+    _initialTrackingPoint           = [_mainView convertPointFromBase:[anEvent globalLocation]];
+    _generalInitialTrackingPoint    = [self convertPointFromBase:[anEvent globalLocation]];
+
     [super mouseDown:anEvent];
 }
 
@@ -156,13 +165,18 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
         if (_translationFunction == TNSwipeViewCSSTranslateFunctionX)
         {
             _currentDraggingPoint.x -= _initialTrackingPoint.x;
-            _mainView._DOMElement.style[CSSProperties[TNSwipeViewBrowserEngine].transform] = _translationFunction + @"("+ _currentDraggingPoint.x + @"px)";
+            [self _setSlideValue:_currentDraggingPoint.x speed:0.1 shouldCommit:NO];
+
         }
         else
         {
             _currentDraggingPoint.y -= _initialTrackingPoint.y;
-            _mainView._DOMElement.style[CSSProperties[TNSwipeViewBrowserEngine].transform] = _translationFunction + @"("+ _currentDraggingPoint.y + @"px)";
+            [self _setSlideValue:_currentDraggingPoint.y speed:0.1 shouldCommit:NO];
         }
+    }
+    else
+    {
+        CPLog.warn("Animating.... forget it");
     }
     [super trackMouse:anEvent];
 
@@ -173,6 +187,9 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
     [super stopTracking:lastPoint at:aPoint mouseIsUp:mouseIsUp];
 
     if (!mouseIsUp)
+        return;
+
+    if (_isAnimating)
         return;
 
     var movement,
@@ -208,7 +225,7 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
             }
         }
     }
-    _isAnimating = NO;
+
     [self _resetTranslation];
 }
 
@@ -246,15 +263,22 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
 
 /*! @ignore
 */
-- (void)_setSlideValue:(float)a_performDirectionalSlideValue
+- (void)_setSlideValue:(float)aDirectionalSlideValue speed:(float)aSpeed shouldCommit:(BOOL)shouldCommit
 {
-    if (a_performDirectionalSlideValue == 0)
-        return;
+    _mainView._DOMElement.style[CSSProperties[TNSwipeViewBrowserEngine].transition] = aSpeed + @"s";
 
-    _isAnimating = YES;
-    _mainView._DOMElement.style[CSSProperties[TNSwipeViewBrowserEngine].transition] = _animationDuration + @"s";
-    _mainView._DOMElement.addEventListener(CSSProperties[TNSwipeViewBrowserEngine].transitionEnd,  _validateFunction, YES);
-    _mainView._DOMElement.style[CSSProperties[TNSwipeViewBrowserEngine].transform] = _translationFunction + @"(" + a_performDirectionalSlideValue  + @"px)";
+    if (shouldCommit)
+    {
+        _animationGuardTimer = [CPTimer scheduledTimerWithTimeInterval:1.0
+                                                                target:self
+                                                              selector:@selector(resetAnimating:)
+                                                              userInfo:nil
+                                                               repeats:NO];
+        _isAnimating = YES;
+        _mainView._DOMElement.addEventListener(CSSProperties[TNSwipeViewBrowserEngine].transitionEnd,  _validateFunction, YES);
+    }
+
+    _mainView._DOMElement.style[CSSProperties[TNSwipeViewBrowserEngine].transform] = _translationFunction + @"(" + aDirectionalSlideValue  + @"px)";
 }
 
 /*! _performDirectionalSlide directly to the current view index. If anIndex is
@@ -277,17 +301,17 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
     if (anIndex > _currentViewIndex)
     {
         if (_translationFunction == TNSwipeViewCSSTranslateFunctionX)
-            [self _setSlideValue:- (anIndex - _currentViewIndex) * [self frameSize].width];
+            [self _setSlideValue:- (anIndex - _currentViewIndex) * [self frameSize].width speed:_animationDuration shouldCommit:YES];
         else
-            [self _setSlideValue:- (anIndex - _currentViewIndex) * [self frameSize].height];
+            [self _setSlideValue:- (anIndex - _currentViewIndex) * [self frameSize].height speed:_animationDuration shouldCommit:YES];
 
     }
     else if (anIndex < _currentViewIndex)
     {
         if (_translationFunction == TNSwipeViewCSSTranslateFunctionX)
-            [self _setSlideValue:(_currentViewIndex - anIndex) * [self frameSize].width];
+            [self _setSlideValue:(_currentViewIndex - anIndex) * [self frameSize].width speed:_animationDuration shouldCommit:YES];
         else
-            [self _setSlideValue:(_currentViewIndex - anIndex) * [self frameSize].height];
+            [self _setSlideValue:(_currentViewIndex - anIndex) * [self frameSize].height speed:_animationDuration shouldCommit:YES];
 
     }
 
@@ -299,16 +323,7 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
 */
 - (void)_resetTranslation
 {
-    if (_mainView._DOMElement.style[CSSProperties[TNSwipeViewBrowserEngine].transform] == _translationFunction + "(0px)"
-        || _mainView._DOMElement.style[CSSProperties[TNSwipeViewBrowserEngine].transform] == "")
-    {
-        _isAnimating = NO;
-        return;
-    }
-    _isAnimating = YES;
-    _mainView._DOMElement.style[CSSProperties[TNSwipeViewBrowserEngine].transition] = _animationDuration + @"s";
-    _mainView._DOMElement.addEventListener(CSSProperties[TNSwipeViewBrowserEngine].transitionEnd,  _validateFunction, YES);
-    _mainView._DOMElement.style[CSSProperties[TNSwipeViewBrowserEngine].transform] = _translationFunction + @"(0px)";
+    [self _setSlideValue:0.0 speed:_animationDuration shouldCommit:YES];
 }
 
 /*! @ignore
@@ -361,7 +376,7 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
             }
             break;
     }
-    [self _setSlideValue:offset];
+    [self _setSlideValue:offset speed:_animationDuration shouldCommit:YES];
 }
 
 /*! @ignore
@@ -401,6 +416,9 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
     [_mainView removeFromSuperview];
     [self addSubview:_mainView];
     _mainView._DOMElement.style[CSSProperties[TNSwipeViewBrowserEngine].transform] = _translationFunction + @"(0px)";
+    if (_animationGuardTimer)
+        [_animationGuardTimer invalidate];
+    _animationGuardTimer = nil;
     _isAnimating = NO;
 }
 
