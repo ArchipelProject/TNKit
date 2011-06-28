@@ -60,6 +60,7 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
     CPArray     _views                  @accessors(getter=views);
     CPString    _translationFunction    @accessors(getter=translationFunction);
     float       _animationDuration      @accessors(property=animationDuration);
+    float       _minimalRatio           @accessors(property=minimalRatio);
 
     BOOL        _isAnimating;
     CPPoint     _currentDraggingPoint;
@@ -83,6 +84,7 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
     {
         _animationDuration      = 0.3;
         _currentViewIndex       = 0;
+        _minimalRatio           = 0.3;
         _isAnimating            = NO;
         _mainView               = [[CPView alloc] initWithFrame:[self bounds]];
         _translationFunction    = TNSwipeViewCSSTranslateFunctionX;
@@ -179,12 +181,12 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
     if (_translationFunction == TNSwipeViewCSSTranslateFunctionX)
     {
         movement = _generalInitialTrackingPoint.x - aPoint.x;
-        minimalMovement = [self frameSize].width / 3;
+        minimalMovement = [self frameSize].width * _minimalRatio;
     }
     else
     {
         movement = _generalInitialTrackingPoint.y - aPoint.y;
-        minimalMovement = [self frameSize].height / 3;
+        minimalMovement = [self frameSize].height * _minimalRatio;
     }
 
     if (movement != 0 && Math.abs(movement) >= minimalMovement)
@@ -422,6 +424,42 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
 - (IBAction)previousView:(id)aSender
 {
     [self _performDirectionalSlide:TNSwipeViewDirectionRight];
+}
+
+@end
+
+
+@implementation TNSwipeView (CPCoding)
+
+/*! CPCoder compliance
+*/
+- (id)initWithCoder:(CPCoder)aCoder
+{
+    self = [super initWithCoder:aCoder];
+
+    if (self)
+    {
+        _views                  = [aCoder decodeObjectForKey:@"_views"];
+        _translationFunction    = [aCoder decodeObjectForKey:@"_translationFunction"];
+        _animationDuration      = [aCoder decodeObjectForKey:@"_animationDuration"];
+        _mainView               = [aCoder decodeObjectForKey:@"_mainView"];
+        _minimalRatio           = [aCoder decodeObjectForKey:@"_minimalRatio"];
+    }
+
+    return self;
+}
+
+/*! CPCoder compliance
+*/
+- (void)encodeWithCoder:(CPCoder)aCoder
+{
+    [super encodeWithCoder:aCoder];
+
+    [aCoder encodeObject:_views forKey:@"_views"];
+    [aCoder encodeObject:_translationFunction forKey:@"_translationFunction"];
+    [aCoder encodeObject:_animationDuration forKey:@"_animationDuration"];
+    [aCoder encodeObject:_mainView forKey:@"_mainView"];
+    [aCoder encodeObject:_minimalRatio forKey:@"_minimalRatio"];
 }
 
 @end
