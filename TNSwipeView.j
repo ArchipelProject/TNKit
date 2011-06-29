@@ -292,6 +292,9 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
         _mainView._DOMElement.addEventListener(CSSProperties[TNSwipeViewBrowserEngine].transitionEnd,  _validateFunction, YES);
     }
 
+    _mainView._DOMElement.style[CSSProperties[TNSwipeViewBrowserEngine].backfaceVisibility] = "hidden";
+    _mainView._DOMElement.style[CSSProperties[TNSwipeViewBrowserEngine].perspective] = 1000;
+    _mainView._DOMElement.style[CSSProperties[TNSwipeViewBrowserEngine].transformStyle] = "preserve-3d";
     _mainView._DOMElement.style[CSSProperties[TNSwipeViewBrowserEngine].transform] = _translationFunction + @"(" + aDirectionalSlideValue  + @"px)";
 }
 
@@ -427,11 +430,10 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
         var newY = [_mainView frameOrigin].y + ty;
         [_mainView setFrameOrigin:CPPointMake(0, newY)];
     }
-    [_mainView removeFromSuperview];
-    [self addSubview:_mainView];
     _mainView._DOMElement.style[CSSProperties[TNSwipeViewBrowserEngine].transform] = _translationFunction + @"(0px)";
     if (_animationGuardTimer)
         [_animationGuardTimer invalidate];
+    [_mainView setNeedsDisplay:YES];
     _animationGuardTimer = nil;
     _isAnimating = NO;
 }
