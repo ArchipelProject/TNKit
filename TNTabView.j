@@ -20,7 +20,7 @@
 @import "TNSwipeView.j"
 @import "TNUIKitScrollView.j"
 
-var TNTabViewTabMargin = 10.0;
+var TNTabViewTabMargin = 2.0;
 
 /*! @ingroup tnkit
     This class represent the prototype of a TNTabView item
@@ -33,6 +33,7 @@ var TNTabViewTabMargin = 10.0;
     int         _index  @accessors(property=index);
 }
 
+
 #pragma mark -
 #pragma mark class methods
 
@@ -41,7 +42,7 @@ var TNTabViewTabMargin = 10.0;
 */
 + (CPSize)size
 {
-    return CPSizeMake(120.0, 26.0);
+    return CPSizeMake(115.0, 25.0);
 }
 
 
@@ -82,7 +83,6 @@ var TNTabViewTabMargin = 10.0;
         [_label setValue:[CPColor blackColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateHighlighted];
         [_label setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelected];
         [_label setValue:[CPColor blackColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateSelected];
-
 
         [self addSubview:_label];
 
@@ -171,6 +171,7 @@ var TNTabViewTabMargin = 10.0;
     TNUIKitScrollView           _scrollViewTabs;
 }
 
+
 #pragma mark -
 #pragma mark Initialization
 
@@ -193,7 +194,7 @@ var TNTabViewTabMargin = 10.0;
 
         _currentSelectedIndex = -1;
         _itemObjects = [CPArray array];
-    
+
         _tabItemViewPrototype = [[TNTabItemPrototype alloc] initWithFrame:CPRectMake(0.0, 0.0, [TNTabItemPrototype size].width, [TNTabItemPrototype size].height)];
 
         [self addSubview:_scrollViewTabs];
@@ -246,7 +247,7 @@ var TNTabViewTabMargin = 10.0;
 {
     if (anIndex >= [_itemObjects count])
         return nil;
-    
+
     return [[_itemObjects objectAtIndex:anIndex] objectAtIndex:0];
 }
 
@@ -267,8 +268,12 @@ var TNTabViewTabMargin = 10.0;
 */
 - (void)addTabViewItem:(CPTabViewItem)anItem
 {
+    var shouldSelectFirstTab = NO;
     if (_currentSelectedIndex == -1)
+    {
+        shouldSelectFirstTab = YES;
         _currentSelectedIndex = 0;
+    }
 
     var itemView = [self _newTabItemPrototype];
     [itemView setObjectValue:anItem];
@@ -281,6 +286,9 @@ var TNTabViewTabMargin = 10.0;
 
     if (_delegate && [_delegate respondsToSelector:@selector(tabViewDidChangeNumberOfTabViewItems:)])
         [_delegate tabViewDidChangeNumberOfTabViewItems:self];
+
+    if (shouldSelectFirstTab)
+        [self selectFirstTabViewItem:nil];
 }
 
 /*! implement CPTabViewProtocol
@@ -329,7 +337,7 @@ var TNTabViewTabMargin = 10.0;
 {
     if (_currentSelectedIndex == -1)
         return;
-    
+
     var itemIndex = [self indexOfTabViewItemWithIdentifier:[anItem identifier]],
         currentItemView = [self _getTabViewAtIndex:itemIndex];
 
@@ -337,9 +345,9 @@ var TNTabViewTabMargin = 10.0;
 
     [currentItemView removeFromSuperview];
     [_itemObjects removeObjectAtIndex:[self indexOfTabViewItemWithIdentifier:[anItem identifier]]];
-    
+
     [self setNeedsLayout];
-    
+
     if ([_itemObjects count] == 0)
         _currentSelectedIndex = -1;
     else if (_currentSelectedIndex >= [_itemObjects count])
@@ -372,7 +380,7 @@ var TNTabViewTabMargin = 10.0;
 {
     if (_currentSelectedIndex == -1)
         return;
-    
+
     [self selectTabViewItemAtIndex:[_itemObjects count] - 1];
 }
 
@@ -383,7 +391,7 @@ var TNTabViewTabMargin = 10.0;
 {
     if (_currentSelectedIndex == -1)
         return;
-    
+
     [self selectTabViewItemAtIndex:(_currentSelectedIndex + 1)];
 }
 
@@ -394,7 +402,7 @@ var TNTabViewTabMargin = 10.0;
 {
     if (_currentSelectedIndex == -1)
         return;
-    
+
     [self selectTabViewItemAtIndex:(_currentSelectedIndex - 1)];
 }
 
@@ -405,7 +413,7 @@ var TNTabViewTabMargin = 10.0;
 {
     if (_currentSelectedIndex == -1)
         return;
-    
+
     [[[self selectedTabViewItem] view] removeFromSuperview];
 
     var pendingItem = [self _getTabItemAtIndex:anIndex];
@@ -416,7 +424,7 @@ var TNTabViewTabMargin = 10.0;
 
     if (_delegate && [_delegate respondsToSelector:@selector(tabView:willSelectTabViewItem:)])
         [_delegate tabView:self willSelectTabViewItem:pendingItem];
-    
+
     [_currentSelectedItemView unsetThemeState:CPThemeStateSelected];
     _currentSelectedItemView = [self _getTabViewAtIndex:anIndex];
     [_currentSelectedItemView setThemeState:CPThemeStateSelected];
@@ -427,8 +435,8 @@ var TNTabViewTabMargin = 10.0;
     _currentSelectedIndex = anIndex;
 
     if (_delegate && [_delegate respondsToSelector:@selector(tabView:didSelectTabViewItem:)])
-        [_delegate tabView:self didSelectTabViewItem:[[_itemObjects objectAtIndex:anIndex] objectAtIndex:0]];
-    
+        [_delegate tabView:self didSelectTabViewItem:pendingItem];
+
 }
 
 /*! implement CPTabViewProtocol
@@ -469,18 +477,12 @@ var TNTabViewTabMargin = 10.0;
         var item = [self _getTabItemAtIndex:i],
             itemView = [self _getTabViewAtIndex:i],
             view = [item view];
-    
+
         [itemView setFrameOrigin:CPPointMake(currentXOrigin, 2.0)];
         [itemView setIndex:i];
-        
-        [view setFrame:[self bounds]];
-    
-        if (_currentSelectedIndex == i)
-        {
-            _currentSelectedItemView = itemView;
-            [_currentSelectedItemView setThemeState:CPThemeStateSelected];
-            [_contentView addSubview:view];
-        }
+
+        [view setFrame:[_contentView bounds]];
+
         currentXOrigin += [TNTabItemPrototype size].width;
     }
 }
