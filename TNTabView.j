@@ -60,7 +60,7 @@ var TNTabViewTabMargin = 2.0;
                             [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/tabitem-normal-left.png"] size:CPSizeMake(9, 22)],
                             [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/tabitem-normal-center.png"] size:CPSizeMake(1, 22)],
                             [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/tabitem-normal-right.png"] size:CPSizeMake(9, 22)]]
-                        isVertical:NO]];
+                        isVertical:NO]],
             colorPressed = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[
                             [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/tabitem-pressed-left.png"] size:CPSizeMake(9, 22)],
                             [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/tabitem-pressed-center.png"] size:CPSizeMake(1, 22)],
