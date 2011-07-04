@@ -467,7 +467,7 @@ var TNTabViewTabMargin = 2.0;
 */
 - (void)layoutSubviews
 {
-    var docViewWitdh = MAX(([TNTabItemPrototype size].width * [_itemObjects count]), [self frameSize].width);
+    var docViewWitdh = MAX(([TNTabItemPrototype size].width * [_itemObjects count]), [self frameSize].width),
         currentXOrigin = (docViewWitdh / 2) - [_itemObjects count] * [TNTabItemPrototype size].width / 2;
 
     [_viewTabsDocument setFrameSize:CPSizeMake(docViewWitdh, [TNTabItemPrototype size].height)];
