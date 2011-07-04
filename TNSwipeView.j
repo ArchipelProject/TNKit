@@ -61,6 +61,8 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
     CPString    _translationFunction    @accessors(getter=translationFunction);
     float       _animationDuration      @accessors(property=animationDuration);
     float       _minimalRatio           @accessors(property=minimalRatio);
+    int         _currentViewIndex       @accessors(getter=currentViewIndex);
+    id          _delegate               @accessors(property=delegate);
 
     BOOL        _isAnimating;
     CPPoint     _currentDraggingPoint;
@@ -69,7 +71,6 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
     CPView      _mainView;
     Function    _validateFunction;
     CPTimer     _animationGuardTimer;
-    int         _currentViewIndex;
 }
 
 
@@ -142,6 +143,14 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
     [self setNeedsLayout];
 }
 
+/*! set the swipping view background Color
+    @param aColor the color
+*/
+- (void)setSwipeViewBackgroundColor:(CPColor)aColor
+{
+    [_mainView setBackgroundColor:aColor];
+}
+
 
 #pragma mark -
 #pragma mark Overrides
@@ -202,6 +211,15 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
     {
         movement = _generalInitialTrackingPoint.y - aPoint.y;
         minimalMovement = [self frameSize].height * _minimalRatio;
+    }
+
+    if (_delegate && [_delegate respondsToSelector:@selector(swipeViewShouldSwipe:)])
+    {
+        if (![_delegate swipeViewShouldSwipe:self])
+        {
+            [self _resetTranslation];
+            return
+        }
     }
 
     if (movement != 0 && Math.abs(movement) >= minimalMovement)
@@ -333,6 +351,9 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
     }
 
     _currentViewIndex = anIndex;
+
+    if (_delegate && [_delegate respondsToSelector:@selector(swipeView:didSelectIndex:)])
+        [_delegate swipeView:self didSelectIndex:_currentViewIndex];
 }
 
 /*! @ignore
@@ -394,6 +415,10 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
             break;
     }
     [self _setSlideValue:offset speed:_animationDuration shouldCommit:YES];
+
+    if (_delegate && [_delegate respondsToSelector:@selector(swipeView:didSelectIndex:)])
+        [_delegate swipeView:self didSelectIndex:_currentViewIndex];
+
 }
 
 /*! @ignore
