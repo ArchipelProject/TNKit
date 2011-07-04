@@ -57,14 +57,14 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
 */
 @implementation TNSwipeView : CPControl
 {
+    BOOL        _isAnimating            @accessors(getter=isAnimating);
     CPArray     _views                  @accessors(getter=views);
     CPString    _translationFunction    @accessors(getter=translationFunction);
     float       _animationDuration      @accessors(property=animationDuration);
     float       _minimalRatio           @accessors(property=minimalRatio);
-    int         _currentViewIndex       @accessors(getter=currentViewIndex);
     id          _delegate               @accessors(property=delegate);
-
-    BOOL        _isAnimating;
+    int         _currentViewIndex       @accessors(getter=currentViewIndex);
+    
     CPPoint     _currentDraggingPoint;
     CPPoint     _generalInitialTrackingPoint;
     CPPoint     _initialTrackingPoint;
@@ -140,6 +140,7 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
 - (void)setViews:(CPArray)someViews
 {
     _views = someViews;
+    [self resetSlide];
     [self setNeedsLayout];
 }
 
@@ -292,6 +293,14 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
 #pragma mark -
 #pragma mark Utilities
 
+/*! reset the absolute translation to (0,0)
+*/
+- (void)resetSlide
+{
+    [_mainView setFrameOrigin:CPPointMake(0, 0)];
+    _currentViewIndex = 0;
+}
+
 /*! @ignore
 */
 - (void)_setSlideValue:(float)aDirectionalSlideValue speed:(float)aSpeed shouldCommit:(BOOL)shouldCommit
@@ -307,7 +316,7 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
                                                               userInfo:nil
                                                                repeats:NO];
         _isAnimating = YES;
-        _mainView._DOMElement.addEventListener(CSSProperties[TNSwipeViewBrowserEngine].transitionEnd,  _validateFunction, YES);
+        _mainView._DOMElement.addEventListener(CSSProperties[TNSwipeViewBrowserEngine].transitionEnd,  _validateFunction, YES);            
     }
 
     _mainView._DOMElement.style[CSSProperties[TNSwipeViewBrowserEngine].backfaceVisibility] = "hidden";
@@ -332,7 +341,6 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
     if (anIndex < 0)
         anIndex = 0;
 
-
     if (anIndex > _currentViewIndex)
     {
         if (_translationFunction == TNSwipeViewCSSTranslateFunctionX)
@@ -352,6 +360,38 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
 
     _currentViewIndex = anIndex;
 
+    if (_delegate && [_delegate respondsToSelector:@selector(swipeView:didSelectIndex:)])
+        [_delegate swipeView:self didSelectIndex:_currentViewIndex];
+}
+
+- (void)showViewIndex:(int)anIndex
+{
+    if (anIndex == _currentViewIndex)
+        return;
+
+    if (anIndex > [_views count] - 1)
+        anIndex == [_views count] - 1;
+
+    if (anIndex < 0)
+        anIndex = 0;
+
+    if (anIndex > _currentViewIndex)
+    {    
+        if (_translationFunction == TNSwipeViewCSSTranslateFunctionX)
+            [_mainView setFrameOrigin:CPPointMake(-anIndex * [self frameSize].width, 0)];
+        else
+            [_mainView setFrameOrigin:CPPointMake(0.0, -anIndex * [self frameSize].height)];
+    }
+    else if (anIndex < _currentViewIndex)
+    {
+        if (_translationFunction == TNSwipeViewCSSTranslateFunctionX)
+            [_mainView setFrameOrigin:CPPointMake(anIndex * [self frameSize].width, 0)];
+        else
+            [_mainView setFrameOrigin:CPPointMake(0.0, -anIndex * [self frameSize].height)];
+    }
+    
+    _currentViewIndex = anIndex;
+    
     if (_delegate && [_delegate respondsToSelector:@selector(swipeView:didSelectIndex:)])
         [_delegate swipeView:self didSelectIndex:_currentViewIndex];
 }
@@ -458,7 +498,11 @@ TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "unde
     _mainView._DOMElement.style[CSSProperties[TNSwipeViewBrowserEngine].transform] = _translationFunction + @"(0px)";
     if (_animationGuardTimer)
         [_animationGuardTimer invalidate];
+    
+    [self setNeedsDisplay:YES];
+    [self setNeedsLayout];
     [_mainView setNeedsDisplay:YES];
+    [_mainView setNeedsLayout];
     _animationGuardTimer = nil;
     _isAnimating = NO;
 }

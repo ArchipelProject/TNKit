@@ -1,5 +1,5 @@
 /*
- * TNSwipingTabView.j
+ * TNTabView.j
  *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
@@ -20,24 +20,24 @@
 @import "TNSwipeView.j"
 @import "TNUIKitScrollView.j"
 
-var TNSwipingTabViewTabMargin = 10.0;
+var TNTabViewTabMargin = 10.0;
 
 /*! @ingroup tnkit
-    This class represent the prototype of a TNSwipingTabView item
-    you can overide it and use setTabItemViewPrototype: of TNSwipingTabView
+    This class represent the prototype of a TNTabView item
+    you can overide it and use setTabItemViewPrototype: of TNTabView
     to implement your own item view
 */
-@implementation TNSwipingTabItemPrototype : CPControl
+@implementation TNTabItemPrototype : CPControl
 {
-    CPButton    _label;
+    CPButton    _label  @accessors(getter=label);
     int         _index  @accessors(property=index);
 }
 
 #pragma mark -
 #pragma mark class methods
 
-/*! return the actual size of a TNSwipingTabItemPrototype
-    This is used to layout the TNSwipingTabView
+/*! return the actual size of a TNTabItemPrototype
+    This is used to layout the TNTabView
 */
 + (CPSize)size
 {
@@ -48,30 +48,30 @@ var TNSwipingTabViewTabMargin = 10.0;
 #pragma mark -
 #pragma mark Initialization
 
-/*! initialize a new TNSwipingTabItemPrototype
+/*! initialize a new TNTabItemPrototype
 */
-- (TNSwipingTabItemPrototype)initWithFrame:(CPRect)aFrame
+- (TNTabItemPrototype)initWithFrame:(CPRect)aFrame
 {
     if (self = [super initWithFrame:aFrame])
     {
         var bundle = [CPBundle bundleForClass:[self class]],
             colorNormal = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[
-                            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNSwipingTabView/tabitem-normal-left.png"] size:CPSizeMake(9, 22)],
-                            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNSwipingTabView/tabitem-normal-center.png"] size:CPSizeMake(1, 22)],
-                            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNSwipingTabView/tabitem-normal-right.png"] size:CPSizeMake(9, 22)]]
+                            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/tabitem-normal-left.png"] size:CPSizeMake(9, 22)],
+                            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/tabitem-normal-center.png"] size:CPSizeMake(1, 22)],
+                            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/tabitem-normal-right.png"] size:CPSizeMake(9, 22)]]
                         isVertical:NO]];
             colorPressed = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[
-                            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNSwipingTabView/tabitem-pressed-left.png"] size:CPSizeMake(9, 22)],
-                            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNSwipingTabView/tabitem-pressed-center.png"] size:CPSizeMake(1, 22)],
-                            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNSwipingTabView/tabitem-pressed-right.png"] size:CPSizeMake(9, 22)]]
+                            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/tabitem-pressed-left.png"] size:CPSizeMake(9, 22)],
+                            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/tabitem-pressed-center.png"] size:CPSizeMake(1, 22)],
+                            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/tabitem-pressed-right.png"] size:CPSizeMake(9, 22)]]
                         isVertical:NO]],
             colorActive = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[
-                            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNSwipingTabView/tabitem-active-left.png"] size:CPSizeMake(9, 22)],
-                            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNSwipingTabView/tabitem-active-center.png"] size:CPSizeMake(1, 22)],
-                            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNSwipingTabView/tabitem-active-right.png"] size:CPSizeMake(9, 22)]]
+                            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/tabitem-active-left.png"] size:CPSizeMake(9, 22)],
+                            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/tabitem-active-center.png"] size:CPSizeMake(1, 22)],
+                            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/tabitem-active-right.png"] size:CPSizeMake(9, 22)]]
                         isVertical:NO]];
 
-        _label = [[CPButton alloc] initWithFrame:CPRectMake(0, 0, [TNSwipingTabItemPrototype size].width - TNSwipingTabViewTabMargin, 22)];
+        _label = [[CPButton alloc] initWithFrame:CPRectMake(0, 0, [TNTabItemPrototype size].width - TNTabViewTabMargin, 22)];
         [_label setAutoresizingMask:CPViewMinXMargin | CPViewMinYMargin];
 
         [_label setValue:colorNormal forThemeAttribute:@"bezel-color" inState:CPThemeStateNormal];
@@ -106,7 +106,7 @@ var TNSwipingTabViewTabMargin = 10.0;
 #pragma mark overrides
 
 /*! called to set the content of the view
-    from the CPTabViewItem passed by TNSwipingTabView
+    from the CPTabViewItem passed by TNTabView
     @passed anItem the CPTabViewItem
 */
 - (void)setObjectValue:(CPTabView)anItem
@@ -158,49 +158,46 @@ var TNSwipingTabViewTabMargin = 10.0;
     this class is a sort of CPTabView (protocol compliant)
     but that uses a TNSwipeView
 */
-@implementation TNSwipingTabView : CPControl
+@implementation TNTabView : CPControl
 {
     id                          _delegate @accessors(property=delegate);
 
-    CPArray                     _tabItems;
-    CPArray                     _itemViews;
+    CPArray                     _itemObjects;
     CPView                      _currentSelectedItemView;
     CPView                      _viewTabsDocument;
     int                         _currentSelectedIndex;
-    TNSwipeView                 _swipeViewContent;
-    TNSwipingTabItemPrototype   _tabItemViewPrototype;
+    CPView                      _contentView;
+    TNTabItemPrototype          _tabItemViewPrototype;
     TNUIKitScrollView           _scrollViewTabs;
 }
 
 #pragma mark -
 #pragma mark Initialization
 
-/*! initialize the TNSwipingTabView
+/*! initialize the TNTabView
     @param aFrame the frame of the view
 */
-- (TNSwipingTabView)initWithFrame:(CPRect)aFrame
+- (TNTabView)initWithFrame:(CPRect)aFrame
 {
     if (self = [super initWithFrame:aFrame])
     {
-        _viewTabsDocument = [[CPView alloc] initWithFrame:CPRectMake(0.0, 0.0, 0.0, [TNSwipingTabItemPrototype size].height)];
+        _viewTabsDocument = [[CPView alloc] initWithFrame:CPRectMake(0.0, 0.0, 0.0, [TNTabItemPrototype size].height)];
 
-        _scrollViewTabs = [[TNUIKitScrollView alloc] initWithFrame:CPRectMake(0.0, 0.0, CPRectGetWidth(aFrame), [TNSwipingTabItemPrototype size].height)];
+        _scrollViewTabs = [[TNUIKitScrollView alloc] initWithFrame:CPRectMake(0.0, 0.0, CPRectGetWidth(aFrame), [TNTabItemPrototype size].height)];
         [_scrollViewTabs setAutoresizingMask:CPViewWidthSizable];
         [_scrollViewTabs setAutohidesScrollers:YES];
         [_scrollViewTabs setDocumentView:_viewTabsDocument];
 
-        _swipeViewContent = [[TNSwipeView alloc] initWithFrame:CPRectMake(0, [TNSwipingTabItemPrototype size].height, CPRectGetWidth(aFrame), CPRectGetHeight(aFrame) - [TNSwipingTabItemPrototype size].height)];
-        [_swipeViewContent setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
-        [_swipeViewContent setDelegate:self];
+        _contentView = [[CPView alloc] initWithFrame:CPRectMake(0, [TNTabItemPrototype size].height, CPRectGetWidth(aFrame), CPRectGetHeight(aFrame) - [TNTabItemPrototype size].height)];
+        [_contentView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
 
-        _currentSelectedIndex = 0;
-        _tabItems = [CPArray array];
-        _itemViews = [CPArray array];
-
-        _tabItemViewPrototype = [[TNSwipingTabItemPrototype alloc] initWithFrame:CPRectMake(0.0, 0.0, [TNSwipingTabItemPrototype size].width, [TNSwipingTabItemPrototype size].height)];
+        _currentSelectedIndex = -1;
+        _itemObjects = [CPArray array];
+    
+        _tabItemViewPrototype = [[TNTabItemPrototype alloc] initWithFrame:CPRectMake(0.0, 0.0, [TNTabItemPrototype size].width, [TNTabItemPrototype size].height)];
 
         [self addSubview:_scrollViewTabs];
-        [self addSubview:_swipeViewContent];
+        [self addSubview:_contentView];
 
         [self setNeedsLayout];
     }
@@ -223,42 +220,42 @@ var TNSwipingTabViewTabMargin = 10.0;
 /*! set the background color for the tabs view
     @param aColor the color
 */
-- (void)setSwipeViewBackgroundColor:(CPColor)aColor
+- (void)setContentBackgroundColor:(CPColor)aColor
 {
-    [_swipeViewContent setBackgroundColor:aColor];
-}
-
-/*! set the background color of the swipe view content
-    @param aColor the color
-*/
-- (void)setSwipeViewContentBackgroundColor:(CPColor)aColor
-{
-    [_swipeViewContent setSwipeViewBackgroundColor:aColor];
-}
-
-/*! set the minimal ratio of movement to swipe
-    @param aMinimalRatio the ratio value
-*/
-- (void)setSwipeViewMinimalMoveRatio:(float)aMinimalRatio
-{
-    [_swipeViewContent setMinimalRatio:aMinimalRatio];
+    [_contentView setBackgroundColor:aColor];
 }
 
 /*! set the prototype view for items
-    @param anItemPrototype a subclass of TNSwipingTabItemPrototype that represent the prototype
+    @param anItemPrototype a subclass of TNTabItemPrototype that represent the prototype
 */
-- (void)setTabItemViewPrototype:(TNSwipingTabItemPrototype)anItemPrototype
+- (void)setTabItemViewPrototype:(TNTabItemPrototype)anItemPrototype
 {
     _tabItemViewPrototype = anItemPrototype;
 }
 
 /*! @ignore
     Returns a new copy of the current item view prototype
-    @return a new copy of current TNSwipingTabItemPrototype
+    @return a new copy of current TNTabItemPrototype
 */
 - (void)_newTabItemPrototype
 {
     return [CPKeyedUnarchiver unarchiveObjectWithData:[CPKeyedArchiver archivedDataWithRootObject:_tabItemViewPrototype]];
+}
+
+- (void)_getTabItemAtIndex:(int)anIndex
+{
+    if (anIndex >= [_itemObjects count])
+        return nil;
+    
+    return [[_itemObjects objectAtIndex:anIndex] objectAtIndex:0];
+}
+
+- (void)_getTabViewAtIndex:(int)anIndex
+{
+    if (anIndex >= [_itemObjects count])
+        return nil;
+
+    return [[_itemObjects objectAtIndex:anIndex] objectAtIndex:1];
 }
 
 
@@ -270,17 +267,16 @@ var TNSwipingTabViewTabMargin = 10.0;
 */
 - (void)addTabViewItem:(CPTabViewItem)anItem
 {
-    [_tabItems addObject:anItem];
+    if (_currentSelectedIndex == -1)
+        _currentSelectedIndex = 0;
 
     var itemView = [self _newTabItemPrototype];
     [itemView setObjectValue:anItem];
-    [itemView setIndex:([_tabItems count] - 1)];
     [itemView setTarget:self];
     [itemView setAction:@selector(_tabItemCliked:)];
+    [_itemObjects addObject:[anItem, itemView]];
 
-    [_itemViews addObject:itemView];
     [_viewTabsDocument addSubview:itemView];
-
     [self setNeedsLayout];
 
     if (_delegate && [_delegate respondsToSelector:@selector(tabViewDidChangeNumberOfTabViewItems:)])
@@ -292,7 +288,11 @@ var TNSwipingTabViewTabMargin = 10.0;
 */
 - (int)indexOfTabViewItem:(CPTabViewItem)anItem
 {
-    return [_tabItems indexOfObject:anItem];
+    for (var i = 0; i < [_itemObjects count]; i++)
+        if ([self _getTabItemAtIndex:i] == anItem)
+            return i;
+
+    return -1;
 }
 
 /*! implement CPTabViewProtocol
@@ -300,10 +300,10 @@ var TNSwipingTabViewTabMargin = 10.0;
 */
 - (int)indexOfTabViewItemWithIdentifier:(CPString)anIdentifer
 {
-    for (var i = 0; i < [_tabItems count]; i++)
-        if ([[_tabItems objectAtIndex:i] identifier] == anIdentifer)
+    for (var i = 0; i < [_itemObjects count]; i++)
+        if ([[self _getTabItemAtIndex:i] identifier] == anIdentifer)
             return i;
-    return nil;
+    return -1;
 }
 
 /*! implement CPTabViewProtocol
@@ -311,7 +311,7 @@ var TNSwipingTabViewTabMargin = 10.0;
 */
 - (void)insertTabViewItem:(CPTabViewItem)anItem atIndex:(int)anIndex
 {
-    CPLog.warn("insertTabViewItem:atIndex: is not implemented in TNSwipingTabView");
+    CPLog.warn("insertTabViewItem:atIndex: is not implemented in TNTabView");
 }
 
 /*! implement CPTabViewProtocol
@@ -319,7 +319,7 @@ var TNSwipingTabViewTabMargin = 10.0;
 */
 - (void)numberOfTabViewItems
 {
-    return [_tabItems count];
+    return [_itemObjects count];
 }
 
 /*! implement CPTabViewProtocol
@@ -327,13 +327,23 @@ var TNSwipingTabViewTabMargin = 10.0;
 */
 - (void)removeTabViewItem:(CPTabViewItem)anItem
 {
-    var currentItemView = [_itemViews objectAtIndex:[self indexOfTabViewItemWithIdentifier:[anItem identifier]]];
+    if (_currentSelectedIndex == -1)
+        return;
+    
+    var itemIndex = [self indexOfTabViewItemWithIdentifier:[anItem identifier]],
+        currentItemView = [self _getTabViewAtIndex:itemIndex];
+
+    [[[self selectedTabViewItem] view] removeFromSuperview];
+
     [currentItemView removeFromSuperview];
-
-    [_itemViews removeObject:currentItemView];
-    [_tabItems removeObject:anItem];
-
+    [_itemObjects removeObjectAtIndex:[self indexOfTabViewItemWithIdentifier:[anItem identifier]]];
+    
     [self setNeedsLayout];
+    
+    if ([_itemObjects count] == 0)
+        _currentSelectedIndex = -1;
+    else if (_currentSelectedIndex >= [_itemObjects count])
+        [self selectLastTabViewItem:nil];
 
     if (_delegate && [_delegate respondsToSelector:@selector(tabViewDidChangeNumberOfTabViewItems:)])
         [_delegate tabViewDidChangeNumberOfTabViewItems:self];
@@ -344,7 +354,7 @@ var TNSwipingTabViewTabMargin = 10.0;
 */
 - (void)selectedTabViewItem
 {
-    return [_tabItems objectAtIndex:_currentSelectedIndex];
+    return [self _getTabItemAtIndex:_currentSelectedIndex];
 }
 
 /*! implement CPTabViewProtocol
@@ -360,7 +370,10 @@ var TNSwipingTabViewTabMargin = 10.0;
 */
 - (void)selectLastTabViewItem:(id)aSender
 {
-    [self selectTabViewItemAtIndex:[_tabItems count] - 1];
+    if (_currentSelectedIndex == -1)
+        return;
+    
+    [self selectTabViewItemAtIndex:[_itemObjects count] - 1];
 }
 
 /*! implement CPTabViewProtocol
@@ -368,6 +381,9 @@ var TNSwipingTabViewTabMargin = 10.0;
 */
 - (void)selectNextTabViewItem:(id)aSender
 {
+    if (_currentSelectedIndex == -1)
+        return;
+    
     [self selectTabViewItemAtIndex:(_currentSelectedIndex + 1)];
 }
 
@@ -376,6 +392,9 @@ var TNSwipingTabViewTabMargin = 10.0;
 */
 - (void)selectPreviousTabViewItem:(id)aSender
 {
+    if (_currentSelectedIndex == -1)
+        return;
+    
     [self selectTabViewItemAtIndex:(_currentSelectedIndex - 1)];
 }
 
@@ -384,7 +403,12 @@ var TNSwipingTabViewTabMargin = 10.0;
 */
 - (void)selectTabViewItemAtIndex:(int)anIndex
 {
-    var pendingItem = [_tabItems objectAtIndex:anIndex];
+    if (_currentSelectedIndex == -1)
+        return;
+    
+    [[[self selectedTabViewItem] view] removeFromSuperview];
+
+    var pendingItem = [self _getTabItemAtIndex:anIndex];
 
     if (_delegate && [_delegate respondsToSelector:@selector(tabView:shouldSelectTabViewItem:)])
         if (![_delegate tabView:self shouldSelectTabViewItem:pendingItem])
@@ -392,8 +416,19 @@ var TNSwipingTabViewTabMargin = 10.0;
 
     if (_delegate && [_delegate respondsToSelector:@selector(tabView:willSelectTabViewItem:)])
         [_delegate tabView:self willSelectTabViewItem:pendingItem];
+    
+    [_currentSelectedItemView unsetThemeState:CPThemeStateSelected];
+    _currentSelectedItemView = [self _getTabViewAtIndex:anIndex];
+    [_currentSelectedItemView setThemeState:CPThemeStateSelected];
 
-    [_swipeViewContent slideToViewIndex:anIndex];
+    [[pendingItem view] setFrame:[_contentView bounds]];
+    [_contentView addSubview:[pendingItem view]];
+
+    _currentSelectedIndex = anIndex;
+
+    if (_delegate && [_delegate respondsToSelector:@selector(tabView:didSelectTabViewItem:)])
+        [_delegate tabView:self didSelectTabViewItem:[[_itemObjects objectAtIndex:anIndex] objectAtIndex:0]];
+    
 }
 
 /*! implement CPTabViewProtocol
@@ -401,7 +436,7 @@ var TNSwipingTabViewTabMargin = 10.0;
 */
 - (CPTabViewItem)tabViewItemAtIndex:(int)anIndex
 {
-    return [_tabItems objectAtIndex:anIndex];
+    return [self _getTabItemAtIndex:anIndex];
 }
 
 /*! implement CPTabViewProtocol
@@ -409,43 +444,45 @@ var TNSwipingTabViewTabMargin = 10.0;
 */
 - (CPArray)tabViewItems
 {
-    return _tabItems;
+    var ret = [CPArray array];
+    for (var i = 0; i < [_itemObjects count]; i++)
+        [ret addObject:[self _getTabItemAtIndex:i]];
+
+    return ret;
 }
 
 
 #pragma mark -
 #pragma mark Layouting
 
-/*! layout the TNSwipingTabView
+/*! layout the TNTabView
 */
 - (void)layoutSubviews
 {
-    var views = [CPArray array],
-        docViewWitdh = MAX(([TNSwipingTabItemPrototype size].width * [_tabItems count]), [self frameSize].width);
-        currentXOrigin = (docViewWitdh / 2) - [_tabItems count] * [TNSwipingTabItemPrototype size].width / 2;
+    var docViewWitdh = MAX(([TNTabItemPrototype size].width * [_itemObjects count]), [self frameSize].width);
+        currentXOrigin = (docViewWitdh / 2) - [_itemObjects count] * [TNTabItemPrototype size].width / 2;
 
-    [_viewTabsDocument setFrameSize:CPSizeMake(docViewWitdh, [TNSwipingTabItemPrototype size].height)];
+    [_viewTabsDocument setFrameSize:CPSizeMake(docViewWitdh, [TNTabItemPrototype size].height)];
 
-    for (var i = 0; i < [_tabItems count]; i++)
+    for (var i = 0; i < [_itemObjects count]; i++)
     {
-        var item = [_tabItems objectAtIndex:i],
+        var item = [self _getTabItemAtIndex:i],
+            itemView = [self _getTabViewAtIndex:i],
             view = [item view];
-
-        itemView = [_itemViews objectAtIndex:i];
+    
         [itemView setFrameOrigin:CPPointMake(currentXOrigin, 2.0)];
-
+        [itemView setIndex:i];
+        
+        [view setFrame:[self bounds]];
+    
         if (_currentSelectedIndex == i)
         {
             _currentSelectedItemView = itemView;
             [_currentSelectedItemView setThemeState:CPThemeStateSelected];
+            [_contentView addSubview:view];
         }
-
-        [views addObject:view];
-        currentXOrigin += [TNSwipingTabItemPrototype size].width;
+        currentXOrigin += [TNTabItemPrototype size].width;
     }
-
-    [_swipeViewContent setViews:views];
-    [_swipeViewContent setNeedsLayout];
 }
 
 /*! @ignore
@@ -458,29 +495,10 @@ var TNSwipingTabViewTabMargin = 10.0;
     [self selectTabViewItemAtIndex:[aSender index]];
 }
 
-
-#pragma mark -
-#pragma mark Delegate
-
-/*! delegate ofg TNSwipeView
-*/
-- (void)swipeView:(TNSwipeView)aSwipeView didSelectIndex:(int)anIndex
-{
-    var currentView = [_itemViews objectAtIndex:anIndex];
-
-    [_currentSelectedItemView unsetThemeState:CPThemeStateSelected];
-    [currentView setThemeState:CPThemeStateSelected];
-    _currentSelectedIndex = anIndex;
-    _currentSelectedItemView = currentView;
-
-    if (_delegate && [_delegate respondsToSelector:@selector(tabView:didSelectTabViewItem:)])
-        [_delegate tabView:self didSelectTabViewItem:[_tabItems objectAtIndex:anIndex]];
-}
-
 @end
 
 
-@implementation TNSwipingTabView (CPCoding)
+@implementation TNTabView (CPCoding)
 
 /*! CPCoder compliance
 */
@@ -489,12 +507,11 @@ var TNSwipingTabViewTabMargin = 10.0;
     if ( self = [super initWithCoder:aCoder])
     {
         _delegate                   = [aCoder decodeObjectForKey:@"_delegate"];
-        _tabItems                   = [aCoder decodeObjectForKey:@"_tabItems"];
-        _itemViews                  = [aCoder decodeObjectForKey:@"_itemViews"];
+        _itemObjects                = [aCoder decodeObjectForKey:@"_itemObjects"];
         _currentSelectedItemView    = [aCoder decodeObjectForKey:@"_currentSelectedItemView"];
         _viewTabsDocument           = [aCoder decodeObjectForKey:@"_viewTabsDocument"];
         _currentSelectedIndex       = [aCoder decodeObjectForKey:@"_currentSelectedIndex"];
-        _swipeViewContent           = [aCoder decodeObjectForKey:@"_swipeViewContent"];
+        _contentView                = [aCoder decodeObjectForKey:@"_contentView"];
         _tabItemViewPrototype       = [aCoder decodeObjectForKey:@"_tabItemViewPrototype"];
         _scrollViewTabs             = [aCoder decodeObjectForKey:@"_scrollViewTabs"];
     }
@@ -509,12 +526,11 @@ var TNSwipingTabViewTabMargin = 10.0;
     [super encodeWithCoder:aCoder];
 
     [aCoder encodeObject:_delegate forKey:@"_delegate"];
-    [aCoder encodeObject:_tabItems forKey:@"_tabItems"];
-    [aCoder encodeObject:_itemViews forKey:@"_itemViews"];
+    [aCoder encodeObject:_itemObjects forKey:@"_itemObjects"];
     [aCoder encodeObject:_currentSelectedItemView forKey:@"_currentSelectedItemView"];
     [aCoder encodeObject:_viewTabsDocument forKey:@"_viewTabsDocument"];
     [aCoder encodeObject:_currentSelectedIndex forKey:@"_currentSelectedIndex"];
-    [aCoder encodeObject:_swipeViewContent forKey:@"_swipeViewContent"];
+    [aCoder encodeObject:_contentView forKey:@"_contentView"];
     [aCoder encodeObject:_tabItemViewPrototype forKey:@"_tabItemViewPrototype"];
     [aCoder encodeObject:_scrollViewTabs forKey:@"_scrollViewTabs"];
 }
