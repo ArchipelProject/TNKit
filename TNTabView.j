@@ -16,11 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@import <AppKit/AppKit.j>
 
 @import "TNSwipeView.j"
 @import "TNUIKitScrollView.j"
 
-var TNTabViewTabMargin = 2.0;
+
+var TNTabViewTabMargin = 2.0,
+    TNTabViewTabsBackgroundColor,
+    TNTabViewTabButtonColorNormal,
+    TNTabViewTabButtonColorPressed,
+    TNTabViewTabButtonColorActive,
+    TNTabViewTabButtonRightBezelColorNormal,
+    TNTabViewTabButtonLeftBezelColorNormal,
+    TNTabViewTabButtonRightBezelColorPressed,
+    TNTabViewTabButtonLeftBezelColorPressed;
 
 /*! @ingroup tnkit
     This class represent the prototype of a TNTabView item
@@ -55,29 +65,30 @@ var TNTabViewTabMargin = 2.0;
 {
     if (self = [super initWithFrame:aFrame])
     {
-        var bundle = [CPBundle bundleForClass:[self class]],
-            colorNormal = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[
-                            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/tabitem-normal-left.png"] size:CPSizeMake(9, 22)],
-                            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/tabitem-normal-center.png"] size:CPSizeMake(1, 22)],
-                            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/tabitem-normal-right.png"] size:CPSizeMake(9, 22)]]
-                        isVertical:NO]],
-            colorPressed = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[
-                            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/tabitem-pressed-left.png"] size:CPSizeMake(9, 22)],
-                            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/tabitem-pressed-center.png"] size:CPSizeMake(1, 22)],
-                            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/tabitem-pressed-right.png"] size:CPSizeMake(9, 22)]]
-                        isVertical:NO]],
-            colorActive = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[
-                            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/tabitem-active-left.png"] size:CPSizeMake(9, 22)],
-                            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/tabitem-active-center.png"] size:CPSizeMake(1, 22)],
-                            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/tabitem-active-right.png"] size:CPSizeMake(9, 22)]]
-                        isVertical:NO]];
-
         _label = [[CPButton alloc] initWithFrame:CPRectMake(0, 0, [TNTabItemPrototype size].width - TNTabViewTabMargin, 22)];
         [_label setAutoresizingMask:CPViewMinXMargin | CPViewMinYMargin];
 
-        [_label setValue:colorNormal forThemeAttribute:@"bezel-color" inState:CPThemeStateNormal];
-        [_label setValue:colorPressed forThemeAttribute:@"bezel-color" inState:CPThemeStateHighlighted];
-        [_label setValue:colorActive forThemeAttribute:@"bezel-color" inState:CPThemeStateSelected];
+        if (!TNTabViewTabButtonColorNormal)
+        {
+            TNTabViewTabButtonColorNormal = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[
+                            [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-normal-left.png"] size:CPSizeMake(9, 22)],
+                            [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-normal-center.png"] size:CPSizeMake(1, 22)],
+                            [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-normal-right.png"] size:CPSizeMake(9, 22)]]
+                        isVertical:NO]];
+            TNTabViewTabButtonColorPressed = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[
+                            [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-pressed-left.png"] size:CPSizeMake(9, 22)],
+                            [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-pressed-center.png"] size:CPSizeMake(1, 22)],
+                            [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-pressed-right.png"] size:CPSizeMake(9, 22)]]
+                        isVertical:NO]];
+            TNTabViewTabButtonColorActive = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[
+                            [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-active-left.png"] size:CPSizeMake(9, 22)],
+                            [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-active-center.png"] size:CPSizeMake(1, 22)],
+                            [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-active-right.png"] size:CPSizeMake(9, 22)]]
+                        isVertical:NO]];
+        }
+        [_label setValue:TNTabViewTabButtonColorNormal forThemeAttribute:@"bezel-color" inState:CPThemeStateNormal];
+        [_label setValue:TNTabViewTabButtonColorPressed forThemeAttribute:@"bezel-color" inState:CPThemeStateHighlighted];
+        [_label setValue:TNTabViewTabButtonColorActive forThemeAttribute:@"bezel-color" inState:CPThemeStateSelected];
 
         [_label setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateHighlighted];
         [_label setValue:[CPColor blackColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateHighlighted];
@@ -163,12 +174,15 @@ var TNTabViewTabMargin = 2.0;
     id                          _delegate @accessors(property=delegate);
 
     CPArray                     _itemObjects;
+    CPButton                    _buttonScrollLeft;
+    CPButton                    _buttonScrollRight;
     CPView                      _currentSelectedItemView;
     CPView                      _viewTabsDocument;
     int                         _currentSelectedIndex;
     CPView                      _contentView;
     TNTabItemPrototype          _tabItemViewPrototype;
     TNUIKitScrollView           _scrollViewTabs;
+    BOOL                        _needsScroll;
 }
 
 
@@ -182,24 +196,58 @@ var TNTabViewTabMargin = 2.0;
 {
     if (self = [super initWithFrame:aFrame])
     {
+        if (!TNTabViewTabsBackgroundColor)
+        {
+            var bundle = [CPBundle bundleForClass:[self class]];
+            TNTabViewTabsBackgroundColor = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/tabs-background.png"]]];
+            TNTabViewTabButtonRightBezelColorNormal = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/scroll-button-right-bezel.png"]];
+            TNTabViewTabButtonLeftBezelColorNormal = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/scroll-button-left-bezel.png"]];
+            TNTabViewTabButtonRightBezelColorPressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/scroll-button-right-bezel-pressed.png"]];
+            TNTabViewTabButtonLeftBezelColorPressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/scroll-button-left-bezel-pressed.png"]];
+        }
+
         _viewTabsDocument = [[CPView alloc] initWithFrame:CPRectMake(0.0, 0.0, 0.0, [TNTabItemPrototype size].height)];
 
         _scrollViewTabs = [[TNUIKitScrollView alloc] initWithFrame:CPRectMake(0.0, 0.0, CPRectGetWidth(aFrame), [TNTabItemPrototype size].height)];
         [_scrollViewTabs setAutoresizingMask:CPViewWidthSizable];
         [_scrollViewTabs setAutohidesScrollers:YES];
         [_scrollViewTabs setDocumentView:_viewTabsDocument];
+        [_scrollViewTabs setHasVerticalScroller:NO];
+        [_scrollViewTabs setHasHorizontalScroller:NO];
 
         _contentView = [[CPView alloc] initWithFrame:CPRectMake(0, [TNTabItemPrototype size].height, CPRectGetWidth(aFrame), CPRectGetHeight(aFrame) - [TNTabItemPrototype size].height)];
         [_contentView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
 
         _currentSelectedIndex = -1;
+        _needsScroll = NO;
         _itemObjects = [CPArray array];
 
         _tabItemViewPrototype = [[TNTabItemPrototype alloc] initWithFrame:CPRectMake(0.0, 0.0, [TNTabItemPrototype size].width, [TNTabItemPrototype size].height)];
 
+        _buttonScrollRight = [CPButton buttonWithTitle:@">"];
+        [_buttonScrollRight setBordered:NO];
+        [_buttonScrollRight setImage:TNTabViewTabButtonRightBezelColorNormal]; // this avoid the blinking..
+        [_buttonScrollRight setValue:TNTabViewTabButtonRightBezelColorNormal forThemeAttribute:@"image"];
+        [_buttonScrollRight setValue:TNTabViewTabButtonRightBezelColorPressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
+        [_buttonScrollRight setFrame:CPRectMake(20.0, 0.0, 20.0, [TNTabItemPrototype size].height)];
+        [_buttonScrollRight setContinuous:YES];
+        [_buttonScrollRight setTarget:_scrollViewTabs];
+        [_buttonScrollRight setAction:@selector(moveRight:)];
+
+        _buttonScrollLeft = [CPButton buttonWithTitle:@"<"];
+        [_buttonScrollLeft setBordered:NO];
+        [_buttonScrollLeft setImage:TNTabViewTabButtonLeftBezelColorNormal]; // this avoid the blinking..
+        [_buttonScrollLeft setValue:TNTabViewTabButtonLeftBezelColorNormal forThemeAttribute:@"image"];
+        [_buttonScrollLeft setValue:TNTabViewTabButtonLeftBezelColorPressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
+        [_buttonScrollLeft setFrame:CPRectMake(0.0, 0.0, 20.0, [TNTabItemPrototype size].height)];
+        [_buttonScrollLeft setContinuous:YES];
+        [_buttonScrollLeft setTarget:_scrollViewTabs];
+        [_buttonScrollLeft setAction:@selector(moveLeft:)];
+
+
         [self addSubview:_scrollViewTabs];
         [self addSubview:_contentView];
-
+        [self setTabViewBackgroundColor:TNTabViewTabsBackgroundColor];
         [self setNeedsLayout];
     }
 
@@ -360,6 +408,14 @@ var TNTabViewTabMargin = 2.0;
 /*! implement CPTabViewProtocol
     see documentation for CPTabView
 */
+- (void)selectTabViewItem:(CPTabViewItem)anItem
+{
+    [self selectTabViewItemAtIndex:[self indexOfTabViewItem:anItem]];
+}
+
+/*! implement CPTabViewProtocol
+    see documentation for CPTabView
+*/
 - (void)selectedTabViewItem
 {
     return [self _getTabItemAtIndex:_currentSelectedIndex];
@@ -467,8 +523,25 @@ var TNTabViewTabMargin = 2.0;
 */
 - (void)layoutSubviews
 {
-    var docViewWitdh = MAX(([TNTabItemPrototype size].width * [_itemObjects count]), [self frameSize].width),
+    var minimalDocViewWidth = [[_scrollViewTabs horizontalScroller] isEnabled] ? [self frameSize].width - 40 : [self frameSize].width,
+        docViewWitdh = MAX(([TNTabItemPrototype size].width * [_itemObjects count]), minimalDocViewWidth),
         currentXOrigin = (docViewWitdh / 2) - [_itemObjects count] * [TNTabItemPrototype size].width / 2;
+
+
+    if ([[_scrollViewTabs horizontalScroller] isEnabled])
+    {
+        [_scrollViewTabs setFrameSize:CPSizeMake([self bounds].size.width - 40, [TNTabItemPrototype size].height)];
+        [_scrollViewTabs setFrameOrigin:CPPointMake(40.0, 0.0)];
+        [self addSubview:_buttonScrollLeft];
+        [self addSubview:_buttonScrollRight];
+    }
+    else
+    {
+        [_scrollViewTabs setFrameSize:CPSizeMake([self bounds].size.width, [TNTabItemPrototype size].height)];
+        [_scrollViewTabs setFrameOrigin:CPPointMake(0.0, 0.0)];
+        [_buttonScrollRight removeFromSuperview];
+        [_buttonScrollLeft removeFromSuperview];
+    }
 
     [_viewTabsDocument setFrameSize:CPSizeMake(docViewWitdh, [TNTabItemPrototype size].height)];
 
@@ -536,6 +609,5 @@ var TNTabViewTabMargin = 2.0;
     [aCoder encodeObject:_tabItemViewPrototype forKey:@"_tabItemViewPrototype"];
     [aCoder encodeObject:_scrollViewTabs forKey:@"_scrollViewTabs"];
 }
-
 
 @end
