@@ -320,6 +320,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
 {
     if ([_windowView isMouseDownPressed])
     {
+        [_targetView removeObserver:self forKeyPath:@"frame"];
         [_windowView hideCursor];
         [self setLevel:CPNormalWindowLevel];
         [_closeButton setFrameOrigin:CPPointMake(1.0, 1.0)];
@@ -357,7 +358,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
     [self makeKeyAndOrderFront:nil];
 
     _targetView = aView;
-    [_targetView addObserver:self forKeyPath:@"window.frame" options:nil context:nil];
+    [_targetView addObserver:self forKeyPath:@"frame" options:nil context:nil];
 }
 
 /*! Position the TNAttachedWindow to a random point
@@ -396,7 +397,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
 {
     [self close];
 
-    [_targetView removeObserver:self forKeyPath:@"window.frame"];
+    [_targetView removeObserver:self forKeyPath:@"frame"];
 
     if (_delegate && [_delegate respondsToSelector:@selector(didAttachedWindowClose:)])
         [_delegate didAttachedWindowClose:self];
@@ -418,7 +419,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
 */
 - (void)observeValueForKeyPath:(CPString)aPath ofObject:(id)anObject change:(CPDictionary)theChange context:(void)aContext
 {
-    if ([aPath isEqual:@"window.frame"])
+    if ([aPath isEqual:@"frame"])
     {
         [self positionRelativeToView:_targetView];
     }
