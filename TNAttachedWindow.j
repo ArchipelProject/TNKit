@@ -174,7 +174,6 @@ TNAttachedBlackWindowMask       = 1 << 26;
     var frameView = [aView frame],
         currentView = aView,
         origin = [aView frameOrigin],
-        nativeRect = [[[CPApp mainWindow] platformWindow] nativeContentRect],
         lastView;
 
     // if somebody succeed to use the conversion function of CPView
@@ -197,25 +196,32 @@ TNAttachedBlackWindowMask       = 1 << 26;
         origin.y -= offsetPoint.y;
     }
 
-    var originLeft      = CPPointCreateCopy(origin),
+    return [self computeOriginFromPoint:origin baseWidth:CPRectGetWidth(frameView) baseHeight:CPRectGetHeight(frameView) gravity:gravity];
+}
+
+
+- (CPPoint)computeOriginFromPoint:(CPPoint)origin baseWidth:(float)aWidth baseHeight:(float)aHeight gravity:(int)gravity
+{
+    var nativeRect      = [[[CPApp mainWindow] platformWindow] nativeContentRect],
+        originLeft      = CPPointCreateCopy(origin),
         originRight     = CPPointCreateCopy(origin),
         originTop       = CPPointCreateCopy(origin),
         originBottom    = CPPointCreateCopy(origin);
 
     // TNAttachedWindowGravityRight
-    originRight.x += CPRectGetWidth(frameView);
-    originRight.y += (CPRectGetHeight(frameView) / 2.0) - (CPRectGetHeight([self frame]) / 2.0)
+    originRight.x += aWidth;
+    originRight.y += (aHeight / 2.0) - (CPRectGetHeight([self frame]) / 2.0)
 
     // TNAttachedWindowGravityLeft
     originLeft.x -= CPRectGetWidth([self frame]);
-    originLeft.y += (CPRectGetHeight(frameView) / 2.0) - (CPRectGetHeight([self frame]) / 2.0)
+    originLeft.y += (aHeight / 2.0) - (CPRectGetHeight([self frame]) / 2.0)
 
     // TNAttachedWindowGravityBottom
-    originBottom.x += CPRectGetWidth(frameView) / 2.0 - CPRectGetWidth([self frame]) / 2.0;
-    originBottom.y += CPRectGetHeight(frameView);
+    originBottom.x += aWidth / 2.0 - CPRectGetWidth([self frame]) / 2.0;
+    originBottom.y += aWidth;
 
     // TNAttachedWindowGravityTop
-    originTop.x += CPRectGetWidth(frameView) / 2.0 - CPRectGetWidth([self frame]) / 2.0;
+    originTop.x += aWidth / 2.0 - CPRectGetWidth([self frame]) / 2.0;
     originTop.y -= CPRectGetHeight([self frame]);
 
 
@@ -343,26 +349,33 @@ TNAttachedBlackWindowMask       = 1 << 26;
 {
     var point = [self computeOrigin:aView gravity:aGravity];
 
-    point.y = MAX(point.y, 0);
-
     [self setFrameOrigin:point];
     [_windowView showCursor];
     [self setLevel:CPStatusWindowLevel];
     [_closeButton setFrameOrigin:CPPointMake(1.0, 1.0)];
     [_windowView setNeedsDisplay:YES];
     [self makeKeyAndOrderFront:nil];
+
+    _targetView = aView;
+    [_targetView addObserver:self forKeyPath:@"window.frame" options:nil context:nil];
 }
 
+/*! Position the TNAttachedWindow to a random point
+    @param aPoint the point where the TNAttachedWindow will be attached
+    @param aGravity the gravity
+*/
+- (void)positionRelativeToPoint:(CPPoint)aPoint
+{
+    [self positionRelativeToPoint:aPoint gravity:TNAttachedWindowGravityAuto]
+}
+
+/*! Position the TNAttachedWindow to a random point
+    @param aPoint the point where the TNAttachedWindow will be attached
+    @param aGravity the gravity
+*/
 - (void)positionRelativeToPoint:(CPPoint)aPoint gravity:(int)aGravity
 {
-    var fakeView = [[CPView alloc] initWithFrame:CPRectMake(aPoint.x, aPoint.y, 10, 10)];
-    [fakeView setHidden:YES];
-    //[fakeView setBackgroundColor:[CPColor redColor]];
-    [[[CPApp mainWindow] contentView] addSubview:fakeView];
-
-    var point = [self computeOrigin:fakeView gravity:aGravity];
-
-    point.y = MAX(point.y, 0);
+    var point = [self computeOriginFromPoint:aPoint baseWidth:10.0 baseHeight:10.0 gravity:aGravity];
 
     [self setFrameOrigin:point];
     [_windowView showCursor];
@@ -370,19 +383,6 @@ TNAttachedBlackWindowMask       = 1 << 26;
     [_closeButton setFrameOrigin:CPPointMake(1.0, 1.0)];
     [_windowView setNeedsDisplay:YES];
     [self makeKeyAndOrderFront:nil];
-
-    [fakeView removeFromSuperview];
-}
-
-/*! set the _targetView and attach the TNAttachedWindow to it
-    @param aView the view where TNAttachedWindow must be attached
-*/
-- (void)attachToView:(CPView)aView
-{
-    _targetView = aView;
-    [self positionRelativeToView:_targetView];
-
-    [_targetView addObserver:self forKeyPath:@"window.frame" options:nil context:nil];
 }
 
 
