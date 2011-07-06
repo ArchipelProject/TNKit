@@ -27,11 +27,11 @@
 @import <AppKit/CPView.j>
 @import <AppKit/CPWindow.j>
 
-TNAttachedWindowGravityUp      = 0;
-TNAttachedWindowGravityDown    = 1;
-TNAttachedWindowGravityLeft    = 2;
-TNAttachedWindowGravityRight   = 3;
-TNAttachedWindowGravityAuto    = 4;
+TNAttachedWindowGravityUp      = 1;
+TNAttachedWindowGravityDown    = 2;
+TNAttachedWindowGravityLeft    = 3;
+TNAttachedWindowGravityRight   = 4;
+TNAttachedWindowGravityAuto    = 5;
 
 CPClosableOnBlurWindowMask      = 1 << 4;
 
@@ -49,7 +49,6 @@ TNAttachedBlackWindowMask       = 1 << 26;
     id              _targetView         @accessors(property=targetView);
     BOOL            _isClosed;
     BOOL            _closeOnBlur;
-
     CPButton        _closeButton;
 }
 
@@ -234,6 +233,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
         {
             frameCopy.origin = tests[i];
 
+            // fix this to correctly find the positionning and everything will be OK
             if (CPRectContainsRect(nativeRect, frameCopy))
             {
                 if (CPPointEqualToPoint(tests[i], originRight))
@@ -278,26 +278,28 @@ TNAttachedBlackWindowMask       = 1 << 26;
     }
 
     [_windowView setGravity:gravity];
+    [_windowView setArrowOffsetX:0];
+    [_windowView setArrowOffsetY:0];
 
     var o = originToBeReturned;
     if (o.x < 0)
     {
-        [_windowView setGravity:nil];
+        [_windowView setArrowOffsetX:o.x];
         o.x = 0;
     }
     if (o.x + CPRectGetWidth([self frame]) > nativeRect.size.width)
     {
-        [_windowView setGravity:nil];
+        [_windowView setArrowOffsetX:(o.x + CPRectGetWidth([self frame]) - nativeRect.size.width)];
         o.x = nativeRect.size.width - CPRectGetWidth([self frame]);
     }
     if (o.y < 0)
     {
-        [_windowView setGravity:nil];
+        [_windowView setArrowOffsetY:o.y];
         o.y = 0;
     }
     if (o.y + CPRectGetHeight([self frame]) > nativeRect.size.height)
     {
-        [_windowView setGravity:nil];
+        [_windowView setArrowOffsetY:(CPRectGetHeight([self frame]) + o.y - nativeRect.size.height)];
         o.y = nativeRect.size.height - CPRectGetHeight([self frame]);
     }
 
@@ -339,10 +341,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
 */
 - (void)positionRelativeToView:(CPView)aView gravity:(int)aGravity
 {
-    var frameView = [aView frame],
-        posX = frameView.origin.x + CPRectGetWidth(frameView),
-        posY = frameView.origin.y + (CPRectGetHeight(frameView) / 2.0) - (CPRectGetHeight([self frame]) / 2.0),
-        point = [self computeOrigin:aView gravity:aGravity];
+    var point = [self computeOrigin:aView gravity:aGravity];
 
     point.y = MAX(point.y, 0);
 
@@ -352,6 +351,27 @@ TNAttachedBlackWindowMask       = 1 << 26;
     [_closeButton setFrameOrigin:CPPointMake(1.0, 1.0)];
     [_windowView setNeedsDisplay:YES];
     [self makeKeyAndOrderFront:nil];
+}
+
+- (void)positionRelativeToPoint:(CPPoint)aPoint gravity:(int)aGravity
+{
+    var fakeView = [[CPView alloc] initWithFrame:CPRectMake(aPoint.x, aPoint.y, 10, 10)];
+    [fakeView setHidden:YES];
+    //[fakeView setBackgroundColor:[CPColor redColor]];
+    [[[CPApp mainWindow] contentView] addSubview:fakeView];
+
+    var point = [self computeOrigin:fakeView gravity:aGravity];
+
+    point.y = MAX(point.y, 0);
+
+    [self setFrameOrigin:point];
+    [_windowView showCursor];
+    [self setLevel:CPStatusWindowLevel];
+    [_closeButton setFrameOrigin:CPPointMake(1.0, 1.0)];
+    [_windowView setNeedsDisplay:YES];
+    [self makeKeyAndOrderFront:nil];
+
+    [fakeView removeFromSuperview];
 }
 
 /*! set the _targetView and attach the TNAttachedWindow to it
@@ -412,6 +432,8 @@ TNAttachedBlackWindowMask       = 1 << 26;
 {
     BOOL            _mouseDownPressed           @accessors(getter=isMouseDownPressed, setter=setMouseDownPressed:);
     unsigned        _gravity                    @accessors(property=gravity);
+    float           _arrowOffsetX               @accessors(property=arrowOffsetX);
+    float           _arrowOffsetY               @accessors(property=arrowOffsetY);
 
     BOOL            _useGlowingEffect;
     CPColor         _backgroundTopColor;
@@ -464,7 +486,8 @@ TNAttachedBlackWindowMask       = 1 << 26;
     if (self = [super initWithFrame:aFrame styleMask:aStyleMask])
     {
         var bundle = [CPBundle bundleForClass:[self class]];
-
+        _arrowOffsetX = 0.0;
+        _arrowOffsetY = 0.0;
         _strokeColor = [CPColor colorWithHexString:[bundle objectForInfoDictionaryKey:(_styleMask & TNAttachedWhiteWindowMask) ? @"TNAttachedWindowWhiteMaskBorderColor" : @"TNAttachedWindowBlackMaskBorderColor"]];
         _useGlowingEffect = !![bundle objectForInfoDictionaryKey:@"TNAttachedWindowUseGlowEffect"];
         _backgroundTopColor = [CPColor colorWithHexString:[bundle objectForInfoDictionaryKey:(_styleMask & TNAttachedWhiteWindowMask) ? @"TNAttachedWindowWhiteMaskTopColor" : @"TNAttachedWindowBlackMaskTopColor"]];
@@ -541,27 +564,27 @@ TNAttachedBlackWindowMask       = 1 << 26;
     switch (_gravity)
     {
         case TNAttachedWindowGravityLeft:
-            CGContextMoveToPoint(context, aRect.size.width + aRect.origin.x, (aRect.size.height / 2 - (arrowWidth / 2)) + aRect.origin.y);
-            CGContextAddLineToPoint(context, aRect.size.width + arrowHeight + aRect.origin.x, (aRect.size.height / 2) + aRect.origin.y);
-            CGContextAddLineToPoint(context, aRect.size.width + aRect.origin.x, (aRect.size.height / 2 + (arrowWidth / 2)) + aRect.origin.y);
+            CGContextMoveToPoint(context, aRect.size.width + aRect.origin.x + _arrowOffsetX, (aRect.size.height / 2 - (arrowWidth / 2)) + aRect.origin.y + _arrowOffsetY);
+            CGContextAddLineToPoint(context, aRect.size.width + arrowHeight + aRect.origin.x + _arrowOffsetX, (aRect.size.height / 2) + aRect.origin.y + _arrowOffsetY);
+            CGContextAddLineToPoint(context, aRect.size.width + aRect.origin.x + _arrowOffsetX, (aRect.size.height / 2 + (arrowWidth / 2)) + aRect.origin.y + _arrowOffsetY);
             break;
 
         case TNAttachedWindowGravityRight:
-            CGContextMoveToPoint(context, aRect.origin.x, (aRect.size.height / 2 - (arrowWidth / 2)) + aRect.origin.y);
-            CGContextAddLineToPoint(context, aRect.origin.x - arrowHeight, (aRect.size.height / 2) + aRect.origin.y);
-            CGContextAddLineToPoint(context, aRect.origin.x, (aRect.size.height / 2 + (arrowWidth / 2) + aRect.origin.y));
+            CGContextMoveToPoint(context, aRect.origin.x + _arrowOffsetX, (aRect.size.height / 2 - (arrowWidth / 2)) + aRect.origin.y + _arrowOffsetY);
+            CGContextAddLineToPoint(context, aRect.origin.x - arrowHeight + _arrowOffsetX, (aRect.size.height / 2) + aRect.origin.y + _arrowOffsetY);
+            CGContextAddLineToPoint(context, aRect.origin.x + _arrowOffsetX, (aRect.size.height / 2 + (arrowWidth / 2) + aRect.origin.y + _arrowOffsetY));
             break;
 
         case TNAttachedWindowGravityDown:
-            CGContextMoveToPoint(context, (aRect.size.width / 2 - (arrowWidth / 2)) + aRect.origin.x, aRect.origin.y);
-            CGContextAddLineToPoint(context, (aRect.size.width / 2) + aRect.origin.x, aRect.origin.y - arrowHeight);
-            CGContextAddLineToPoint(context, (aRect.size.width / 2) + (arrowWidth / 2) + aRect.origin.x , aRect.origin.y);
+            CGContextMoveToPoint(context, (aRect.size.width / 2 - (arrowWidth / 2)) + aRect.origin.x + _arrowOffsetX, aRect.origin.y + _arrowOffsetY);
+            CGContextAddLineToPoint(context, (aRect.size.width / 2) + aRect.origin.x + _arrowOffsetX, aRect.origin.y - arrowHeight + _arrowOffsetY);
+            CGContextAddLineToPoint(context, (aRect.size.width / 2) + (arrowWidth / 2) + aRect.origin.x + _arrowOffsetX, aRect.origin.y + _arrowOffsetY);
             break;
 
         case TNAttachedWindowGravityUp:
-            CGContextMoveToPoint(context, (aRect.size.width / 2 - (arrowWidth / 2)) + aRect.origin.x, aRect.size.height + aRect.origin.y);
-            CGContextAddLineToPoint(context, (aRect.size.width / 2) + aRect.origin.x, aRect.size.height + aRect.origin.y + arrowHeight);
-            CGContextAddLineToPoint(context, (aRect.size.width / 2) + (arrowWidth / 2) + aRect.origin.x , aRect.size.height + aRect.origin.y);
+            CGContextMoveToPoint(context, (aRect.size.width / 2 - (arrowWidth / 2)) + aRect.origin.x + _arrowOffsetX, aRect.size.height + aRect.origin.y + _arrowOffsetY);
+            CGContextAddLineToPoint(context, (aRect.size.width / 2) + aRect.origin.x + _arrowOffsetX, aRect.size.height + aRect.origin.y + arrowHeight + _arrowOffsetY);
+            CGContextAddLineToPoint(context, (aRect.size.width / 2) + (arrowWidth / 2) + aRect.origin.x + _arrowOffsetX, aRect.size.height + aRect.origin.y + _arrowOffsetY);
             break;
     }
 
