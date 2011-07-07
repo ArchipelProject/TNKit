@@ -49,7 +49,9 @@ TNAttachedBlackWindowMask       = 1 << 26;
     id              _targetView         @accessors(property=targetView);
     BOOL            _isClosed;
     BOOL            _closeOnBlur;
+    BOOL            _shouldPerformAnimation;
     CPButton        _closeButton;
+    float           _animationDuration;
 }
 
 /*! override default windowView class loader
@@ -134,12 +136,16 @@ TNAttachedBlackWindowMask       = 1 << 26;
             [_closeButton setAction:@selector(close:)];
             [[self contentView] addSubview:_closeButton];
         }
-
+        _shouldPerformAnimation = YES;
         _closeOnBlur = (aStyleMask & CPClosableOnBlurWindowMask);
+        _animationDuration = 150;
 
         [self setLevel:CPStatusWindowLevel];
         [self setMovableByWindowBackground:YES];
         [self setHasShadow:NO];
+
+        _DOMElement.style.WebkitTransition = "-webkit-transform, opacity";
+        _DOMElement.style.WebkitTransitionDuration = _animationDuration + "ms";
 
         [_windowView setNeedsDisplay:YES];
     }
@@ -200,13 +206,13 @@ TNAttachedBlackWindowMask       = 1 << 26;
 }
 
 
-- (CPPoint)computeOriginFromPoint:(CPPoint)origin baseWidth:(float)aWidth baseHeight:(float)aHeight gravity:(int)gravity
+- (CPPoint)computeOriginFromPoint:(CPPoint)anOrigin baseWidth:(float)aWidth baseHeight:(float)aHeight gravity:(int)aGravity
 {
     var nativeRect      = [[[CPApp mainWindow] platformWindow] nativeContentRect],
-        originLeft      = CPPointCreateCopy(origin),
-        originRight     = CPPointCreateCopy(origin),
-        originTop       = CPPointCreateCopy(origin),
-        originBottom    = CPPointCreateCopy(origin);
+        originLeft      = CPPointCreateCopy(anOrigin),
+        originRight     = CPPointCreateCopy(anOrigin),
+        originTop       = CPPointCreateCopy(anOrigin),
+        originBottom    = CPPointCreateCopy(anOrigin);
 
     // TNAttachedWindowGravityRight
     originRight.x += aWidth;
@@ -218,98 +224,93 @@ TNAttachedBlackWindowMask       = 1 << 26;
 
     // TNAttachedWindowGravityBottom
     originBottom.x += aWidth / 2.0 - CPRectGetWidth([self frame]) / 2.0;
-    originBottom.y += aWidth;
+    originBottom.y += aHeight;
 
     // TNAttachedWindowGravityTop
     originTop.x += aWidth / 2.0 - CPRectGetWidth([self frame]) / 2.0;
     originTop.y -= CPRectGetHeight([self frame]);
 
 
-    if (gravity === TNAttachedWindowGravityAuto)
+    var requestedGravity = aGravity,
+        requestedOrigin = originRight;
+
+    switch (requestedGravity)
     {
-        var frameCopy = CPRectCreateCopy([self frame]);
+        case TNAttachedWindowGravityRight:
+            requestedOrigin = originRight;
+            break;
+        case TNAttachedWindowGravityLeft:
+            requestedOrigin = originLeft;
+            break;
+        case TNAttachedWindowGravityUp:
+            requestedOrigin = originTop;
+            break;
+        case TNAttachedWindowGravityDown:
+            requestedOrigin = originBottom;
+            break;
+        case TNAttachedWindowGravityAuto:
+            requestedOrigin = originTop;
+            requestedGravity = TNAttachedWindowGravityUp;
+            break;
+    }
 
-        nativeRect.origin.x = 0.0;
-        nativeRect.origin.y = 0.0;
+    var origins = [requestedOrigin, originRight, originLeft, originTop, originBottom],
+        gravityValues = [requestedGravity, TNAttachedWindowGravityRight, TNAttachedWindowGravityLeft,
+                        TNAttachedWindowGravityUp, TNAttachedWindowGravityDown];
 
-        var tests = [originRight, originLeft, originTop, originBottom];
+    for (var i = 0; i < origins.length; i++)
+    {
+        var o = origins[i],
+            g = gravityValues[i];
 
-        gravity = TNAttachedWindowGravityRight;
-        for (var i = 0; i < tests.length; i++)
+        [_windowView setArrowOffsetX:0];
+        [_windowView setArrowOffsetY:0];
+        [_windowView setGravity:g];
+
+        if (o.x < 0)
         {
-            frameCopy.origin = tests[i];
+            [_windowView setArrowOffsetX:o.x];
+            o.x = 0;
+        }
+        if (o.x + CPRectGetWidth([self frame]) > nativeRect.size.width)
+        {
+            [_windowView setArrowOffsetX:(o.x + CPRectGetWidth([self frame]) - nativeRect.size.width)];
+            o.x = nativeRect.size.width - CPRectGetWidth([self frame]);
+        }
+        if (o.y < 0)
+        {
+            [_windowView setArrowOffsetY:o.y];
+            o.y = 0;
+        }
+        if (o.y + CPRectGetHeight([self frame]) > nativeRect.size.height)
+        {
+            [_windowView setArrowOffsetY:(CPRectGetHeight([self frame]) + o.y - nativeRect.size.height)];
+            o.y = nativeRect.size.height - CPRectGetHeight([self frame]);
+        }
 
-            // fix this to correctly find the positionning and everything will be OK
-            if (CPRectContainsRect(nativeRect, frameCopy))
-            {
-                if (CPPointEqualToPoint(tests[i], originRight))
-                {
-                    gravity = TNAttachedWindowGravityRight
-                    break;
-                }
-                else if (CPPointEqualToPoint(tests[i], originLeft))
-                {
-                    gravity = TNAttachedWindowGravityLeft
-                    break;
-                }
-                else if (CPPointEqualToPoint(tests[i], originTop))
-                {
-                    gravity = TNAttachedWindowGravityUp
-                    break;
-                }
-                else if (CPPointEqualToPoint(tests[i], originBottom))
-                {
-                    gravity = TNAttachedWindowGravityDown
-                    break;
-                }
-            }
+        switch (g)
+        {
+            case TNAttachedWindowGravityRight:
+                if (o.x >= (anOrigin.x + aWidth))
+                    return o;
+                break;
+            case TNAttachedWindowGravityLeft:
+                if ((o.x + _frame.size.width) <= anOrigin.x)
+                    return o;
+                break;
+            case TNAttachedWindowGravityUp:
+                if ((o.y + _frame.size.height) <= anOrigin.y)
+                    return o;
+                break;
+            case TNAttachedWindowGravityDown:
+                if (o.y >= (anOrigin.y + aHeight))
+                    return o;
+                break;
         }
     }
 
-    var originToBeReturned;
-    switch (gravity)
-    {
-        case TNAttachedWindowGravityRight:
-            originToBeReturned = originRight;
-            break;
-        case TNAttachedWindowGravityLeft:
-            originToBeReturned = originLeft;
-            break;
-        case TNAttachedWindowGravityDown:
-            originToBeReturned = originBottom;
-            break;
-        case TNAttachedWindowGravityUp:
-            originToBeReturned = originTop;
-            break;
-    }
-
-    [_windowView setGravity:gravity];
-    [_windowView setArrowOffsetX:0];
-    [_windowView setArrowOffsetY:0];
-
-    var o = originToBeReturned;
-    if (o.x < 0)
-    {
-        [_windowView setArrowOffsetX:o.x];
-        o.x = 0;
-    }
-    if (o.x + CPRectGetWidth([self frame]) > nativeRect.size.width)
-    {
-        [_windowView setArrowOffsetX:(o.x + CPRectGetWidth([self frame]) - nativeRect.size.width)];
-        o.x = nativeRect.size.width - CPRectGetWidth([self frame]);
-    }
-    if (o.y < 0)
-    {
-        [_windowView setArrowOffsetY:o.y];
-        o.y = 0;
-    }
-    if (o.y + CPRectGetHeight([self frame]) > nativeRect.size.height)
-    {
-        [_windowView setArrowOffsetY:(CPRectGetHeight([self frame]) + o.y - nativeRect.size.height)];
-        o.y = nativeRect.size.height - CPRectGetHeight([self frame]);
-    }
-
-    return originToBeReturned;
+    [_windowView setGravity:requestedGravity];
+    return requestedOrigin;
 }
 
 
@@ -395,7 +396,12 @@ TNAttachedBlackWindowMask       = 1 << 26;
 */
 - (IBAction)close:(id)aSender
 {
-    [self close];
+    _DOMElement.style.opacity = 0;
+    var transitionEndFunction = function(){
+        [self close];
+        _DOMElement.removeEventListener("webkitTransitionEnd", transitionEndFunction, YES);
+    };
+    _DOMElement.addEventListener("webkitTransitionEnd", transitionEndFunction, YES);
 
     [_targetView removeObserver:self forKeyPath:@"frame"];
 
@@ -406,9 +412,51 @@ TNAttachedBlackWindowMask       = 1 << 26;
 /*! order front the window as usual and add listener for CPWindowDidMoveNotification
     @param sender the sender of the action
 */
-- (IBAction)makeKeyAndOrderFront:(is)aSender
+- (IBAction)orderFront:(is)aSender
 {
-    [super makeKeyAndOrderFront:aSender];
+    [super orderFront:aSender];
+
+    // @TODO: add support for Mozilla
+    if (_shouldPerformAnimation && typeof(_DOMElement.style.WebkitTransform) != "undefined")
+    {
+        var tranformOrigin = "50% 100%";
+
+        switch ([_windowView gravity])
+        {
+            case TNAttachedWindowGravityDown:
+                var posX = 50 + (([_windowView arrowOffsetX] * 100) / _frame.size.width);
+                tranformOrigin = posX + "% 0%"; // 50 0
+                break;
+            case TNAttachedWindowGravityUp:
+                var posX = 50 + (([_windowView arrowOffsetX] * 100) / _frame.size.width);
+                tranformOrigin = posX + "% 100%"; // 50 100
+                break;
+            case TNAttachedWindowGravityLeft:
+                var posY = 50 + (([_windowView arrowOffsetY] * 100) / _frame.size.height);
+                tranformOrigin = "100% " + posY + "%"; // 100 50
+                break;
+            case TNAttachedWindowGravityRight:
+                var posY = 50 + (([_windowView arrowOffsetY] * 100) / _frame.size.height);
+                tranformOrigin = "0% "+ posY + "%"; // 0 50
+                break;
+        }
+
+        _DOMElement.style.opacity = 0;
+        _DOMElement.style.WebkitTransform = "scale(0)";
+        _DOMElement.style.WebkitTransformOrigin = tranformOrigin;
+        window.setTimeout(function(){
+            _DOMElement.style.height = _frame.size.height + @"px";
+            _DOMElement.style.width = _frame.size.width + @"px";
+            _DOMElement.style.opacity = 1;
+            _DOMElement.style.WebkitTransform = "scale(1.2)";
+            var transitionEndFunction = function(){
+                _DOMElement.style.WebkitTransform = "scale(1)";
+                _DOMElement.removeEventListener("webkitTransitionEnd", transitionEndFunction, YES);
+            };
+            _DOMElement.addEventListener("webkitTransitionEnd", transitionEndFunction, YES)
+        },0);
+    }
+
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_attachedWindowDidMove:) name:CPWindowDidMoveNotification object:self];
 
     _isClosed = NO;
@@ -421,7 +469,11 @@ TNAttachedBlackWindowMask       = 1 << 26;
 {
     if ([aPath isEqual:@"frame"])
     {
-        [self positionRelativeToView:_targetView];
+        var g = [_windowView gravity] || TNAttachedWindowGravityAuto;
+
+        _shouldPerformAnimation = NO;
+        [self positionRelativeToView:_targetView gravity:g];
+        _shouldPerformAnimation = YES;
     }
 }
 
