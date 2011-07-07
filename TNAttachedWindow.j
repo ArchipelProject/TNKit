@@ -59,6 +59,9 @@ TNAttachedBlackWindowMask       = 1 << 26;
     @return the windowView class
 */
 
+#pragma mark -
+#pragma mark Class methods
+
 + (Class)_windowViewClassForStyleMask:(unsigned)aStyleMask
 {
     return _TNAttachedWindowView;
@@ -154,6 +157,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
     return self;
 }
 
+
 #pragma mark -
 #pragma mark Getters/ Setters
 
@@ -167,23 +171,38 @@ TNAttachedBlackWindowMask       = 1 << 26;
 
 
 #pragma mark -
-#pragma mark Window actions
+#pragma mark Observer
 
-/*! called when the window is loowing focus and close the window
-    if CPClosableOnBlurWindowMask is setted
+/*! update the TNAttachedWindow frame if a resize event is observed
+
 */
-- (void)resignMainWindow
+- (void)observeValueForKeyPath:(CPString)aPath ofObject:(id)anObject change:(CPDictionary)theChange context:(void)aContext
 {
-    if (_closeOnBlur && !_isClosed)
+    if ([aPath isEqual:@"frame"])
     {
-        // set a close flag to avoid infinite loop
-        _isClosed = YES;
-        [self close];
+        // @TODO: not recompute everything, just compute the move offset
+        var g = [_windowView gravity] || TNAttachedWindowGravityAuto;
 
-        if (_delegate && [_delegate respondsToSelector:@selector(didAttachedWindowClose:)])
-            [_delegate didAttachedWindowClose:self];
+        [self positionRelativeToView:_targetView gravity:g];
     }
 }
+
+
+#pragma mark -
+#pragma mark Notification handlers
+
+- (void)_attachedWindowDidMove:(CPNotification)aNotification
+{
+    if ([_windowView isMouseDownPressed])
+    {
+        [_targetView removeObserver:self forKeyPath:@"frame"];
+        [_windowView hideCursor];
+        [self setLevel:CPNormalWindowLevel];
+        [_closeButton setFrameOrigin:CPPointMake(1.0, 1.0)];
+        [[CPNotificationCenter defaultCenter] removeObserver:self name:CPWindowDidMoveNotification object:self];
+    }
+}
+
 
 #pragma mark -
 #pragma mark Utilities
@@ -217,7 +236,6 @@ TNAttachedBlackWindowMask       = 1 << 26;
 
     return [self computeOriginFromPoint:origin baseWidth:CPRectGetWidth(frameView) baseHeight:CPRectGetHeight(frameView) gravity:gravity];
 }
-
 
 - (CPPoint)computeOriginFromPoint:(CPPoint)anOrigin baseWidth:(float)aWidth baseHeight:(float)aHeight gravity:(int)aGravity
 {
@@ -263,7 +281,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
             break;
         case TNAttachedWindowGravityAuto:
             requestedOrigin = originTop;
-            requestedGravity = TNAttachedWindowGravityUp;
+            requestedGravity = TNAttachedWindowGravityRight;
             break;
     }
 
@@ -326,26 +344,6 @@ TNAttachedBlackWindowMask       = 1 << 26;
     [_windowView setGravity:requestedGravity];
     return requestedOrigin;
 }
-
-
-#pragma mark -
-#pragma mark Notification handlers
-
-- (void)_attachedWindowDidMove:(CPNotification)aNotification
-{
-    if ([_windowView isMouseDownPressed])
-    {
-        [_targetView removeObserver:self forKeyPath:@"frame"];
-        [_windowView hideCursor];
-        [self setLevel:CPNormalWindowLevel];
-        [_closeButton setFrameOrigin:CPPointMake(1.0, 1.0)];
-        [[CPNotificationCenter defaultCenter] removeObserver:self name:CPWindowDidMoveNotification object:self];
-    }
-}
-
-
-#pragma mark -
-#pragma mark Utilities
 
 /*! compute the frame needed to be placed to the given view
     and position the attached window according to this view (gravity will be TNAttachedWindowGravityAuto)
@@ -410,18 +408,27 @@ TNAttachedBlackWindowMask       = 1 << 26;
 */
 - (IBAction)close:(id)aSender
 {
-    _shouldPerformAnimation = YES;
-    _DOMElement.style.opacity = 0;
-    var transitionEndFunction = function(){
+    [self close];
+}
+
+
+#pragma mark -
+#pragma mark Overrides
+
+/*! called when the window is loowing focus and close the window
+    if CPClosableOnBlurWindowMask is setted
+*/
+- (void)resignMainWindow
+{
+    if (_closeOnBlur && !_isClosed)
+    {
+        // set a close flag to avoid infinite loop
+        _isClosed = YES;
         [self close];
-        _DOMElement.removeEventListener("webkitTransitionEnd", transitionEndFunction, YES);
-    };
-    _DOMElement.addEventListener("webkitTransitionEnd", transitionEndFunction, YES);
 
-    [_targetView removeObserver:self forKeyPath:@"frame"];
-
-    if (_delegate && [_delegate respondsToSelector:@selector(didAttachedWindowClose:)])
-        [_delegate didAttachedWindowClose:self];
+        if (_delegate && [_delegate respondsToSelector:@selector(didAttachedWindowClose:)])
+            [_delegate didAttachedWindowClose:self];
+    }
 }
 
 /*! order front the window as usual and add listener for CPWindowDidMoveNotification
@@ -478,17 +485,22 @@ TNAttachedBlackWindowMask       = 1 << 26;
     _isClosed = NO;
 }
 
-/*! update the TNAttachedWindow frame if a resize event is observed
-
+/*! close the windo with animation
 */
-- (void)observeValueForKeyPath:(CPString)aPath ofObject:(id)anObject change:(CPDictionary)theChange context:(void)aContext
+- (void)close
 {
-    if ([aPath isEqual:@"frame"])
-    {
-        var g = [_windowView gravity] || TNAttachedWindowGravityAuto;
+    _shouldPerformAnimation = YES;
+    _DOMElement.style.opacity = 0;
+    var transitionEndFunction = function(){
+            [super close];
+        _DOMElement.removeEventListener("webkitTransitionEnd", transitionEndFunction, YES);
+    };
+    _DOMElement.addEventListener("webkitTransitionEnd", transitionEndFunction, YES);
 
-        [self positionRelativeToView:_targetView gravity:g];
-    }
+    [_targetView removeObserver:self forKeyPath:@"frame"];
+
+    if (_delegate && [_delegate respondsToSelector:@selector(didAttachedWindowClose:)])
+        [_delegate didAttachedWindowClose:self];
 }
 
 @end
