@@ -144,7 +144,8 @@ TNAttachedBlackWindowMask       = 1 << 26;
         [self setMovableByWindowBackground:YES];
         [self setHasShadow:NO];
 
-        _DOMElement.style.WebkitTransition = "-webkit-transform, opacity";
+        _DOMElement.style.WebkitBackfaceVisibility = "hidden";
+        _DOMElement.style.WebkitTransitionProperty = "-webkit-transform, opacity";
         _DOMElement.style.WebkitTransitionDuration = _animationDuration + "ms";
 
         [_windowView setNeedsDisplay:YES];
@@ -152,6 +153,18 @@ TNAttachedBlackWindowMask       = 1 << 26;
 
     return self;
 }
+
+#pragma mark -
+#pragma mark Getters/ Setters
+
+/*! return the current computed value of gravity
+    @return int representing the gravity value
+*/
+- (int)gravity
+{
+    return [_windowView gravity];
+}
+
 
 #pragma mark -
 #pragma mark Window actions
@@ -266,7 +279,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
         [_windowView setArrowOffsetX:0];
         [_windowView setArrowOffsetY:0];
         [_windowView setGravity:g];
-
+        [_windowView setShouldDrawArrow:YES];
         if (o.x < 0)
         {
             [_windowView setArrowOffsetX:o.x];
@@ -309,6 +322,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
         }
     }
 
+    [_windowView setShouldDrawArrow:NO];
     [_windowView setGravity:requestedGravity];
     return requestedOrigin;
 }
@@ -396,6 +410,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
 */
 - (IBAction)close:(id)aSender
 {
+    _shouldPerformAnimation = YES;
     _DOMElement.style.opacity = 0;
     var transitionEndFunction = function(){
         [self close];
@@ -416,31 +431,31 @@ TNAttachedBlackWindowMask       = 1 << 26;
 {
     [super orderFront:aSender];
 
-    // @TODO: add support for Mozilla
+    var tranformOrigin = "50% 100%";
+
+    switch ([_windowView gravity])
+    {
+        case TNAttachedWindowGravityDown:
+            var posX = 50 + (([_windowView arrowOffsetX] * 100) / _frame.size.width);
+            tranformOrigin = posX + "% 0%"; // 50 0
+            break;
+        case TNAttachedWindowGravityUp:
+            var posX = 50 + (([_windowView arrowOffsetX] * 100) / _frame.size.width);
+            tranformOrigin = posX + "% 100%"; // 50 100
+            break;
+        case TNAttachedWindowGravityLeft:
+            var posY = 50 + (([_windowView arrowOffsetY] * 100) / _frame.size.height);
+            tranformOrigin = "100% " + posY + "%"; // 100 50
+            break;
+        case TNAttachedWindowGravityRight:
+            var posY = 50 + (([_windowView arrowOffsetY] * 100) / _frame.size.height);
+            tranformOrigin = "0% "+ posY + "%"; // 0 50
+            break;
+    }
+
+    // @TODO: implement for FF
     if (_shouldPerformAnimation && typeof(_DOMElement.style.WebkitTransform) != "undefined")
     {
-        var tranformOrigin = "50% 100%";
-
-        switch ([_windowView gravity])
-        {
-            case TNAttachedWindowGravityDown:
-                var posX = 50 + (([_windowView arrowOffsetX] * 100) / _frame.size.width);
-                tranformOrigin = posX + "% 0%"; // 50 0
-                break;
-            case TNAttachedWindowGravityUp:
-                var posX = 50 + (([_windowView arrowOffsetX] * 100) / _frame.size.width);
-                tranformOrigin = posX + "% 100%"; // 50 100
-                break;
-            case TNAttachedWindowGravityLeft:
-                var posY = 50 + (([_windowView arrowOffsetY] * 100) / _frame.size.height);
-                tranformOrigin = "100% " + posY + "%"; // 100 50
-                break;
-            case TNAttachedWindowGravityRight:
-                var posY = 50 + (([_windowView arrowOffsetY] * 100) / _frame.size.height);
-                tranformOrigin = "0% "+ posY + "%"; // 0 50
-                break;
-        }
-
         _DOMElement.style.opacity = 0;
         _DOMElement.style.WebkitTransform = "scale(0)";
         _DOMElement.style.WebkitTransformOrigin = tranformOrigin;
@@ -448,7 +463,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
             _DOMElement.style.height = _frame.size.height + @"px";
             _DOMElement.style.width = _frame.size.width + @"px";
             _DOMElement.style.opacity = 1;
-            _DOMElement.style.WebkitTransform = "scale(1.2)";
+            _DOMElement.style.WebkitTransform = "scale(1.1)";
             var transitionEndFunction = function(){
                 _DOMElement.style.WebkitTransform = "scale(1)";
                 _DOMElement.removeEventListener("webkitTransitionEnd", transitionEndFunction, YES);
@@ -459,6 +474,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
 
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_attachedWindowDidMove:) name:CPWindowDidMoveNotification object:self];
 
+    _shouldPerformAnimation = NO;
     _isClosed = NO;
 }
 
@@ -471,9 +487,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
     {
         var g = [_windowView gravity] || TNAttachedWindowGravityAuto;
 
-        _shouldPerformAnimation = NO;
         [self positionRelativeToView:_targetView gravity:g];
-        _shouldPerformAnimation = YES;
     }
 }
 
@@ -487,6 +501,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
     unsigned        _gravity                    @accessors(property=gravity);
     float           _arrowOffsetX               @accessors(property=arrowOffsetX);
     float           _arrowOffsetY               @accessors(property=arrowOffsetY);
+    BOOL            _shouldDrawArrow            @accessors(getter=isDrawingArrow, setter=setShouldDrawArrow:);
 
     BOOL            _useGlowingEffect;
     CPColor         _backgroundTopColor;
@@ -614,7 +629,7 @@ TNAttachedBlackWindowMask       = 1 << 26;
     CGContextClosePath(context);
 
     //Start the arrow
-    switch (_gravity)
+    switch (_shouldDrawArrow && _gravity)
     {
         case TNAttachedWindowGravityLeft:
             CGContextMoveToPoint(context, aRect.size.width + aRect.origin.x + _arrowOffsetX, (aRect.size.height / 2 - (arrowWidth / 2)) + aRect.origin.y + _arrowOffsetY);
