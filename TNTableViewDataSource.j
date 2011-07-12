@@ -157,6 +157,15 @@
     _needsFilter = YES;
 }
 
+/*! Chek if contents contains given object
+    @param anObject the object to search
+    @return YES if anObject is in the contents
+*/
+- (void)containsObject:(id)anObject
+{
+    return [_filteredContent containsObject:anObject];
+}
+
 /*! insert an object at a given index in the datasource
     @param anObject object to add
     @param anObject int representing the position
