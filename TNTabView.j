@@ -16,7 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import <AppKit/AppKit.j>
+@import <Foundation/Foundation.j>
+
+@import <AppKit/CPButton.j>
+@import <AppKit/CPControl.j>
+@import <AppKit/CPTabViewItem.j>
+@import <AppKit/CPTheme.j>
+@import <AppKit/CPView.j>
 
 @import "TNSwipeView.j"
 @import "TNUIKitScrollView.j"
@@ -31,6 +37,8 @@ var TNTabViewTabMargin = 2.0,
     TNTabViewTabButtonLeftBezelColorNormal,
     TNTabViewTabButtonRightBezelColorPressed,
     TNTabViewTabButtonLeftBezelColorPressed;
+
+var TNTabItemPrototypeThemeStateSelected;
 
 /*! @ingroup tnkit
     This class represent the prototype of a TNTabView item
@@ -65,6 +73,9 @@ var TNTabViewTabMargin = 2.0,
 {
     if (self = [super initWithFrame:aFrame])
     {
+        if (!TNTabItemPrototypeThemeStateSelected)
+            TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStateSelected");
+
         _label = [[CPButton alloc] initWithFrame:CPRectMake(0, 0, [TNTabItemPrototype size].width - TNTabViewTabMargin, 22)];
         [_label setAutoresizingMask:CPViewMinXMargin | CPViewMinYMargin];
 
@@ -88,12 +99,12 @@ var TNTabViewTabMargin = 2.0,
         }
         [_label setValue:TNTabViewTabButtonColorNormal forThemeAttribute:@"bezel-color" inState:CPThemeStateNormal];
         [_label setValue:TNTabViewTabButtonColorPressed forThemeAttribute:@"bezel-color" inState:CPThemeStateHighlighted];
-        [_label setValue:TNTabViewTabButtonColorActive forThemeAttribute:@"bezel-color" inState:CPThemeStateSelected];
+        [_label setValue:TNTabViewTabButtonColorActive forThemeAttribute:@"bezel-color" inState:TNTabItemPrototypeThemeStateSelected];
 
         [_label setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateHighlighted];
         [_label setValue:[CPColor blackColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateHighlighted];
-        [_label setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelected];
-        [_label setValue:[CPColor blackColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateSelected];
+        [_label setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:TNTabItemPrototypeThemeStateSelected];
+        [_label setValue:[CPColor blackColor] forThemeAttribute:@"text-shadow-color" inState:TNTabItemPrototypeThemeStateSelected];
 
         [self addSubview:_label];
 
@@ -481,9 +492,9 @@ var TNTabViewTabMargin = 2.0,
     if (_delegate && [_delegate respondsToSelector:@selector(tabView:willSelectTabViewItem:)])
         [_delegate tabView:self willSelectTabViewItem:pendingItem];
 
-    [_currentSelectedItemView unsetThemeState:CPThemeStateSelected];
+    [_currentSelectedItemView unsetThemeState:TNTabItemPrototypeThemeStateSelected];
     _currentSelectedItemView = [self _getTabViewAtIndex:anIndex];
-    [_currentSelectedItemView setThemeState:CPThemeStateSelected];
+    [_currentSelectedItemView setThemeState:TNTabItemPrototypeThemeStateSelected];
 
     [[pendingItem view] setFrame:[_contentView bounds]];
     [_contentView addSubview:[pendingItem view]];
