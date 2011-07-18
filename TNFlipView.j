@@ -48,7 +48,17 @@ TNFlipViewAnimationStyleTranslate = 2;
 TNFlipViewAnimationStyleTranslateHorizontal = 1;
 TNFlipViewAnimationStyleTranslateVertical = 2;
 
-TNFlipViewCurrentBrowserEngine = (typeof(document.body.style.WebkitTransform) != "undefined") ? "webkit" : "gecko";
+// handle flatten & press
+try
+{
+    TNFlipViewCurrentBrowserEngine = (typeof(document.body.style.WebkitTransform) != "undefined") ? "webkit" : "gecko";
+}
+catch(e)
+{
+    TNFlipViewCurrentBrowserEngine = "gecko";
+}
+
+
 
 /*! @ingroup TNKit
     this widget allow to set a back view and a front view and

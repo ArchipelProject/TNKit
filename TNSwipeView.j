@@ -49,7 +49,17 @@ TNSwipeViewDirectionLeft = 2;
 TNSwipeViewCSSTranslateFunctionX = @"translateX";
 TNSwipeViewCSSTranslateFunctionY = @"translateY";
 
-TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "undefined") ? "webkit" : "gecko";
+// handle flatten & press
+try
+{
+    TNSwipeViewBrowserEngine = (typeof(document.body.style.WebkitTransform) != "undefined") ? "webkit" : "gecko";
+}
+catch(e)
+{
+    TNSwipeViewBrowserEngine = "gecko";
+}
+
+
 
 /*! @ingroup TNKit
     This widget allows to add custom views in it and swipe them as pages
