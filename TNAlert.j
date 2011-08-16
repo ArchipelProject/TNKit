@@ -25,9 +25,8 @@
 /*! @ingroup tnkit
     A very easy to use alert without all the NSAlert mess
 */
-@implementation TNAlert : CPObject
+@implementation TNAlert : CPAlert
 {
-    CPAlert _alert      @accessors(getter=alert);
     CPArray _actions    @accessors(getter=actions);
     id      _helpTarget @accessors(getter=helpTarget);
     id      _target     @accessors(property=target);
@@ -97,17 +96,16 @@
 {
     if (self = [super init])
     {
-        _alert      = [[CPAlert alloc] init];
         _actions    = someActions;
         _target     = aTarget;
 
-        [_alert setMessageText:aTitle];
-        [_alert setInformativeText:aMessage];
-        [_alert setDelegate:self];
-        [_alert setAlertStyle:CPInformationalAlertStyle];
+        [self setMessageText:aTitle];
+        [self setInformativeText:aMessage];
+        [self setDelegate:self];
+        [self setAlertStyle:CPInformationalAlertStyle];
 
         for (var i = 0; i < [_actions count]; i++)
-            [_alert addButtonWithTitle:[[_actions objectAtIndex:i] objectAtIndex:0]];
+            [self addButtonWithTitle:[[_actions objectAtIndex:i] objectAtIndex:0]];
     }
 
     return self;
@@ -125,39 +123,27 @@
     {
         _helpTarget = aTarget;
         _helpAction = anAction;
-        [_alert setShowsHelp:YES];
+        [self setShowsHelp:YES];
     }
     else
     {
         _helpTarget = nil;
         _helpAction = nil;
-        [_alert setShowsHelp:NO];
+        [self setShowsHelp:NO];
 
     }
-}
-
-- (void)setAlertStyle:(int)aStyle
-{
-    [_alert setAlertStyle:aStyle];
 }
 
 
 #pragma mark -
 #pragma mark Displaying
 
-/*! run the alert in modal mode
-*/
-- (void)runModal
-{
-    [_alert runModal];
-}
-
 /*! run the alert as a sheet of given window
     @param aWindow the window to use for sheeting
 */
 - (void)beginSheetModalForWindow:(CPWindow)aWindow
 {
-    [_alert beginSheetModalForWindow:aWindow];
+    [self beginSheetModalForWindow:aWindow];
 }
 
 
