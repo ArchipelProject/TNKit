@@ -278,7 +278,7 @@
             break;
     }
     var frame = [toolbarItemView convertRect:[toolbarItemView bounds] toView:_toolbarView],
-        labelFrame = [[aToolbarItem label] sizeWithFont:[CPFont boldSystemFontOfSize:12]];
+        labelFrame = [aToolbarItem label] ? [[aToolbarItem label] sizeWithFont:[CPFont boldSystemFontOfSize:12]] : [aToolbarItem minSize];
     _iconSelected = YES;
 
     [_imageViewSelection setFrameSize:CGSizeMake(MAX(labelFrame.width + 4, 50.0), 60.0)];
