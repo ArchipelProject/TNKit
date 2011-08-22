@@ -478,7 +478,7 @@ var TNTabItemPrototypeThemeStateSelected;
 */
 - (void)selectTabViewItemAtIndex:(int)anIndex
 {
-    if (!_currentSelectedIndex || _currentSelectedIndex == -1)
+    if (_currentSelectedIndex == -1)
         return;
 
     [[[self selectedTabViewItem] view] removeFromSuperview];
