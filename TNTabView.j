@@ -25,7 +25,6 @@
 @import <AppKit/CPView.j>
 
 @import "TNSwipeView.j"
-@import "TNUIKitScrollView.j"
 
 
 var TNTabViewTabMargin = 2.0,
@@ -192,7 +191,7 @@ var TNTabItemPrototypeThemeStateSelected;
     int                         _currentSelectedIndex;
     CPView                      _contentView;
     TNTabItemPrototype          _tabItemViewPrototype;
-    TNUIKitScrollView           _scrollViewTabs;
+    CPScrollView                _scrollViewTabs;
     BOOL                        _needsScroll;
 }
 
@@ -219,7 +218,7 @@ var TNTabItemPrototypeThemeStateSelected;
 
         _viewTabsDocument = [[CPView alloc] initWithFrame:CPRectMake(0.0, 0.0, 0.0, [TNTabItemPrototype size].height)];
 
-        _scrollViewTabs = [[TNUIKitScrollView alloc] initWithFrame:CPRectMake(0.0, 0.0, CPRectGetWidth(aFrame), [TNTabItemPrototype size].height)];
+        _scrollViewTabs = [[CPScrollView alloc] initWithFrame:CPRectMake(0.0, 0.0, CPRectGetWidth(aFrame), [TNTabItemPrototype size].height)];
         [_scrollViewTabs setAutoresizingMask:CPViewWidthSizable];
         [_scrollViewTabs setAutohidesScrollers:YES];
         [_scrollViewTabs setDocumentView:_viewTabsDocument];
