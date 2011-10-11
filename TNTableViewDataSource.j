@@ -63,6 +63,7 @@
     CPArray         _content                @accessors(property=content);
     CPArray         _searchableKeyPaths     @accessors(property=searchableKeyPaths);
     CPTableView     _table                  @accessors(property=table);
+    CPPredicate     _displayFilter          @accessors(property=displayFilter);
 
     CPArray         _filteredContent;
     CPSearchField   _searchField;
@@ -106,7 +107,7 @@
 
     if (!(_filter) || (_filter == @""))
     {
-        _filteredContent = [_content copy];
+        _filteredContent = _displayFilter ? [[_content copy] filteredArrayUsingPredicate:_displayFilter] : [_content copy];
         [_table reloadData];
         return;
     }
@@ -122,7 +123,8 @@
             if ([entryValue uppercaseString].indexOf(_filter) != -1)
             {
                 if (![_filteredContent containsObject:entry])
-                    [_filteredContent addObject:entry];
+                    if (!_displayFilter || [_displayFilter evaluateWithObject:entry])
+                        [_filteredContent addObject:entry];
             }
 
         }
@@ -141,7 +143,7 @@
 - (void)setContent:(CPArray)aContent
 {
     _content = aContent;
-    _filteredContent = [aContent copy];
+    _filteredContent = _displayFilter ? [[_content copy] filteredArrayUsingPredicate:_displayFilter] : [_content copy];
 
     _needsFilter = YES;
 }
@@ -152,7 +154,9 @@
 - (void)addObject:(id)anObject
 {
     [_content addObject:anObject];
-    [_filteredContent addObject:anObject];
+
+    if (!_displayFilter || [_displayFilter evaluateWithObject:anObject])
+        [_filteredContent addObject:anObject];
 
     _needsFilter = YES;
 }
@@ -173,7 +177,9 @@
 - (void)insertObject:(id)anObject atIndex:(int)anIndex
 {
     [_content insertObject:anObject atIndex:anIndex];
-    [_filteredContent insertObject:anObject atIndex:anIndex];
+
+    if (!_displayFilter || [_displayFilter evaluateWithObject:anObject])
+        [_filteredContent insertObject:anObject atIndex:anIndex];
 
     _needsFilter = YES;
 }
