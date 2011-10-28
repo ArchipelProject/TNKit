@@ -34,6 +34,13 @@ TNMessageViewBubbleColorNormal      = 1;
 TNMessageViewBubbleColorAlt         = 2;
 TNMessageViewBubbleColorNotice      = 3;
 
+var TNMessageViewBackgroundColorLeftNormal,
+    TNMessageViewBackgroundColorLeftAlt,
+    TNMessageViewBackgroundColorLeftNotice,
+    TNMessageViewBackgroundColorRightNormal,
+    TNMessageViewBackgroundColorRightAlt,
+    TNMessageViewBackgroundColorRightNotice;
+
 
 /*! @ingroup messageboard
     CPView that contains information to display chat information
@@ -57,6 +64,76 @@ TNMessageViewBubbleColorNotice      = 3;
 
 #pragma mark -
 #pragma mark Class methods
+
++ (void)initialize
+{
+    TNMessageViewBackgroundColorLeftNormal = [CPColor colorWithPatternImage:[[CPNinePartImage alloc] initWithImageSlices:[
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/1.png"] size:CPSizeMake(24.0, 14.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/2.png"] size:CPSizeMake(1.0, 14.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/3.png"] size:CPSizeMake(24.0, 14.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/4.png"] size:CPSizeMake(24.0, 1.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/5.png"] size:CPSizeMake(1.0, 1.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/6.png"] size:CPSizeMake(24.0, 1.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/7.png"] size:CPSizeMake(24.0, 16.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/8.png"] size:CPSizeMake(1.0, 16.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/9.png"] size:CPSizeMake(24.0, 16.0)],
+    ]]];
+    TNMessageViewBackgroundColorLeftAlt = [CPColor colorWithPatternImage:[[CPNinePartImage alloc] initWithImageSlices:[
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/1.png"] size:CPSizeMake(24.0, 14.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/2.png"] size:CPSizeMake(1.0, 14.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/3.png"] size:CPSizeMake(24.0, 14.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/4.png"] size:CPSizeMake(24.0, 1.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/5.png"] size:CPSizeMake(1.0, 1.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/6.png"] size:CPSizeMake(24.0, 1.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/7.png"] size:CPSizeMake(24.0, 16.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/8.png"] size:CPSizeMake(1.0, 16.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/9.png"] size:CPSizeMake(24.0, 16.0)],
+    ]]];
+    TNMessageViewBackgroundColorLeftNotice = [CPColor colorWithPatternImage:[[CPNinePartImage alloc] initWithImageSlices:[
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/1.png"] size:CPSizeMake(24.0, 14.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/2.png"] size:CPSizeMake(1.0, 14.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/3.png"] size:CPSizeMake(24.0, 14.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/4.png"] size:CPSizeMake(24.0, 1.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/5.png"] size:CPSizeMake(1.0, 1.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/6.png"] size:CPSizeMake(24.0, 1.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/7.png"] size:CPSizeMake(24.0, 16.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/8.png"] size:CPSizeMake(1.0, 16.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/9.png"] size:CPSizeMake(24.0, 16.0)],
+    ]]];
+    TNMessageViewBackgroundColorRightNormal = [CPColor colorWithPatternImage:[[CPNinePartImage alloc] initWithImageSlices:[
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/1.png"] size:CPSizeMake(24.0, 14.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/2.png"] size:CPSizeMake(1.0, 14.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/3.png"] size:CPSizeMake(24.0, 14.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/4.png"] size:CPSizeMake(24.0, 1.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/5.png"] size:CPSizeMake(1.0, 1.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/6.png"] size:CPSizeMake(24.0, 1.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/7-alt.png"] size:CPSizeMake(24.0, 16.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/8.png"] size:CPSizeMake(1.0, 16.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/9-alt.png"] size:CPSizeMake(24.0, 16.0)],
+    ]]];
+    TNMessageViewBackgroundColorRightAlt = [CPColor colorWithPatternImage:[[CPNinePartImage alloc] initWithImageSlices:[
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/1.png"] size:CPSizeMake(24.0, 14.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/2.png"] size:CPSizeMake(1.0, 14.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/3.png"] size:CPSizeMake(24.0, 14.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/4.png"] size:CPSizeMake(24.0, 1.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/5.png"] size:CPSizeMake(1.0, 1.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/6.png"] size:CPSizeMake(24.0, 1.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/7-alt.png"] size:CPSizeMake(24.0, 16.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/8.png"] size:CPSizeMake(1.0, 16.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/9-alt.png"] size:CPSizeMake(24.0, 16.0)],
+    ]]];
+    TNMessageViewBackgroundColorRightNotice = [CPColor colorWithPatternImage:[[CPNinePartImage alloc] initWithImageSlices:[
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/1.png"] size:CPSizeMake(24.0, 14.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/2.png"] size:CPSizeMake(1.0, 14.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/3.png"] size:CPSizeMake(24.0, 14.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/4.png"] size:CPSizeMake(24.0, 1.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/5.png"] size:CPSizeMake(1.0, 1.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/6.png"] size:CPSizeMake(24.0, 1.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/7-alt.png"] size:CPSizeMake(24.0, 16.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/8.png"] size:CPSizeMake(1.0, 16.0)],
+        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/9-alt.png"] size:CPSizeMake(24.0, 16.0)],
+    ]]];
+}
 
 /*! this class method return the height of a TNMessageView with given text in given width
     @param aText the text
@@ -240,71 +317,3 @@ TNMessageViewBubbleColorNotice      = 3;
 }
 
 @end
-
-
-var TNMessageViewBackgroundColorLeftNormal = [CPColor colorWithPatternImage:[[CPNinePartImage alloc] initWithImageSlices:[
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/1.png"] size:CPSizeMake(24.0, 14.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/2.png"] size:CPSizeMake(1.0, 14.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/3.png"] size:CPSizeMake(24.0, 14.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/4.png"] size:CPSizeMake(24.0, 1.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/5.png"] size:CPSizeMake(1.0, 1.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/6.png"] size:CPSizeMake(24.0, 1.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/7.png"] size:CPSizeMake(24.0, 16.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/8.png"] size:CPSizeMake(1.0, 16.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/9.png"] size:CPSizeMake(24.0, 16.0)],
-    ]]],
-    TNMessageViewBackgroundColorLeftAlt = [CPColor colorWithPatternImage:[[CPNinePartImage alloc] initWithImageSlices:[
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/1.png"] size:CPSizeMake(24.0, 14.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/2.png"] size:CPSizeMake(1.0, 14.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/3.png"] size:CPSizeMake(24.0, 14.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/4.png"] size:CPSizeMake(24.0, 1.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/5.png"] size:CPSizeMake(1.0, 1.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/6.png"] size:CPSizeMake(24.0, 1.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/7.png"] size:CPSizeMake(24.0, 16.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/8.png"] size:CPSizeMake(1.0, 16.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/9.png"] size:CPSizeMake(24.0, 16.0)],
-    ]]],
-    TNMessageViewBackgroundColorLeftNotice = [CPColor colorWithPatternImage:[[CPNinePartImage alloc] initWithImageSlices:[
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/1.png"] size:CPSizeMake(24.0, 14.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/2.png"] size:CPSizeMake(1.0, 14.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/3.png"] size:CPSizeMake(24.0, 14.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/4.png"] size:CPSizeMake(24.0, 1.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/5.png"] size:CPSizeMake(1.0, 1.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/6.png"] size:CPSizeMake(24.0, 1.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/7.png"] size:CPSizeMake(24.0, 16.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/8.png"] size:CPSizeMake(1.0, 16.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/9.png"] size:CPSizeMake(24.0, 16.0)],
-    ]]],
-    TNMessageViewBackgroundColorRightNormal = [CPColor colorWithPatternImage:[[CPNinePartImage alloc] initWithImageSlices:[
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/1.png"] size:CPSizeMake(24.0, 14.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/2.png"] size:CPSizeMake(1.0, 14.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/3.png"] size:CPSizeMake(24.0, 14.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/4.png"] size:CPSizeMake(24.0, 1.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/5.png"] size:CPSizeMake(1.0, 1.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/6.png"] size:CPSizeMake(24.0, 1.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/7-alt.png"] size:CPSizeMake(24.0, 16.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/8.png"] size:CPSizeMake(1.0, 16.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/Bubble/9-alt.png"] size:CPSizeMake(24.0, 16.0)],
-    ]]],
-    TNMessageViewBackgroundColorRightAlt = [CPColor colorWithPatternImage:[[CPNinePartImage alloc] initWithImageSlices:[
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/1.png"] size:CPSizeMake(24.0, 14.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/2.png"] size:CPSizeMake(1.0, 14.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/3.png"] size:CPSizeMake(24.0, 14.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/4.png"] size:CPSizeMake(24.0, 1.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/5.png"] size:CPSizeMake(1.0, 1.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/6.png"] size:CPSizeMake(24.0, 1.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/7-alt.png"] size:CPSizeMake(24.0, 16.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/8.png"] size:CPSizeMake(1.0, 16.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleAlt/9-alt.png"] size:CPSizeMake(24.0, 16.0)],
-    ]]],
-    TNMessageViewBackgroundColorRightNotice = [CPColor colorWithPatternImage:[[CPNinePartImage alloc] initWithImageSlices:[
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/1.png"] size:CPSizeMake(24.0, 14.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/2.png"] size:CPSizeMake(1.0, 14.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/3.png"] size:CPSizeMake(24.0, 14.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/4.png"] size:CPSizeMake(24.0, 1.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/5.png"] size:CPSizeMake(1.0, 1.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/6.png"] size:CPSizeMake(24.0, 1.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/7-alt.png"] size:CPSizeMake(24.0, 16.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/8.png"] size:CPSizeMake(1.0, 16.0)],
-        [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNMessageView] pathForResource:@"TNMessageBoard/BubbleNotice/9-alt.png"] size:CPSizeMake(24.0, 16.0)],
-    ]]];

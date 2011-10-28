@@ -27,6 +27,8 @@
 @import <AppKit/CPView.j>
 
 
+var TNToolbarSelectedBgImage,
+    TNToolbarSelectedBgImageHUD;
 
 /*! @ingroup tnkit
     subclass of CPToolbar that allow dynamic insertion and item selection
@@ -49,6 +51,23 @@
 #pragma mark -
 #pragma mark Initialization
 
++ (void)initialize
+{
+    var bundle = [CPBundle bundleForClass:TNToolbar];
+
+    TNToolbarSelectedBgImage = [[CPThreePartImage alloc] initWithImageSlices:[
+        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-item-selected-left.png"] size:CPSizeMake(3.0, 60.0)],
+        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-item-selected-center.png"] size:CPSizeMake(1.0, 60.0)],
+        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-item-selected-right.png"] size:CPSizeMake(3.0, 60.0)]
+    ] isVertical:NO];
+
+    TNToolbarSelectedBgImageHUD = [[CPThreePartImage alloc] initWithImageSlices:[
+        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-hud-item-selected-left.png"] size:CPSizeMake(1.0, 60.0)],
+        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-hud-item-selected-center.png"] size:CPSizeMake(1.0, 60.0)],
+        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-hud-item-selected-right.png"] size:CPSizeMake(1.0, 60.0)]
+    ] isVertical:NO];
+}
+
 /*! initialize the class with a target
     @param aTarget the target
     @return a initialized instance of TNToolbar
@@ -57,21 +76,13 @@
 {
     if (self = [super init])
     {
-        var bundle          = [CPBundle bundleForClass:[self class]];
-
         _toolbarItems           = [CPDictionary dictionary];
         _toolbarItemsOrder      = [CPDictionary dictionary];
         _imageViewSelection     = [[CPImageView alloc] initWithFrame:CPRectMake(0.0, 0.0, 60.0, 60.0)];
         _iconSelected           = NO;
         _customSubViews         = [CPArray array];
 
-        var selectedBgImage     = [[CPThreePartImage alloc] initWithImageSlices:[
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-item-selected-left.png"] size:CPSizeMake(3.0, 60.0)],
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-item-selected-center.png"] size:CPSizeMake(1.0, 60.0)],
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-item-selected-right.png"] size:CPSizeMake(3.0, 60.0)]
-            ] isVertical:NO];
-
-        [_imageViewSelection setBackgroundColor:[CPColor colorWithPatternImage:selectedBgImage]];
+        [_imageViewSelection setBackgroundColor:[CPColor colorWithPatternImage:TNToolbarSelectedBgImage]];
 
         [self setDelegate:self];
     }
@@ -94,13 +105,7 @@
             [CPColor colorWithPatternImage:
                 [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-hud-background.png"] size:CGSizeMake(1.0, 59.0)]]];
 
-        var selectedBgImage     = [[CPThreePartImage alloc] initWithImageSlices:[
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-hud-item-selected-left.png"] size:CPSizeMake(1.0, 60.0)],
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-hud-item-selected-center.png"] size:CPSizeMake(1.0, 60.0)],
-                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-hud-item-selected-right.png"] size:CPSizeMake(1.0, 60.0)]
-            ] isVertical:NO];
-
-        [_imageViewSelection setBackgroundColor:[CPColor colorWithPatternImage:selectedBgImage]];
+        [_imageViewSelection setBackgroundColor:[CPColor colorWithPatternImage:TNToolbarSelectedBgImageHUD]];
     }
 
     return self;
