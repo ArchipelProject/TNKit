@@ -433,6 +433,14 @@ var TNTabItemPrototypeThemeStateSelected;
 /*! implement CPTabViewProtocol
     see documentation for CPTabView
 */
+- (void)selectedTabViewIndex
+{
+    return _currentSelectedIndex;
+}
+
+/*! implement CPTabViewProtocol
+    see documentation for CPTabView
+*/
 - (void)selectFirstTabViewItem:(id)aSender
 {
     [self selectTabViewItemAtIndex:0];
@@ -588,7 +596,7 @@ var TNTabItemPrototypeThemeStateSelected;
 */
 - (id)initWithCoder:(CPCoder)aCoder
 {
-    if ( self = [super initWithCoder:aCoder])
+    if (self = [super initWithCoder:aCoder])
     {
         _delegate                   = [aCoder decodeObjectForKey:@"_delegate"];
         _itemObjects                = [aCoder decodeObjectForKey:@"_itemObjects"];
