@@ -101,7 +101,6 @@
     if (!_searchField)
         _searchField = sender;
 
-
     _filteredContent = [CPArray array];
     _filter          = [[sender stringValue] uppercaseString];
 
@@ -129,7 +128,6 @@
 
         }
     }
-
     [_table reloadData];
 }
 
