@@ -34,6 +34,7 @@
 @import "TNTextFieldStepper.j"
 @import "TNToolbar.j"
 @import "TNUIKitScrollView.j"
+@import "TNWorker.j"
 
 /*! @mainpage
     TNKit is distributed under the @ref license "AGPL".
