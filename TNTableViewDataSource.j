@@ -298,11 +298,16 @@
 #pragma mark Helpers
 
 /*! expose selected objects
-    @return array of selected objects
+    @return array of selected objects or nil if _table is not setted
 */
 - (CPArray)selectedObjects
 {
-    return [_filteredContent objectsAtIndexes:[_table selectedRowIndexes]];
+    if (_table)
+    {
+        return [_filteredContent objectsAtIndexes:[_table selectedRowIndexes]];
+    }
+
+    return nil;
 }
 
 #pragma mark -
