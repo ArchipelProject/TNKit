@@ -302,12 +302,9 @@
 */
 - (CPArray)selectedObjects
 {
-    if (_table)
-    {
-        return [_filteredContent objectsAtIndexes:[_table selectedRowIndexes]];
-    }
-
-    return nil;
+    if (!_table)
+        return nil;
+    return [_filteredContent objectsAtIndexes:[_table selectedRowIndexes]];
 }
 
 #pragma mark -
