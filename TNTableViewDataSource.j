@@ -294,6 +294,16 @@
     return [_filteredContent count];
 }
 
+#pragma mark -
+#pragma mark Helpers
+
+/*! expose selected objects
+    @return array of selected objects
+*/
+- (CPArray)selectedObjects
+{
+    return [_filteredContent objectsAtIndexes:[_table selectedRowIndexes]];
+}
 
 #pragma mark -
 #pragma mark Datasource implementation
