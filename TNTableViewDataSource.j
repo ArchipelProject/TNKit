@@ -65,7 +65,7 @@
     CPTableView     _table                  @accessors(property=table);
     CPPredicate     _displayFilter          @accessors(property=displayFilter);
 
-    CPArray         _filteredContent;
+    CPArray         _filteredContent        @accessors(property=filteredContent, readonly);
     CPSearchField   _searchField;
     CPString        _filter;
     BOOL            _needsFilter;
