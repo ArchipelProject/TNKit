@@ -91,7 +91,7 @@
 */
 - (void)synchronizeSelectionFromView:(CPView)aView
 {
-    if(!aView)
+    if (!aView)
         return;
 
     if (aView == _collectionView)
