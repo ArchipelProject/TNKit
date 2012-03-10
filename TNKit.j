@@ -25,6 +25,7 @@
 @import "TNLocalizationCenter.j";
 @import "TNMessageBoard.j"
 @import "TNMessageView.j"
+@import "TNMultiViewDataSource.j"
 @import "TNOutlineViewDataSource.j"
 @import "TNStackView.j"
 @import "TNSwipeView.j"
