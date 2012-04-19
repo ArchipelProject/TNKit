@@ -244,7 +244,7 @@ catch(e)
             [self addSubview:_frontView];
             _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transition] = "0s";
             _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transition] = "0s";
-            this.removeEventListener(CSSProperties[TNFlipViewCurrentBrowserEngine].transitionEnd);
+            this[CSSProperties[TNFlipViewCurrentBrowserEngine].transitionEnd] = nil;
         }, YES);
 
         if (TNFlipViewCurrentBrowserEngine == "gecko")
@@ -291,7 +291,7 @@ catch(e)
             [self addSubview:_backView];
             _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transition] = "0s";
             _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transition] = "0s";
-            this.removeEventListener(@"webkitTransitionEnd");
+            this.webkitTransitionEnd = nil;
         }, YES);
 
         if (TNFlipViewCurrentBrowserEngine == "gecko")
