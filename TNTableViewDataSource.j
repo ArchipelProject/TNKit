@@ -118,7 +118,8 @@
         for (var j = 0; j < [_searchableKeyPaths count]; j++)
         {
             var entryValue = [entry valueForKeyPath:[_searchableKeyPaths objectAtIndex:j]];
-
+            if (typeof(entryValue) == @"number")
+                entryValue = @"" + entryValue;
             if ([entryValue uppercaseString].indexOf(_filter) != -1)
             {
                 if (![_filteredContent containsObject:entry])
