@@ -316,6 +316,14 @@ var TNTabItemPrototypeThemeStateSelected;
     return [[_itemObjects objectAtIndex:anIndex] objectAtIndex:1];
 }
 
+#pragma mark -
+#pragma mark Events
+
+/*! stop the event progation
+*/
+- (void)mouseDown:(CPEvent)anEvent
+{
+}
 
 #pragma mark -
 #pragma mark CPTabView protocol
