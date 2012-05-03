@@ -64,6 +64,7 @@
     CPArray         _searchableKeyPaths     @accessors(property=searchableKeyPaths);
     CPTableView     _table                  @accessors(property=table);
     CPPredicate     _displayFilter          @accessors(property=displayFilter);
+    id              _delegate               @accessors(property=delegate);
 
     CPArray         _filteredContent;
     CPSearchField   _searchField;
@@ -201,7 +202,6 @@
     return [_filteredContent objectsAtIndexes:aSet];
 }
 
-
 /*! removes the object at given index
     @param anObject int representing the position
 */
@@ -295,6 +295,16 @@
     return [_filteredContent count];
 }
 
+/*! Removes the objects from the array
+*/
+- (void)removeObjectsInArray:(CPArray)someObjects
+{
+    [_content removeObjectsInArray:someObjects];
+    [_filteredContent removeObjectsInArray:someObjects];
+
+    _needsFilter = YES;
+}
+
 
 #pragma mark -
 #pragma mark Datasource implementation
@@ -306,7 +316,7 @@
 
 - (id)tableView:(CPTableView)aTable objectValueForTableColumn:(CPNumber)aCol row:(CPNumber)aRow
 {
-    if (_needsFilter && _searchField)
+    if (_needsFilter)
     {
         [self filterObjects:_searchField];
         _needsFilter = NO;
@@ -349,6 +359,40 @@
     var identifier = [aCol identifier];
 
     [[_filteredContent objectAtIndex:aRow] setValue:aValue forKeyPath:identifier];
+}
+
+
+#pragma mark -
+#pragma mark Drag and drop
+
+/*! DataSource delegate
+*/
+- (BOOL)tableView:(CPTableView)aTableView writeRowsWithIndexes:(CPIndexSet)rowIndexes toPasteboard:(CPPasteboard)thePasteBoard
+{
+    if (_delegate && [_delegate respondsToSelector:@selector(dataSource:writeRowsWithIndexes:toPasteboard:)])
+        return [_delegate dataSource:self writeRowsWithIndexes:rowIndexes toPasteboard:thePasteBoard];
+
+    return NO;
+}
+
+/*! DataSource delegate
+*/
+- (CPDragOperation)tableView:(CPTableView)aTableView validateDrop:(CPDraggingInfo)info proposedRow:(int)row proposedDropOperation:(CPTableViewDropOperation)operation
+{
+    if (_delegate && [_delegate respondsToSelector:@selector(dataSource:validateDrop:proposedRow:proposedDropOperation:)])
+        return [_delegate dataSource:self validateDrop:info proposedRow:row proposedDropOperation:operation];
+
+    return CPDragOperationNone;
+}
+
+/*! DataSource delegate
+*/
+- (BOOL)tableView:(CPTableView)aTableView acceptDrop:(CPDraggingInfo)info row:(int)row dropOperation:(CPTableViewDropOperation)operation
+{
+    if (_delegate && [_delegate respondsToSelector:@selector(dataSource:acceptDrop:row:dropOperation:)])
+        return [_delegate dataSource:self acceptDrop:info row:row dropOperation:operation];
+
+    return NO;
 }
 
 @end
