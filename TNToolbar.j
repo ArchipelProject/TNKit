@@ -174,16 +174,19 @@ var TNToolbarSelectedBgImage,
     @param anIdentifier CPString containing the identifier
     @param aLabel CPString containing the label
     @param anImage CPImage containing the icon of the item
+    @param anotherImage CPImage containing the alternative icon of the item
     @param aTarget an object that will be the target of the item
     @param anAction a selector of the aTarget to perform on click
     @param toolTip the toolTip
 */
-- (CPToolbarItem)addItemWithIdentifier:(CPString)anIdentifier label:(CPString)aLabel icon:(CPImage)anImage target:(id)aTarget action:(SEL)anAction toolTip:(CPString)aToolTip
+- (CPToolbarItem)addItemWithIdentifier:(CPString)anIdentifier label:(CPString)aLabel icon:(CPImage)anImage altIcon:(CPImage)anotherImage target:(id)aTarget action:(SEL)anAction toolTip:(CPString)aToolTip
 {
     var newItem = [[CPToolbarItem alloc] initWithItemIdentifier:anIdentifier];
 
     [newItem setLabel:aLabel];
     [newItem setImage:[[CPImage alloc] initWithContentsOfFile:anImage size:CPSizeMake(32,32)]];
+    if (anotherImage)
+        [newItem setAlternateImage:[[CPImage alloc] initWithContentsOfFile:anotherImage size:CPSizeMake(32,32)]];
     [newItem setTarget:aTarget];
     [newItem setAction:anAction];
     [newItem setToolTip:aToolTip];
@@ -191,6 +194,19 @@ var TNToolbarSelectedBgImage,
     [_toolbarItems setObject:newItem forKey:anIdentifier];
 
     return newItem;
+}
+
+/*! add a new CPToolbarItem
+    @param anIdentifier CPString containing the identifier
+    @param aLabel CPString containing the label
+    @param anImage CPImage containing the icon of the item
+    @param aTarget an object that will be the target of the item
+    @param anAction a selector of the aTarget to perform on click
+    @param toolTip the toolTip
+*/
+- (CPToolbarItem)addItemWithIdentifier:(CPString)anIdentifier label:(CPString)aLabel icon:(CPImage)anImage target:(id)aTarget action:(SEL)anAction toolTip:(CPString)aToolTip
+{
+    return [self addItemWithIdentifier:anIdentifier label:aLabel icon:anImage altIcon:nil target:aTarget action:anAction toolTip:nil];
 }
 
 /*! add a new CPToolbarItem
