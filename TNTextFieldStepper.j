@@ -20,7 +20,6 @@
 
 @import <Foundation/Foundation.j>
 
-@import <AppKit/CPGeometry.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPStepper.j>
 
