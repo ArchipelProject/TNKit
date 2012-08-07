@@ -404,7 +404,10 @@ var TNTabItemPrototypeThemeStateSelected;
         return;
 
     var itemIndex = [self indexOfTabViewItemWithIdentifier:[anItem identifier]],
-        currentItemView = [self _getTabViewAtIndex:itemIndex];
+        currentItemView = [self _getTabViewAtIndex:itemIndex],
+        associatedView = [[self _getTabItemAtIndex:itemIndex] view];
+
+    [associatedView removeFromSuperview];
 
     [currentItemView removeFromSuperview];
     [_itemObjects removeObjectAtIndex:[self indexOfTabViewItemWithIdentifier:[anItem identifier]]];
