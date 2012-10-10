@@ -102,59 +102,43 @@
     if (!_searchField)
         _searchField = sender;
 
-    [self setFilter:[sender stringValue]];
+    [self setFilterString:[sender stringValue]];
+}
+
+- (void)setFilterPredicate:(CPPredicate)aPredicate
+{
+    _filter = aPredicate;
     [self _performFiltering];
 }
 
-/*! Set the filter. The filter can be a string
-    or a CPPredicate
-    @param aFilter CPPredicate or CPString
+/*! Set the filter. The filter must be a string
+    @param aString CPString representing the filter
 */
-- (void)setFilter:(id)aFilter
+- (void)setFilterString:(CPString)aString
 {
-    if (aFilter && [aFilter length])
+    if (aString && [aString length])
     {
-        _filter = [CPPredicate predicateWithFormat:aFilter];
+        _filter = [CPPredicate predicateWithFormat:aString];
 
-        // if predicate creation failed, use a simple string matching
+        // if predicate creation failed, build a predicate according to searchable ketpaths
         if (!_filter)
-            _filter = [aFilter uppercaseString];
+        {
+            var tempPredicateString = @"";
+
+            for (var i = 0; i < [_searchableKeyPaths count]; i++)
+            {
+                tempPredicateString += [_searchableKeyPaths objectAtIndex:i] + " contains[c] '" + aString + "' ";
+                if (i + 1 < [_searchableKeyPaths count])
+                    tempPredicateString += " OR ";
+            }
+
+            _filter = [CPPredicate predicateWithFormat:tempPredicateString];
+        }
     }
     else
         _filter = nil;
 
     [self _performFiltering];
-}
-
-/*! @ignore
-    Return a filtered content using a filter string and
-    the _searchableKeyPaths
-    @param aString the filter string
-    @return CPArray with filtered content
-*/
-- (void)_filterWithString:(CPString)aString
-{
-    var ret = [CPArray array];
-
-    for (var i = 0; i < [_content count]; i++)
-    {
-        var entry = [_content objectAtIndex:i];
-
-        for (var j = 0; j < [_searchableKeyPaths count]; j++)
-        {
-            var entryValue = [entry valueForKeyPath:[_searchableKeyPaths objectAtIndex:j]];
-            if (typeof(entryValue) == @"number")
-                entryValue = @"" + entryValue;
-            if ([entryValue uppercaseString].indexOf(_filter) != -1)
-            {
-                if (![ret containsObject:entry])
-                    if (!_displayFilter || [_displayFilter evaluateWithObject:entry])
-                        [ret addObject:entry];
-            }
-        }
-    }
-
-    return ret;
 }
 
 /*! @ignore
@@ -181,10 +165,7 @@
         return;
     }
 
-    if ([_filter isKindOfClass:CPPredicate])
-        _filteredContent = [self _filterWithPredicate:_filter];
-    else
-        _filteredContent = [self _filterWithString:_filter];
+    _filteredContent = [self _filterWithPredicate:_filter];
 
     [_table reloadData];
 }
