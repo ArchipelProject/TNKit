@@ -83,7 +83,7 @@
         _filteredContent    = [CPArray array];
         _searchableKeyPaths = [CPArray array];
 
-        _filter             = @"";
+        _filter             = nil;
         _needsFilter        = NO;
     }
     return self;
@@ -102,15 +102,39 @@
     if (!_searchField)
         _searchField = sender;
 
-    _filteredContent = [CPArray array];
-    _filter          = [[sender stringValue] uppercaseString];
+    [self setFilter:[sender stringValue]];
+    [self _performFiltering];
+}
 
-    if (!(_filter) || (_filter == @""))
+/*! Set the filter. The filter can be a string
+    or a CPPredicate
+    @param aFilter CPPredicate or CPString
+*/
+- (void)setFilter:(id)aFilter
+{
+    if (aFilter && [aFilter length])
     {
-        _filteredContent = _displayFilter ? [[_content copy] filteredArrayUsingPredicate:_displayFilter] : [_content copy];
-        [_table reloadData];
-        return;
+        _filter = [CPPredicate predicateWithFormat:aFilter];
+
+        // if predicate creation failed, use a simple string matching
+        if (!_filter)
+            _filter = [aFilter uppercaseString];
     }
+    else
+        _filter = nil;
+
+    [self _performFiltering];
+}
+
+/*! @ignore
+    Return a filtered content using a filter string and
+    the _searchableKeyPaths
+    @param aString the filter string
+    @return CPArray with filtered content
+*/
+- (void)_filterWithString:(CPString)aString
+{
+    var ret = [CPArray array];
 
     for (var i = 0; i < [_content count]; i++)
     {
@@ -123,13 +147,45 @@
                 entryValue = @"" + entryValue;
             if ([entryValue uppercaseString].indexOf(_filter) != -1)
             {
-                if (![_filteredContent containsObject:entry])
+                if (![ret containsObject:entry])
                     if (!_displayFilter || [_displayFilter evaluateWithObject:entry])
-                        [_filteredContent addObject:entry];
+                        [ret addObject:entry];
             }
-
         }
     }
+
+    return ret;
+}
+
+/*! @ignore
+    Return a filtered content using a filter predicate
+    @param aPredicate the predicate
+    @return CPArray with filtered content
+*/
+- (void)_filterWithPredicate:(CPPredicate)aPredicate
+{
+    if (_displayFilter)
+        return [[_content filteredArrayUsingPredicate:_filter] filteredArrayUsingPredicate:_displayFilter];
+    else
+        return [_content filteredArrayUsingPredicate:_filter];
+}
+
+- (void)_performFiltering
+{
+    _filteredContent = [CPArray array];
+
+    if (!_filter)
+    {
+        _filteredContent = _displayFilter ? [[_content copy] filteredArrayUsingPredicate:_displayFilter] : [_content copy];
+        [_table reloadData];
+        return;
+    }
+
+    if ([_filter isKindOfClass:CPPredicate])
+        _filteredContent = [self _filterWithPredicate:_filter];
+    else
+        _filteredContent = [self _filterWithString:_filter];
+
     [_table reloadData];
 }
 
