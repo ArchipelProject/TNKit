@@ -68,7 +68,7 @@
 
     CPArray         _filteredContent;
     CPSearchField   _searchField;
-    CPString        _filter;
+    CPPredicate     _filter;
     BOOL            _needsFilter;
 }
 
