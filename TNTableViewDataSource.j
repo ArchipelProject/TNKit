@@ -132,7 +132,8 @@
                     tempPredicateString += " OR ";
             }
 
-            _filter = [CPPredicate predicateWithFormat:tempPredicateString];
+            if ([tempPredicateString length])
+                _filter = [CPPredicate predicateWithFormat:tempPredicateString];
         }
     }
     else
