@@ -118,7 +118,7 @@
 {
     if (aString && [aString length])
     {
-        _filter = [CPPredicate predicateWithFormat:aString];
+        try {_filter = [CPPredicate predicateWithFormat:aString];}catch(e){};
 
         // if predicate creation failed, build a predicate according to searchable ketpaths
         if (!_filter)
