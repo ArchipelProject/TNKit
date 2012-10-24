@@ -199,6 +199,19 @@
     _needsFilter = YES;
 }
 
+/*! add some objects to the datasource
+    @param someObjects array of objects to add
+*/
+- (void)addObjectsFromArray:(CPArray)someObjects
+{
+    [_content addObjectsFromArray:someObjects];
+
+    if (!_displayFilter || [_displayFilter evaluateWithObject:anObject])
+        [_filteredContent addObjectsFromArray:someObjects];
+
+    _needsFilter = YES;
+}
+
 /*! Chek if contents contains given object
     @param anObject the object to search
     @return YES if anObject is in the contents
@@ -352,7 +365,7 @@
     return [_filteredContent count];
 }
 
-- (id)tableView:(CPTableView)aTable objectValueForTableColumn:(CPNumber)aCol row:(CPNumber)aRow
+- (id)tableView:(CPTableView)aTableView objectValueForTableColumn:(CPNumber)aCol row:(CPNumber)aRow
 {
     if (_needsFilter)
     {
@@ -361,11 +374,17 @@
     }
 
     if (aRow >= [_filteredContent count])
-            return nil;
+        return nil;
 
-    var identifier = [aCol identifier];
+    if (_delegate
+        && [_delegate respondsToSelector:@selector(dataSource:willReachEndOfData:)]
+        && [aTableView numberOfRows] == aRow + 1)
+    {
+        [_delegate dataSource:self willReachEndOfData:aRow];
+    }
 
-    return [[_filteredContent objectAtIndex:aRow] valueForKeyPath:identifier];
+
+    return [[_filteredContent objectAtIndex:aRow] valueForKeyPath:[aCol identifier]];
 }
 
 - (void)tableView:(CPTableView)aTableView sortDescriptorsDidChange:(CPArray)oldDescriptors
