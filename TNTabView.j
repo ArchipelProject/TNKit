@@ -333,6 +333,14 @@ var TNTabItemPrototypeThemeStateSelected;
 */
 - (void)addTabViewItem:(CPTabViewItem)anItem
 {
+    [self insertTabViewItem:anItem atIndex:[_itemObjects count]];
+}
+
+/*! implement CPTabViewProtocol
+    see documentation for CPTabView
+*/
+- (void)insertTabViewItem:(CPTabViewItem)anItem atIndex:(int)anIndex
+{
     var shouldSelectFirstTab = NO;
     if (_currentSelectedIndex == -1)
     {
@@ -344,7 +352,7 @@ var TNTabItemPrototypeThemeStateSelected;
     [itemView setObjectValue:anItem];
     [itemView setTarget:self];
     [itemView setAction:@selector(_tabItemCliked:)];
-    [_itemObjects addObject:[anItem, itemView]];
+    [_itemObjects insertObject:[anItem, itemView] atIndex:anIndex];
 
     [_viewTabsDocument addSubview:itemView];
     [self setNeedsLayout];
@@ -355,6 +363,7 @@ var TNTabItemPrototypeThemeStateSelected;
     if (shouldSelectFirstTab)
         [self selectFirstTabViewItem:nil];
 }
+
 
 /*! implement CPTabViewProtocol
     see documentation for CPTabView
@@ -377,14 +386,6 @@ var TNTabItemPrototypeThemeStateSelected;
         if ([[self _getTabItemAtIndex:i] identifier] == anIdentifer)
             return i;
     return -1;
-}
-
-/*! implement CPTabViewProtocol
-    see documentation for CPTabView
-*/
-- (void)insertTabViewItem:(CPTabViewItem)anItem atIndex:(int)anIndex
-{
-    CPLog.warn("insertTabViewItem:atIndex: is not implemented in TNTabView");
 }
 
 /*! implement CPTabViewProtocol
