@@ -46,6 +46,7 @@ var TNRangeSelectorViewDelegate_rangeSelectorView_didChangeLeftValue    = 1 << 1
     CPView      _viewInnerBounds;
     CPView      _viewOuterBoundsLeft;
     CPView      _viewOuterBoundsRight;
+    CPTimer     _timerBeforeAction;
     int         _implementedDelegateMethods;
 }
 
@@ -130,6 +131,7 @@ var TNRangeSelectorViewDelegate_rangeSelectorView_didChangeLeftValue    = 1 << 1
     if (_backgroundView)
         _backgroundView._DOMElement.style.borderRadius =  "3px";
 }
+
 
 #pragma mark -
 #pragma mark Setters and Getters
@@ -353,13 +355,17 @@ var TNRangeSelectorViewDelegate_rangeSelectorView_didChangeLeftValue    = 1 << 1
 - (void)splitViewDidResizeSubviews:(CPNotification)aNotification
 {
     var frameWidth = [self frameSize].width,
+        changeHasBeenMade = NO,
         leftDividerPosition = CGRectMakeCopy([_splitView rectOfDividerAtIndex:0]).origin.x,
         rightDividerPosition = CGRectMakeCopy([_splitView rectOfDividerAtIndex:1]).origin.x + 1,
         leftValue = Math.floor((leftDividerPosition / frameWidth * (_maxValue - _minValue)) + _minValue),
         rightValue = Math.floor((rightDividerPosition / frameWidth * (_maxValue - _minValue)) + _minValue);
 
     if (_rightValue != rightValue || _leftValue != leftValue)
+    {
+        changeHasBeenMade = YES;
         [self willChangeValueForKey:@"rangeValue"];
+    }
 
     if (_rightValue != rightValue)
     {
@@ -377,9 +383,22 @@ var TNRangeSelectorViewDelegate_rangeSelectorView_didChangeLeftValue    = 1 << 1
         [self _didChangeLeftValue];
     }
 
-    if (_rightValue != rightValue || _leftValue != leftValue)
+    if (changeHasBeenMade)
+    {
         [self didChangeValueForKey:@"rangeValue"];
 
+        if (_timerBeforeAction)
+            [_timerBeforeAction invalidate];
+
+        if ([self target] && [self action])
+            _timerBeforeAction = [CPTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(_shouldSendAction:) userInfo:nil repeats:NO];
+    }
+}
+
+- (void)_shouldSendAction:(CPTimer)aTimer
+{
+    _timerBeforeAction = nil;
+    [[self target] performSelector:[self action] withObject:self];
 }
 
 @end
