@@ -16,7 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 @import <Foundation/Foundation.j>
 @import <AppKit/CPSplitView.j>
 @import <AppKit/CPTextField.j>
@@ -33,12 +32,13 @@ var TNRangeSelectorViewDelegate_rangeSelectorView_didChangeLeftValue    = 1 << 1
 */
 @implementation TNRangeSelectorView : CPControl
 {
-    CPView      _backgroundView                 @accessors(getter=backgroundView);
+    CPRange     _rangeValue                     @accessors(getter=rangeValue);
     float       _leftValue                      @accessors(getter=leftValue);
     float       _maxValue                       @accessors(property=maxValue);
     float       _minValue                       @accessors(property=minValue);
     float       _rightValue                     @accessors(getter=rightValue);
     id          _delegate                       @accessors(getter=delegate);
+    CPView      _backgroundView                 @accessors(getter=backgroundView);
 
     CPSplitView _splitView;
     CPTextField _fieldLeftValue;
@@ -152,9 +152,11 @@ var TNRangeSelectorViewDelegate_rangeSelectorView_didChangeLeftValue    = 1 << 1
 
     [_splitView setDelegate:nil];
 
+    [self willChangeValueForKey:@"rangeValue"];
     [self willChangeValueForKey:@"leftValue"];
     _leftValue = aValue;
     [self didChangeValueForKey:@"leftValue"];
+    [self didChangeValueForKey:@"rangeValue"];
 
     [_splitView setPosition:(frameWidth * [self _calculateProgress:aValue]) ofDividerAtIndex:0];
 
@@ -181,8 +183,10 @@ var TNRangeSelectorViewDelegate_rangeSelectorView_didChangeLeftValue    = 1 << 1
 
     [_splitView setDelegate:nil];
 
+    [self willChangeValueForKey:@"rangeValue"];
     [self willChangeValueForKey:@"rightValue"];
     _rightValue = aValue;
+    [self didChangeValueForKey:@"rangeValue"];
     [self didChangeValueForKey:@"rightValue"];
 
     [_splitView setPosition:(frameWidth * [self _calculateProgress:aValue]) ofDividerAtIndex:1];
@@ -191,6 +195,28 @@ var TNRangeSelectorViewDelegate_rangeSelectorView_didChangeLeftValue    = 1 << 1
 
     [self _didChangeRightValue];
 }
+
+/*! Set the left and right value using a range
+    @param aRange the range to use
+*/
+- (void)setRangeValue:(CPRange)aRange
+{
+    [self willChangeValueForKey:@"rangeValue"];
+
+    var start = aRange.location;
+        end = start + aRange.length;
+
+    [self setLeftValue:start];
+    [self setRightValue:end];
+
+    [self didChangeValueForKey:@"rangeValue"];
+}
+
+- (CPRange)rangeValue
+{
+    return CPMakeRange(_leftValue, _rightValue - _leftValue);
+}
+
 
 /*! Set the value field color
     @param aColor the color to use
@@ -332,6 +358,9 @@ var TNRangeSelectorViewDelegate_rangeSelectorView_didChangeLeftValue    = 1 << 1
         leftValue = Math.floor((leftDividerPosition / frameWidth * (_maxValue - _minValue)) + _minValue),
         rightValue = Math.floor((rightDividerPosition / frameWidth * (_maxValue - _minValue)) + _minValue);
 
+    if (_rightValue != rightValue || _leftValue != leftValue)
+        [self willChangeValueForKey:@"rangeValue"];
+
     if (_rightValue != rightValue)
     {
         [self willChangeValueForKey:@"rightValue"];
@@ -347,6 +376,10 @@ var TNRangeSelectorViewDelegate_rangeSelectorView_didChangeLeftValue    = 1 << 1
         [self didChangeValueForKey:@"leftValue"];
         [self _didChangeLeftValue];
     }
+
+    if (_rightValue != rightValue || _leftValue != leftValue)
+        [self didChangeValueForKey:@"rangeValue"];
+
 }
 
 @end
