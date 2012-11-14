@@ -26,6 +26,7 @@
 @import "TNMessageBoard.j"
 @import "TNMessageView.j"
 @import "TNOutlineViewDataSource.j"
+@import "TNRangeSelectorView.j"
 @import "TNStackView.j"
 @import "TNSwipeView.j"
 @import "TNTableViewDataSource.j"
@@ -35,6 +36,7 @@
 @import "TNToolbar.j"
 @import "TNUIKitScrollView.j"
 @import "TNWorker.j"
+
 
 /*! @mainpage
     TNKit is distributed under the @ref license "AGPL".
