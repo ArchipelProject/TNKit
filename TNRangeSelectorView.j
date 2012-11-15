@@ -62,8 +62,6 @@ var TNRangeSelectorViewDelegate_rangeSelectorView_didChangeLeftValue    = 1 << 1
     {
         _minValue = 0;
         _maxValue = 100;
-        _leftValue = 9;
-        _rightValue = 89;
 
         _splitView = [[CPSplitView alloc] initWithFrame:[self bounds]];
         [_splitView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
@@ -113,9 +111,6 @@ var TNRangeSelectorViewDelegate_rangeSelectorView_didChangeLeftValue    = 1 << 1
 
         [self addSubview:_splitView];
 
-        [self setLeftValue:10.0];
-        [self setRightValue:90.0];
-
         [_splitView setDelegate:self];
         [self _init];
     }
@@ -144,19 +139,13 @@ var TNRangeSelectorViewDelegate_rangeSelectorView_didChangeLeftValue    = 1 << 1
     if (aValue == _leftValue)
         return;
 
-    if (aValue < _minValue || aValue > _maxValue)
-        [CPException raise:CPInternalInconsistencyException reason:"Left value must be between maxValue and minValue"];
-
-    if (aValue > _rightValue)
-        [CPException raise:CPInternalInconsistencyException reason:"Left value " + aValue + " must be inferior to right value " + _rightValue];
-
     var frameWidth = [self frameSize].width;
 
     [_splitView setDelegate:nil];
 
     [self willChangeValueForKey:@"rangeValue"];
     [self willChangeValueForKey:@"leftValue"];
-    _leftValue = aValue;
+    _leftValue = MIN(MAX(aValue, _minValue), _maxValue);
     [self didChangeValueForKey:@"leftValue"];
     [self didChangeValueForKey:@"rangeValue"];
 
@@ -175,19 +164,13 @@ var TNRangeSelectorViewDelegate_rangeSelectorView_didChangeLeftValue    = 1 << 1
     if (aValue == _rightValue)
         return;
 
-    if (aValue < _minValue || aValue > _maxValue)
-        [CPException raise:CPInternalInconsistencyException reason:"Right value must be between maxValue and minValue"];
-
-    if (aValue < _leftValue)
-        [CPException raise:CPInternalInconsistencyException reason:"Right value " + aValue + "  must be superior to left value " + _leftValue];
-
     var frameWidth = [self frameSize].width;
 
     [_splitView setDelegate:nil];
 
     [self willChangeValueForKey:@"rangeValue"];
     [self willChangeValueForKey:@"rightValue"];
-    _rightValue = aValue;
+    _rightValue = MIN(MAX(aValue, _minValue), _maxValue);
     [self didChangeValueForKey:@"rangeValue"];
     [self didChangeValueForKey:@"rightValue"];
 
