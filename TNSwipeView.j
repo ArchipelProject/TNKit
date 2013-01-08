@@ -19,7 +19,7 @@
  */
 
 @import <Foundation/Foundation.j>
-
+@import <AppKit/CPControl.j>
 @import <AppKit/CPView.j>
 
 var CSSProperties = {
@@ -73,7 +73,6 @@ catch(e)
     float       _minimalRatio           @accessors(property=minimalRatio);
 
     BOOL        _isAnimating;
-    CPPoint     _currentDraggingPoint;
     CPPoint     _generalInitialTrackingPoint;
     CPPoint     _initialTrackingPoint;
     CPView      _mainView;
@@ -168,18 +167,18 @@ catch(e)
 {
     if (!_isAnimating)
     {
-        var _currentDraggingPoint = [_mainView convertPointFromBase:[anEvent globalLocation]];
+        var currentDraggingPoint = [_mainView convertPointFromBase:[anEvent globalLocation]];
 
         if (_translationFunction == TNSwipeViewCSSTranslateFunctionX)
         {
-            _currentDraggingPoint.x -= _initialTrackingPoint.x;
-            [self _setSlideValue:_currentDraggingPoint.x speed:0.05 shouldCommit:NO];
+            currentDraggingPoint.x -= _initialTrackingPoint.x;
+            [self _setSlideValue:currentDraggingPoint.x speed:0.05 shouldCommit:NO];
 
         }
         else
         {
-            _currentDraggingPoint.y -= _initialTrackingPoint.y;
-            [self _setSlideValue:_currentDraggingPoint.y speed:0.05 shouldCommit:NO];
+            currentDraggingPoint.y -= _initialTrackingPoint.y;
+            [self _setSlideValue:currentDraggingPoint.y speed:0.05 shouldCommit:NO];
         }
     }
     else
