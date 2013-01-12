@@ -77,6 +77,9 @@ function PatternColor()
 */
 - (id)initWithFrame:(CGRect)aFrame
 {
+    aFrame.origin.x -= 6;
+    aFrame.origin.y -= 3;
+    aFrame.size.width += 14;
     if (self = [super initWithFrame:aFrame])
     {
         [self _init];
@@ -93,7 +96,8 @@ function PatternColor()
     [_stepper setFrame:CPRectMake(frame.size.width - 35, 1.0, 25, 25)]
     [_stepper setAutoresizingMask:CPViewMinXMargin];
 
-    _textField = [CPTextField textFieldWithStringValue:@"" placeholder:@"" width:frame.size.width - 35];
+    _textField = [CPTextField textFieldWithStringValue:@"" placeholder:@"" width:frame.size.width - 36];
+    [_textField setAutoresizingMask:CPViewWidthSizable];
     [_textField bind:CPValueBinding toObject:_stepper withKeyPath:@"doubleValue" options:nil];
 
     [self addSubview:_stepper];
