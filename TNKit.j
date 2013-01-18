@@ -20,7 +20,6 @@
 
 @import "TNAlert.j"
 @import "TNAnimation.j"
-@import "TNAttachedWindow.j"
 @import "TNFlipView.j"
 @import "TNLocalizationCenter.j";
 @import "TNMessageBoard.j"
