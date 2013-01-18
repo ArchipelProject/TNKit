@@ -21,7 +21,6 @@
 @import "TNAlert.j"
 @import "TNAnimation.j"
 @import "TNFlipView.j"
-@import "TNLocalizationCenter.j";
 @import "TNMessageBoard.j"
 @import "TNMessageView.j"
 @import "TNOutlineViewDataSource.j"
