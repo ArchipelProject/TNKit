@@ -206,8 +206,17 @@
 {
     [_content addObjectsFromArray:someObjects];
 
-    if (!_displayFilter || [_displayFilter evaluateWithObject:anObject])
-        [_filteredContent addObjectsFromArray:someObjects];
+    if (!_displayFilter)
+    {
+        var enumerator = [someObjects objectEnumerator],
+            obj;
+
+        while (obj = [enumerator nextObject])
+        {
+            if ([_displayFilter evaluateWithObject:obj])
+                [_filteredContent addObject:obj];
+        }
+    }
 
     _needsFilter = YES;
 }

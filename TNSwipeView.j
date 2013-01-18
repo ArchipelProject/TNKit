@@ -429,14 +429,14 @@ catch(e)
 
     if (_translationFunction == TNSwipeViewCSSTranslateFunctionX)
     {
-        tx = [self _currentTranslation];
-        var newX = [_mainView frameOrigin].x + tx;
+        var tx = [self _currentTranslation],
+            newX = [_mainView frameOrigin].x + tx;
         [_mainView setFrameOrigin:CPPointMake(newX, 0)];
     }
     else
     {
-        ty = [self _currentTranslation];
-        var newY = [_mainView frameOrigin].y + ty;
+        var ty = [self _currentTranslation],
+            newY = [_mainView frameOrigin].y + ty;
         [_mainView setFrameOrigin:CPPointMake(0, newY)];
     }
     _mainView._DOMElement.style[CSSProperties[TNSwipeViewBrowserEngine].transform] = _translationFunction + @"(0px)";

@@ -120,8 +120,8 @@ var TNRangeSelectorViewDelegate_rangeSelectorView_didChangeLeftValue    = 1 << 1
 
 - (void)_init
 {
-    _DOMElement.style.border =  "1px solid #A5A5A5";
-    _DOMElement.style.borderRadius =  "3px";
+    self._DOMElement.style.border =  "1px solid #A5A5A5";
+    self._DOMElement.style.borderRadius =  "3px";
     _splitView._DOMElement.style.borderRadius =  "3px";
     if (_backgroundView)
         _backgroundView._DOMElement.style.borderRadius =  "3px";
@@ -188,7 +188,7 @@ var TNRangeSelectorViewDelegate_rangeSelectorView_didChangeLeftValue    = 1 << 1
 {
     [self willChangeValueForKey:@"rangeValue"];
 
-    var start = aRange.location;
+    var start = aRange.location,
         end = start + aRange.length;
 
     [self setLeftValue:start];

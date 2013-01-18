@@ -23,6 +23,7 @@
 @import <AppKit/CPTabViewItem.j>
 @import <AppKit/CPTheme.j>
 @import <AppKit/CPView.j>
+@import <AppKit/CPScrollView.j>
 
 @import "TNSwipeView.j"
 

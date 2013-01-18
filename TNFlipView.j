@@ -91,7 +91,7 @@ catch(e)
     {
         _animationDuration  = 0.5;
         _flipped            = NO;
-        animationDirection  = TNFlipViewAnimationStyleTranslateHorizontal;
+        _animationDirection  = TNFlipViewAnimationStyleTranslateHorizontal;
 
         _backView = [[CPView alloc] initWithFrame:[self bounds]];
         _frontView = [[CPView alloc] initWithFrame:[self bounds]];
