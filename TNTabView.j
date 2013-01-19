@@ -58,19 +58,19 @@ var TNTabItemPrototypeThemeStateSelected;
 + (void)initialize
 {
     TNTabViewTabButtonColorNormal = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[
-                    [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-normal-left.png"] size:CPSizeMake(9, 22)],
-                    [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-normal-center.png"] size:CPSizeMake(1, 22)],
-                    [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-normal-right.png"] size:CPSizeMake(9, 22)]]
+                    [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-normal-left.png"] size:CGSizeMake(9, 22)],
+                    [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-normal-center.png"] size:CGSizeMake(1, 22)],
+                    [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-normal-right.png"] size:CGSizeMake(9, 22)]]
                 isVertical:NO]];
     TNTabViewTabButtonColorPressed = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[
-                    [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-pressed-left.png"] size:CPSizeMake(9, 22)],
-                    [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-pressed-center.png"] size:CPSizeMake(1, 22)],
-                    [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-pressed-right.png"] size:CPSizeMake(9, 22)]]
+                    [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-pressed-left.png"] size:CGSizeMake(9, 22)],
+                    [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-pressed-center.png"] size:CGSizeMake(1, 22)],
+                    [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-pressed-right.png"] size:CGSizeMake(9, 22)]]
                 isVertical:NO]];
     TNTabViewTabButtonColorActive = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[
-                    [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-active-left.png"] size:CPSizeMake(9, 22)],
-                    [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-active-center.png"] size:CPSizeMake(1, 22)],
-                    [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-active-right.png"] size:CPSizeMake(9, 22)]]
+                    [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-active-left.png"] size:CGSizeMake(9, 22)],
+                    [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-active-center.png"] size:CGSizeMake(1, 22)],
+                    [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-active-right.png"] size:CGSizeMake(9, 22)]]
                 isVertical:NO]];
 }
 
@@ -79,7 +79,7 @@ var TNTabItemPrototypeThemeStateSelected;
 */
 + (CPSize)size
 {
-    return CPSizeMake(115.0, 25.0);
+    return CGSizeMake(115.0, 25.0);
 }
 
 
@@ -558,20 +558,20 @@ var TNTabItemPrototypeThemeStateSelected;
 
     if ([[_scrollViewTabs horizontalScroller] isEnabled])
     {
-        [_scrollViewTabs setFrameSize:CPSizeMake([self bounds].size.width - 40, [TNTabItemPrototype size].height)];
+        [_scrollViewTabs setFrameSize:CGSizeMake([self bounds].size.width - 40, [TNTabItemPrototype size].height)];
         [_scrollViewTabs setFrameOrigin:CPPointMake(40.0, 0.0)];
         [self addSubview:_buttonScrollLeft];
         [self addSubview:_buttonScrollRight];
     }
     else
     {
-        [_scrollViewTabs setFrameSize:CPSizeMake([self bounds].size.width, [TNTabItemPrototype size].height)];
+        [_scrollViewTabs setFrameSize:CGSizeMake([self bounds].size.width, [TNTabItemPrototype size].height)];
         [_scrollViewTabs setFrameOrigin:CPPointMake(0.0, 0.0)];
         [_buttonScrollRight removeFromSuperview];
         [_buttonScrollLeft removeFromSuperview];
     }
 
-    [_viewTabsDocument setFrameSize:CPSizeMake(docViewWitdh, [TNTabItemPrototype size].height)];
+    [_viewTabsDocument setFrameSize:CGSizeMake(docViewWitdh, [TNTabItemPrototype size].height)];
 
     for (var i = 0; i < [_itemObjects count]; i++)
     {

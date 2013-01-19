@@ -56,15 +56,15 @@ var TNToolbarSelectedBgImage,
     var bundle = [CPBundle bundleForClass:TNToolbar];
 
     TNToolbarSelectedBgImage = [[CPThreePartImage alloc] initWithImageSlices:[
-        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-item-selected-left.png"] size:CPSizeMake(3.0, 60.0)],
-        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-item-selected-center.png"] size:CPSizeMake(1.0, 60.0)],
-        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-item-selected-right.png"] size:CPSizeMake(3.0, 60.0)]
+        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-item-selected-left.png"] size:CGSizeMake(3.0, 60.0)],
+        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-item-selected-center.png"] size:CGSizeMake(1.0, 60.0)],
+        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-item-selected-right.png"] size:CGSizeMake(3.0, 60.0)]
     ] isVertical:NO];
 
     TNToolbarSelectedBgImageHUD = [[CPThreePartImage alloc] initWithImageSlices:[
-        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-hud-item-selected-left.png"] size:CPSizeMake(1.0, 60.0)],
-        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-hud-item-selected-center.png"] size:CPSizeMake(1.0, 60.0)],
-        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-hud-item-selected-right.png"] size:CPSizeMake(1.0, 60.0)]
+        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-hud-item-selected-left.png"] size:CGSizeMake(1.0, 60.0)],
+        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-hud-item-selected-center.png"] size:CGSizeMake(1.0, 60.0)],
+        [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-hud-item-selected-right.png"] size:CGSizeMake(1.0, 60.0)]
     ] isVertical:NO];
 }
 
@@ -184,9 +184,9 @@ var TNToolbarSelectedBgImage,
     var newItem = [[CPToolbarItem alloc] initWithItemIdentifier:anIdentifier];
 
     [newItem setLabel:aLabel];
-    [newItem setImage:[[CPImage alloc] initWithContentsOfFile:anImage size:CPSizeMake(32,32)]];
+    [newItem setImage:[[CPImage alloc] initWithContentsOfFile:anImage size:CGSizeMake(32,32)]];
     if (anotherImage)
-        [newItem setAlternateImage:[[CPImage alloc] initWithContentsOfFile:anotherImage size:CPSizeMake(32,32)]];
+        [newItem setAlternateImage:[[CPImage alloc] initWithContentsOfFile:anotherImage size:CGSizeMake(32,32)]];
     [newItem setTarget:aTarget];
     [newItem setAction:anAction];
     [newItem setToolTip:aToolTip];

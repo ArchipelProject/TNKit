@@ -240,7 +240,7 @@ catch(e)
 {
     if (_translationFunction == TNSwipeViewCSSTranslateFunctionX)
     {
-        [_mainView setFrameSize:CPSizeMake([self frameSize].width * [_views count], [self frameSize].height)];
+        [_mainView setFrameSize:CGSizeMake([self frameSize].width * [_views count], [self frameSize].height)];
         for (var i = 0; i < [_views count]; i++)
         {
             var currentView = [_views objectAtIndex:i];
@@ -252,7 +252,7 @@ catch(e)
     }
     else
     {
-        [_mainView setFrameSize:CPSizeMake([self frameSize].width, [self frameSize].height * [_views count])];
+        [_mainView setFrameSize:CGSizeMake([self frameSize].width, [self frameSize].height * [_views count])];
         for (var i = 0; i < [_views count]; i++)
         {
             var currentView = [_views objectAtIndex:i];

@@ -58,8 +58,8 @@
 //         [self setValue:[CPNull null] forThemeAttribute:@"decrement-line-color"];
 //         [self setValue:[CPNull null] forThemeAttribute:@"increment-line-color"];
 //         [self setValue:[CPNull null] forThemeAttribute:@"knob-slot-color"];
-//         [self setValue:CPSizeMake(10, 0) forThemeAttribute:@"increment-line-size"];
-//         [self setValue:CPSizeMake(10, 0) forThemeAttribute:@"decrement-line-size"];
+//         [self setValue:CGSizeMake(10, 0) forThemeAttribute:@"increment-line-size"];
+//         [self setValue:CGSizeMake(10, 0) forThemeAttribute:@"decrement-line-size"];
 //         [self setValue:10.0 forThemeAttribute:@"scroller-width"];
 //
 //         if ([self isVertical])
@@ -216,7 +216,7 @@
 //     contentFrame.origin.y += headerClipViewHeight;
 //     contentFrame.size.height -= headerClipViewHeight;
 //
-//     var difference = CPSizeMake(CPRectGetWidth(documentFrame) - CPRectGetWidth(contentFrame), CPRectGetHeight(documentFrame) - CPRectGetHeight(contentFrame)),
+//     var difference = CGSizeMake(CPRectGetWidth(documentFrame) - CPRectGetWidth(contentFrame), CPRectGetHeight(documentFrame) - CPRectGetHeight(contentFrame)),
 //         verticalScrollerWidth = CPRectGetWidth([_verticalScroller frame]),
 //         horizontalScrollerHeight = CPRectGetHeight([_horizontalScroller frame]),
 //         hasVerticalScroll = difference.height > 0.0,
