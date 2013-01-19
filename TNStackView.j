@@ -45,7 +45,7 @@
     @param aFrame the frame
     @return a instancied TNStackView
 */
-- (id)initWithFrame:(CPRect)aFrame
+- (id)initWithFrame:(CGRect)aFrame
 {
     if (self = [super initWithFrame:aFrame])
     {
@@ -62,7 +62,7 @@
 
 /*! @ignore
 */
-- (CPRect)_nextPosition
+- (CGRect)_nextPosition
 {
     var lastStackedView = [_stackedViews lastObject],
         position;
@@ -70,11 +70,11 @@
     if (lastStackedView)
     {
         position = [lastStackedView frame];
-        position.origin.y = CPRectGetMaxY(position) + _padding;
+        position.origin.y = CGRectGetMaxY(position) + _padding;
         position.origin.x = _padding;
     }
     else
-        position = CGRectMake(_padding, _padding, CPRectGetWidth([self bounds]) - (_padding * 2), 0);
+        position = CGRectMake(_padding, _padding, CGRectGetWidth([self bounds]) - (_padding * 2), 0);
 
     return position
 }

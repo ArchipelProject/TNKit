@@ -23,25 +23,25 @@
 @import <AppKit/CPView.j>
 
 var CSSProperties = {
-    "webkit" : {
-        "transform": "WebkitTransform",
-        "backfaceVisibility": "WebkitBackfaceVisibility",
-        "perspective": "WebkitPerspective",
-        "transformStyle": "WebkitTransformStyle",
-        "transition": "WebkitTransition",
-        "transitionTimingFunction": "WebkitTransitionTimingFunction",
-        "transitionEnd": "webkitTransitionEnd"
-    },
-    "gecko" : {
-        "transform": "MozTransform",
-        "backfaceVisibility": "MozBackfaceVisibility",
-        "perspective": "MozPerspective",
-        "transformStyle": "MozTransformStyle",
-        "transition": "MozTransition",
-        "transitionTimingFunction": "MozTransitionTimingFunction",
-        "transitionEnd": "transitionend"
-    }
-};
+        "webkit" : {
+            "transform": "WebkitTransform",
+            "backfaceVisibility": "WebkitBackfaceVisibility",
+            "perspective": "WebkitPerspective",
+            "transformStyle": "WebkitTransformStyle",
+            "transition": "WebkitTransition",
+            "transitionTimingFunction": "WebkitTransitionTimingFunction",
+            "transitionEnd": "webkitTransitionEnd"
+        },
+        "gecko" : {
+            "transform": "MozTransform",
+            "backfaceVisibility": "MozBackfaceVisibility",
+            "perspective": "MozPerspective",
+            "transformStyle": "MozTransformStyle",
+            "transition": "MozTransition",
+            "transitionTimingFunction": "MozTransitionTimingFunction",
+            "transitionEnd": "transitionend"
+        }
+    };
 
 TNSwipeViewDirectionRight = 1;
 TNSwipeViewDirectionLeft = 2;
@@ -73,8 +73,8 @@ catch(e)
     float       _minimalRatio           @accessors(property=minimalRatio);
 
     BOOL        _isAnimating;
-    CPPoint     _generalInitialTrackingPoint;
-    CPPoint     _initialTrackingPoint;
+    CGPoint     _generalInitialTrackingPoint;
+    CGPoint     _initialTrackingPoint;
     CPView      _mainView;
     Function    _validateFunction;
     CPTimer     _animationGuardTimer;
@@ -246,7 +246,7 @@ catch(e)
             var currentView = [_views objectAtIndex:i];
 
             [currentView setFrame:[self bounds]];
-            [currentView setFrameOrigin:CPPointMake(i * [self frameSize].width, 0)];
+            [currentView setFrameOrigin:CGPointMake(i * [self frameSize].width, 0)];
             [_mainView addSubview:currentView];
         }
     }
@@ -258,13 +258,13 @@ catch(e)
             var currentView = [_views objectAtIndex:i];
 
             [currentView setFrame:[self bounds]];
-            [currentView setFrameOrigin:CPPointMake(0, i * [self frameSize].height)];
+            [currentView setFrameOrigin:CGPointMake(0, i * [self frameSize].height)];
             [_mainView addSubview:currentView];
         }
     }
 }
 
-- (void)setFrame:(CPRect)aFrame
+- (void)setFrame:(CGRect)aFrame
 {
     var currentFrameWidth = [self frameSize].width,
         widthOffset;
@@ -275,7 +275,7 @@ catch(e)
         return;
 
     widthOffset = aFrame.size.width - currentFrameWidth;
-    [_mainView setFrameOrigin:CPPointMake(([_mainView frameOrigin].x - (widthOffset * _currentViewIndex)) , 0)];
+    [_mainView setFrameOrigin:CGPointMake(([_mainView frameOrigin].x - (widthOffset * _currentViewIndex)) , 0)];
 }
 
 
@@ -431,13 +431,13 @@ catch(e)
     {
         var tx = [self _currentTranslation],
             newX = [_mainView frameOrigin].x + tx;
-        [_mainView setFrameOrigin:CPPointMake(newX, 0)];
+        [_mainView setFrameOrigin:CGPointMake(newX, 0)];
     }
     else
     {
         var ty = [self _currentTranslation],
             newY = [_mainView frameOrigin].y + ty;
-        [_mainView setFrameOrigin:CPPointMake(0, newY)];
+        [_mainView setFrameOrigin:CGPointMake(0, newY)];
     }
     _mainView._DOMElement.style[CSSProperties[TNSwipeViewBrowserEngine].transform] = _translationFunction + @"(0px)";
     if (_animationGuardTimer)

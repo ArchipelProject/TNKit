@@ -29,7 +29,7 @@
 
 /*! @ingroup messageboard
     This class allows to stack TNMessageView in a variable
-    row height CPTableView with shortcuts. Result will display 
+    row height CPTableView with shortcuts. Result will display
     a sort of chat view
 */
 @implementation TNMessageBoard : CPTableView
@@ -45,7 +45,7 @@
     @param aFrame the frame of the TNMessageBoard
     @return an initialized TNMessageBoard
 */
-- (TNMessageBoard)initWithFrame:(CPRect)aFrame
+- (TNMessageBoard)initWithFrame:(CGRect)aFrame
 {
     if (self = [super initWithFrame:aFrame])
     {
@@ -69,7 +69,7 @@
 
         [self addTableColumn:messageColumn];
 
-        _dataView = [[TNMessageView alloc] initWithFrame:CPRectMake(0, 0, 100, 100)];
+        _dataView = [[TNMessageView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
     }
 
     return self;

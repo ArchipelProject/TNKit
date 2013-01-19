@@ -93,7 +93,7 @@ function PatternColor()
     var frame = [self frame];
 
     _stepper = [CPStepper stepper];
-    [_stepper setFrame:CPRectMake(frame.size.width - 35, 1.0, 25, 25)]
+    [_stepper setFrame:CGRectMake(frame.size.width - 35, 1.0, 25, 25)]
     [_stepper setAutoresizingMask:CPViewMinXMargin];
 
     _textField = [CPTextField textFieldWithStringValue:@"" placeholder:@"" width:frame.size.width - 36];

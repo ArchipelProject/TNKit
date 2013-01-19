@@ -23,7 +23,7 @@
 
 @implementation TNUIKitScrollView : CPScroller
 
-- (void)initWithFrame:(CPRect)aRect
+- (void)initWithFrame:(CGRect)aRect
 {
     if (self = [super initWithFrame:aRect])
     {
@@ -201,7 +201,7 @@
 //         }
 //
 //         [_contentView setFrame:[self _insetBounds]];
-//         [_headerClipView setFrame:CPRectMakeZero()];
+//         [_headerClipView setFrame:CGRectMakeZero()];
 //
 //         --_recursionCount;
 //
@@ -211,14 +211,14 @@
 //     var documentFrame = [documentView frame], // the size of the whole document
 //         contentFrame = [self _insetBounds], // assume it takes up the entire size of the scrollview (no scrollers)
 //         headerClipViewFrame = [self _headerClipViewFrame],
-//         headerClipViewHeight = CPRectGetHeight(headerClipViewFrame);
+//         headerClipViewHeight = CGRectGetHeight(headerClipViewFrame);
 //
 //     contentFrame.origin.y += headerClipViewHeight;
 //     contentFrame.size.height -= headerClipViewHeight;
 //
-//     var difference = CGSizeMake(CPRectGetWidth(documentFrame) - CPRectGetWidth(contentFrame), CPRectGetHeight(documentFrame) - CPRectGetHeight(contentFrame)),
-//         verticalScrollerWidth = CPRectGetWidth([_verticalScroller frame]),
-//         horizontalScrollerHeight = CPRectGetHeight([_horizontalScroller frame]),
+//     var difference = CGSizeMake(CGRectGetWidth(documentFrame) - CGRectGetWidth(contentFrame), CGRectGetHeight(documentFrame) - CGRectGetHeight(contentFrame)),
+//         verticalScrollerWidth = CGRectGetWidth([_verticalScroller frame]),
+//         horizontalScrollerHeight = CGRectGetHeight([_horizontalScroller frame]),
 //         hasVerticalScroll = difference.height > 0.0,
 //         hasHorizontalScroll = difference.width > 0.0,
 //         shouldShowVerticalScroller = _hasVerticalScroller && (!_autohidesScrollers || hasVerticalScroll),
@@ -260,13 +260,13 @@
 //     if (shouldShowVerticalScroller)
 //     {
 //         var verticalScrollerY =
-//             MAX(CPRectGetMinY(contentFrame), MAX(CPRectGetMaxY([self _cornerViewFrame]), CPRectGetMaxY(headerClipViewFrame)));
+//             MAX(CGRectGetMinY(contentFrame), MAX(CGRectGetMaxY([self _cornerViewFrame]), CGRectGetMaxY(headerClipViewFrame)));
 //
-//         var verticalScrollerHeight = CPRectGetMaxY(contentFrame) - verticalScrollerY;
+//         var verticalScrollerHeight = CGRectGetMaxY(contentFrame) - verticalScrollerY;
 //
 //         [_verticalScroller setFloatValue:(difference.height <= 0.0) ? 0.0 : scrollPoint.y / difference.height];
-//         [_verticalScroller setKnobProportion:CPRectGetHeight(contentFrame) / CPRectGetHeight(documentFrame)];
-//         [_verticalScroller setFrame:CPRectMake(CPRectGetMaxX(contentFrame) - 10.0, verticalScrollerY, verticalScrollerWidth, verticalScrollerHeight)];
+//         [_verticalScroller setKnobProportion:CGRectGetHeight(contentFrame) / CGRectGetHeight(documentFrame)];
+//         [_verticalScroller setFrame:CGRectMake(CGRectGetMaxX(contentFrame) - 10.0, verticalScrollerY, verticalScrollerWidth, verticalScrollerHeight)];
 //     }
 //     else if (wasShowingVerticalScroller)
 //     {
@@ -277,8 +277,8 @@
 //     if (shouldShowHorizontalScroller)
 //     {
 //         [_horizontalScroller setFloatValue:(difference.width <= 0.0) ? 0.0 : scrollPoint.x / difference.width];
-//         [_horizontalScroller setKnobProportion:CPRectGetWidth(contentFrame) / CPRectGetWidth(documentFrame)];
-//         [_horizontalScroller setFrame:CPRectMake(CPRectGetMinX(contentFrame), CPRectGetMaxY(contentFrame) - 10.0, CPRectGetWidth(contentFrame), horizontalScrollerHeight)];
+//         [_horizontalScroller setKnobProportion:CGRectGetWidth(contentFrame) / CGRectGetWidth(documentFrame)];
+//         [_horizontalScroller setFrame:CGRectMake(CGRectGetMinX(contentFrame), CGRectGetMaxY(contentFrame) - 10.0, CGRectGetWidth(contentFrame), horizontalScrollerHeight)];
 //     }
 //     else if (wasShowingHorizontalScroller)
 //     {

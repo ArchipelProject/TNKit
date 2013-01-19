@@ -154,7 +154,7 @@ var TNMessageViewBackgroundColorLeftNormal,
     @param aFrame the frame of the view
     @return initialized view
 */
-- (void)initWithFrame:(CPRect)aFrame
+- (void)initWithFrame:(CGRect)aFrame
 {
     if (self = [super initWithFrame:aFrame])
     {
@@ -240,13 +240,13 @@ var TNMessageViewBackgroundColorLeftNormal,
     switch (_position)
     {
         case TNMessageViewAvatarPositionLeft:
-            [_viewContainer setFrameOrigin:CPPointMake(50, 10)];
+            [_viewContainer setFrameOrigin:CGPointMake(50, 10)];
             [_imageViewAvatar setFrame:CGRectMake(6, CGRectGetHeight([self frame]) - 46, 36, 36)];
             [_imageViewAvatar setAutoresizingMask:CPViewMinYMargin];
             break;
 
         case TNMessageViewAvatarPositionRight:
-            [_viewContainer setFrameOrigin:CPPointMake(10, 10)];
+            [_viewContainer setFrameOrigin:CGPointMake(10, 10)];
             [_imageViewAvatar setFrame:CGRectMake(CGRectGetWidth([self frame]) - 46, CGRectGetHeight([self frame]) - 46 , 36, 36)];
             [_imageViewAvatar setAutoresizingMask:CPViewMinXMargin | CPViewMinYMargin];
             break;

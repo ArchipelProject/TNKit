@@ -23,25 +23,27 @@
 @import <AppKit/CPView.j>
 
 var CSSProperties = {
-    "webkit" : {
-        "transform": "WebkitTransform",
-        "backfaceVisibility": "WebkitBackfaceVisibility",
-        "perspective": "WebkitPerspective",
-        "transformStyle": "WebkitTransformStyle",
-        "transition": "WebkitTransition",
-        "transitionTimingFunction": "WebkitTransitionTimingFunction",
-        "transitionEnd": "webkitTransitionEnd"
-    },
-    "gecko" : {
-        "transform": "MozTransform",
-        "backfaceVisibility": "MozBackfaceVisibility",
-        "perspective": "MozPerspective",
-        "transformStyle": "MozTransformStyle",
-        "transition": "MozTransition",
-        "transitionTimingFunction": "MozTransitionTimingFunction",
-        "transitionEnd": "transitionend"
-    }
-};
+        "webkit":
+        {
+            "transform": "WebkitTransform",
+            "backfaceVisibility": "WebkitBackfaceVisibility",
+            "perspective": "WebkitPerspective",
+            "transformStyle": "WebkitTransformStyle",
+            "transition": "WebkitTransition",
+            "transitionTimingFunction": "WebkitTransitionTimingFunction",
+            "transitionEnd": "webkitTransitionEnd"
+        },
+        "gecko":
+        {
+            "transform": "MozTransform",
+            "backfaceVisibility": "MozBackfaceVisibility",
+            "perspective": "MozPerspective",
+            "transformStyle": "MozTransformStyle",
+            "transition": "MozTransition",
+            "transitionTimingFunction": "MozTransitionTimingFunction",
+            "transitionEnd": "transitionend"
+        }
+    };
 
 TNFlipViewAnimationStyleRotate = 1;
 TNFlipViewAnimationStyleTranslate = 2;

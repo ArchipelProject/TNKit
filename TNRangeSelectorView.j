@@ -56,7 +56,7 @@ var TNRangeSelectorViewDelegate_rangeSelectorView_didChangeLeftValue    = 1 << 1
 
 /*! Initialize a new TNRangeSelectorView
 */
-- (TNRangeSelectorView)initWithFrame:(CPRect)aFrame
+- (TNRangeSelectorView)initWithFrame:(CGRect)aFrame
 {
     if (self = [super initWithFrame:aFrame])
     {
@@ -66,17 +66,17 @@ var TNRangeSelectorViewDelegate_rangeSelectorView_didChangeLeftValue    = 1 << 1
         _splitView = [[CPSplitView alloc] initWithFrame:[self bounds]];
         [_splitView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
 
-        _viewOuterBoundsLeft = [[CPView alloc] initWithFrame:CPRectMakeZero()];
+        _viewOuterBoundsLeft = [[CPView alloc] initWithFrame:CGRectMakeZero()];
         [_viewOuterBoundsLeft setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
         [_viewOuterBoundsLeft setBackgroundColor:[CPColor colorWithHexString:@"555"]];
         [_viewOuterBoundsLeft setAlphaValue:0.3];
 
-        _viewOuterBoundsRight = [[CPView alloc] initWithFrame:CPRectMakeZero()];
+        _viewOuterBoundsRight = [[CPView alloc] initWithFrame:CGRectMakeZero()];
         [_viewOuterBoundsRight setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
         [_viewOuterBoundsRight setBackgroundColor:[CPColor colorWithHexString:@"555"]];
         [_viewOuterBoundsRight setAlphaValue:0.3];
 
-        _viewInnerBounds = [[CPView alloc] initWithFrame:CPRectMakeZero()];
+        _viewInnerBounds = [[CPView alloc] initWithFrame:CGRectMakeZero()];
         [_viewInnerBounds setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
 
         [_splitView addSubview:_viewOuterBoundsLeft];

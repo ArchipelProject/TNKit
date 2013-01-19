@@ -78,7 +78,7 @@ var TNToolbarSelectedBgImage,
     {
         _toolbarItems           = [CPDictionary dictionary];
         _toolbarItemsOrder      = [CPDictionary dictionary];
-        _imageViewSelection     = [[CPImageView alloc] initWithFrame:CPRectMake(0.0, 0.0, 60.0, 60.0)];
+        _imageViewSelection     = [[CPImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, 60.0, 60.0)];
         _iconSelected           = NO;
         _customSubViews         = [CPArray array];
 

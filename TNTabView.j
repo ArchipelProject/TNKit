@@ -77,7 +77,7 @@ var TNTabItemPrototypeThemeStateSelected;
 /*! return the actual size of a TNTabItemPrototype
     This is used to layout the TNTabView
 */
-+ (CPSize)size
++ (CGSize)size
 {
     return CGSizeMake(115.0, 25.0);
 }
@@ -88,14 +88,14 @@ var TNTabItemPrototypeThemeStateSelected;
 
 /*! initialize a new TNTabItemPrototype
 */
-- (TNTabItemPrototype)initWithFrame:(CPRect)aFrame
+- (TNTabItemPrototype)initWithFrame:(CGRect)aFrame
 {
     if (self = [super initWithFrame:aFrame])
     {
         if (!TNTabItemPrototypeThemeStateSelected)
             TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStateSelected");
 
-        _label = [[CPButton alloc] initWithFrame:CPRectMake(0, 0, [TNTabItemPrototype size].width - TNTabViewTabMargin, 22)];
+        _label = [[CPButton alloc] initWithFrame:CGRectMake(0, 0, [TNTabItemPrototype size].width - TNTabViewTabMargin, 22)];
         [_label setAutoresizingMask:CPViewMinXMargin | CPViewMinYMargin];
         [_label setValue:TNTabViewTabButtonColorNormal forThemeAttribute:@"bezel-color" inState:CPThemeStateNormal];
         [_label setValue:TNTabViewTabButtonColorPressed forThemeAttribute:@"bezel-color" inState:CPThemeStateHighlighted];
@@ -155,10 +155,8 @@ var TNTabItemPrototypeThemeStateSelected;
 */
 - (id)initWithCoder:(CPCoder)aCoder
 {
-    if ( self = [super initWithCoder:aCoder])
-    {
+    if (self = [super initWithCoder:aCoder])
         _label  = [aCoder decodeObjectForKey:@"_label"];
-    }
 
     return self;
 }
@@ -202,7 +200,7 @@ var TNTabItemPrototypeThemeStateSelected;
 /*! initialize the TNTabView
     @param aFrame the frame of the view
 */
-- (TNTabView)initWithFrame:(CPRect)aFrame
+- (TNTabView)initWithFrame:(CGRect)aFrame
 {
     if (self = [super initWithFrame:aFrame])
     {
@@ -216,30 +214,30 @@ var TNTabItemPrototypeThemeStateSelected;
             TNTabViewTabButtonLeftBezelColorPressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/scroll-button-left-bezel-pressed.png"]];
         }
 
-        _viewTabsDocument = [[CPView alloc] initWithFrame:CPRectMake(0.0, 0.0, 0.0, [TNTabItemPrototype size].height)];
+        _viewTabsDocument = [[CPView alloc] initWithFrame:CGRectMake(0.0, 0.0, 0.0, [TNTabItemPrototype size].height)];
 
-        _scrollViewTabs = [[CPScrollView alloc] initWithFrame:CPRectMake(0.0, 0.0, CPRectGetWidth(aFrame), [TNTabItemPrototype size].height)];
+        _scrollViewTabs = [[CPScrollView alloc] initWithFrame:CGRectMake(0.0, 0.0, CGRectGetWidth(aFrame), [TNTabItemPrototype size].height)];
         [_scrollViewTabs setAutoresizingMask:CPViewWidthSizable];
         [_scrollViewTabs setAutohidesScrollers:YES];
         [_scrollViewTabs setDocumentView:_viewTabsDocument];
         [_scrollViewTabs setHasVerticalScroller:NO];
         [_scrollViewTabs setHasHorizontalScroller:NO];
 
-        _contentView = [[CPView alloc] initWithFrame:CPRectMake(0, [TNTabItemPrototype size].height, CPRectGetWidth(aFrame), CPRectGetHeight(aFrame) - [TNTabItemPrototype size].height)];
+        _contentView = [[CPView alloc] initWithFrame:CGRectMake(0, [TNTabItemPrototype size].height, CGRectGetWidth(aFrame), CGRectGetHeight(aFrame) - [TNTabItemPrototype size].height)];
         [_contentView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
 
         _currentSelectedIndex = -1;
         _needsScroll = NO;
         _itemObjects = [CPArray array];
 
-        _tabItemViewPrototype = [[TNTabItemPrototype alloc] initWithFrame:CPRectMake(0.0, 0.0, [TNTabItemPrototype size].width, [TNTabItemPrototype size].height)];
+        _tabItemViewPrototype = [[TNTabItemPrototype alloc] initWithFrame:CGRectMake(0.0, 0.0, [TNTabItemPrototype size].width, [TNTabItemPrototype size].height)];
 
         _buttonScrollRight = [CPButton buttonWithTitle:@">"];
         [_buttonScrollRight setBordered:NO];
         [_buttonScrollRight setImage:TNTabViewTabButtonRightBezelColorNormal]; // this avoid the blinking..
         [_buttonScrollRight setValue:TNTabViewTabButtonRightBezelColorNormal forThemeAttribute:@"image"];
         [_buttonScrollRight setValue:TNTabViewTabButtonRightBezelColorPressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
-        [_buttonScrollRight setFrame:CPRectMake(20.0, 0.0, 20.0, [TNTabItemPrototype size].height)];
+        [_buttonScrollRight setFrame:CGRectMake(20.0, 0.0, 20.0, [TNTabItemPrototype size].height)];
         [_buttonScrollRight setContinuous:YES];
         [_buttonScrollRight setTarget:_scrollViewTabs];
         [_buttonScrollRight setAction:@selector(moveRight:)];
@@ -249,7 +247,7 @@ var TNTabItemPrototypeThemeStateSelected;
         [_buttonScrollLeft setImage:TNTabViewTabButtonLeftBezelColorNormal]; // this avoid the blinking..
         [_buttonScrollLeft setValue:TNTabViewTabButtonLeftBezelColorNormal forThemeAttribute:@"image"];
         [_buttonScrollLeft setValue:TNTabViewTabButtonLeftBezelColorPressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
-        [_buttonScrollLeft setFrame:CPRectMake(0.0, 0.0, 20.0, [TNTabItemPrototype size].height)];
+        [_buttonScrollLeft setFrame:CGRectMake(0.0, 0.0, 20.0, [TNTabItemPrototype size].height)];
         [_buttonScrollLeft setContinuous:YES];
         [_buttonScrollLeft setTarget:_scrollViewTabs];
         [_buttonScrollLeft setAction:@selector(moveLeft:)];
@@ -559,14 +557,14 @@ var TNTabItemPrototypeThemeStateSelected;
     if ([[_scrollViewTabs horizontalScroller] isEnabled])
     {
         [_scrollViewTabs setFrameSize:CGSizeMake([self bounds].size.width - 40, [TNTabItemPrototype size].height)];
-        [_scrollViewTabs setFrameOrigin:CPPointMake(40.0, 0.0)];
+        [_scrollViewTabs setFrameOrigin:CGPointMake(40.0, 0.0)];
         [self addSubview:_buttonScrollLeft];
         [self addSubview:_buttonScrollRight];
     }
     else
     {
         [_scrollViewTabs setFrameSize:CGSizeMake([self bounds].size.width, [TNTabItemPrototype size].height)];
-        [_scrollViewTabs setFrameOrigin:CPPointMake(0.0, 0.0)];
+        [_scrollViewTabs setFrameOrigin:CGPointMake(0.0, 0.0)];
         [_buttonScrollRight removeFromSuperview];
         [_buttonScrollLeft removeFromSuperview];
     }
@@ -579,7 +577,7 @@ var TNTabItemPrototypeThemeStateSelected;
             itemView = [self _getTabViewAtIndex:i],
             view = [item view];
 
-        [itemView setFrameOrigin:CPPointMake(currentXOrigin, 2.0)];
+        [itemView setFrameOrigin:CGPointMake(currentXOrigin, 2.0)];
         [itemView setIndex:i];
 
         [view setFrame:[_contentView bounds]];

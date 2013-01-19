@@ -78,7 +78,7 @@
     if (self = [super init])
     {
         _workerURL = anURL;
-        _worker = new Worker([_workerURL absoluteString ]);
+        _worker = new Worker([_workerURL absoluteString]);
         _worker.onmessage = function(e) {
             [self _didReceiveData:e.data];
         }
