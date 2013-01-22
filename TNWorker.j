@@ -20,6 +20,8 @@
 
 @import <Foundation/Foundation.j>
 
+@global Worker
+
 
 /*! @ingroup tnkit
     Wrapper for Web Worker in Cappuccino
