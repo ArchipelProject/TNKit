@@ -22,6 +22,7 @@
 @import <AppKit/CPView.j>
 @import <AppKit/CPControl.j>
 
+@global CPWindowBelow
 
 var TNRangeSelectorViewDelegate_rangeSelectorView_didChangeLeftValue    = 1 << 1,
     TNRangeSelectorViewDelegate_rangeSelectorView_didChangeRightValue   = 1 << 2;
