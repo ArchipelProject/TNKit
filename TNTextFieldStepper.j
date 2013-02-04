@@ -26,38 +26,6 @@
 
 var TNStepperButtonsSize;
 
-/*! exctracted from Cappuccino's CPTheme because this rocks
-*/
-function PatternColor()
-{
-    if (arguments.length < 3)
-    {
-        var slices = arguments[0],
-            imageSlices = [],
-            bundle = [CPBundle bundleForClass:TNTextFieldStepper];
-
-        for (var i = 0; i < slices.length; ++i)
-        {
-            var slice = slices[i];
-
-            imageSlices.push(slice ? [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:slice[0]] size:CGSizeMake(slice[1], slice[2])] : nil);
-        }
-
-        if (arguments.length == 2)
-            return [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:imageSlices isVertical:arguments[1]]];
-        else
-            return [CPColor colorWithPatternImage:[[CPNinePartImage alloc] initWithImageSlices:imageSlices]];
-    }
-    else if (arguments.length == 3)
-    {
-        return [CPColor colorWithPatternImage:PatternImage(arguments[0], arguments[1], arguments[2])];
-    }
-    else
-    {
-        return nil;
-    }
-}
-
 /*! @ingroup tnkit
     TNTextFieldStepper is a subclass of CPStepper. it contains a textfield that displays the current stepper value
 */
@@ -158,6 +126,28 @@ function PatternColor()
 - (double)doubleValue
 {
     return [_stepper doubleValue];
+}
+
+- (void)setTarget:(id)aTarget
+{
+    [_stepper setTarget:aTarget];
+    [_textField setTarget:aTarget];
+}
+
+- (id)target
+{
+    return [_stepper target];
+}
+
+- (id)setAction:(SEL)aSelector
+{
+    [_stepper setAction:aSelector];
+    [_textField setAction:aSelector];
+}
+
+- (SEL)selector
+{
+    return [_stepper action];
 }
 
 @end
