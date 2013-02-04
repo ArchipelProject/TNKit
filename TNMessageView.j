@@ -23,7 +23,7 @@
 @import <AppKit/CPColor.j>
 @import <AppKit/CPImage.j>
 @import <AppKit/CPImageView.j>
-@import <AppKit/CPImageView.j>
+@import <AppKit/CPView.j>
 @import <AppKit/CPTextField.j>
 
 
