@@ -165,7 +165,8 @@
 */
 - (void)tableView:(CPTableView)aTableView viewForTableColumn:(CPTableColumn)aColumn row:(id)aRow
 {
-    return _dataView;
+    var copy = [CPKeyedArchiver archivedDataWithRootObject:_dataView];
+    return [CPKeyedUnarchiver unarchiveObjectWithData:copy];
 }
 
 /*! tableview delegate
