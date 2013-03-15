@@ -163,7 +163,7 @@
 
 /*! tableview delegate
 */
-- (void)tableView:(CPTableView)aTableView dataViewForTableColumn:(CPTableColumn)aColumn row:(id)aRow
+- (void)tableView:(CPTableView)aTableView viewForTableColumn:(CPTableColumn)aColumn row:(id)aRow
 {
     return _dataView;
 }
