@@ -323,13 +323,13 @@ var TNToolbarSelectedBgImage,
 */
 - (CPToolbarItem)itemWithIdentifier:(id)anIdentifier
 {
-    for (var i = 0; i < [[self visibleItems] count]; i++)
-    {
-        if ([[[self visibleItems] objectAtIndex:i] itemIdentifier] == anIdentifier)
-            return [[self visibleItems] objectAtIndex:i];
-    }
+    // for (var i = 0; i < [[self visibleItems] count]; i++)
+    // {
+    //     if ([[[self visibleItems] objectAtIndex:i] itemIdentifier] == anIdentifier)
+    //         return [[self visibleItems] objectAtIndex:i];
+    // }
 
-    return nil;
+    return [_toolbarItems objectForKey:anIdentifier];
 }
 
 #pragma mark -
