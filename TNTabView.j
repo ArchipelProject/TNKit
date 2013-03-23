@@ -132,7 +132,8 @@ var TNTabItemPrototypeThemeStateSelected;
 */
 - (void)setObjectValue:(CPTabView)anItem
 {
-    [_label setTitle:[anItem label]];
+    [_label unbind:@"title"];
+    [_label bind:@"title" toObject:anItem withKeyPath:@"label" options:nil];
 }
 
 /*! used to set theme state of subviews
