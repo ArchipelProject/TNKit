@@ -348,11 +348,16 @@ var TNTabItemPrototypeThemeStateSelected;
         _currentSelectedIndex = 0;
     }
 
-    var itemView = [self _newTabItemPrototype];
+    var previousSelectedItem = [self selectedTabViewItem],
+        itemView = [self _newTabItemPrototype];
+
     [itemView setObjectValue:anItem];
     [itemView setTarget:self];
     [itemView setAction:@selector(_tabItemCliked:)];
     [_itemObjects insertObject:[anItem, itemView] atIndex:anIndex];
+
+    if (previousSelectedItem)
+        [self selectTabViewItem:previousSelectedItem];
 
     [_viewTabsDocument addSubview:itemView];
     [self setNeedsLayout];
