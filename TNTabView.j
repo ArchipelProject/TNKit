@@ -38,7 +38,7 @@ var TNTabViewTabMargin = 2.0,
     TNTabViewTabButtonRightBezelColorPressed,
     TNTabViewTabButtonLeftBezelColorPressed;
 
-var TNTabItemPrototypeThemeStateSelected;
+TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStateSelected");
 
 /*! @ingroup tnkit
     This class represent the prototype of a TNTabView item
@@ -92,18 +92,10 @@ var TNTabItemPrototypeThemeStateSelected;
 {
     if (self = [super initWithFrame:aFrame])
     {
-        if (!TNTabItemPrototypeThemeStateSelected)
-            TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStateSelected");
-
         _label = [[CPButton alloc] initWithFrame:CGRectMake(0, 0, [TNTabItemPrototype size].width - TNTabViewTabMargin, 22)];
         [_label setAutoresizingMask:CPViewMinXMargin | CPViewMinYMargin];
-        [_label setValue:TNTabViewTabButtonColorNormal forThemeAttribute:@"bezel-color" inState:CPThemeStateNormal];
-        [_label setValue:TNTabViewTabButtonColorPressed forThemeAttribute:@"bezel-color" inState:CPThemeStateHighlighted];
-        [_label setValue:TNTabViewTabButtonColorActive forThemeAttribute:@"bezel-color" inState:TNTabItemPrototypeThemeStateSelected];
-        [_label setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateHighlighted];
-        [_label setValue:[CPColor blackColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateHighlighted];
-        [_label setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:TNTabItemPrototypeThemeStateSelected];
-        [_label setValue:[CPColor blackColor] forThemeAttribute:@"text-shadow-color" inState:TNTabItemPrototypeThemeStateSelected];
+
+        [self prepareTheme];
 
         [self addSubview:_label];
 
@@ -113,6 +105,17 @@ var TNTabItemPrototypeThemeStateSelected;
     }
 
     return self;
+}
+
+- (void)prepareTheme
+{
+    [_label setValue:TNTabViewTabButtonColorNormal forThemeAttribute:@"bezel-color" inState:CPThemeStateNormal];
+    [_label setValue:TNTabViewTabButtonColorPressed forThemeAttribute:@"bezel-color" inState:CPThemeStateHighlighted];
+    [_label setValue:TNTabViewTabButtonColorActive forThemeAttribute:@"bezel-color" inState:TNTabItemPrototypeThemeStateSelected];
+    [_label setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateHighlighted];
+    [_label setValue:[CPColor blackColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateHighlighted];
+    [_label setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:TNTabItemPrototypeThemeStateSelected];
+    [_label setValue:[CPColor blackColor] forThemeAttribute:@"text-shadow-color" inState:TNTabItemPrototypeThemeStateSelected];
 }
 
 
@@ -180,7 +183,8 @@ var TNTabItemPrototypeThemeStateSelected;
 */
 @implementation TNTabView : CPControl
 {
-    id                          _delegate @accessors(property=delegate);
+    id                          _delegate               @accessors(property=delegate);
+    BOOL                        _enableManualScrolling  @accessors(property=enableManualScrolling);
 
     CPArray                     _itemObjects;
     CPButton                    _buttonScrollLeft;
@@ -229,6 +233,7 @@ var TNTabItemPrototypeThemeStateSelected;
 
         _currentSelectedIndex = -1;
         _needsScroll = NO;
+        _enableManualScrolling = YES;
         _itemObjects = [CPArray array];
 
         _tabItemViewPrototype = [[TNTabItemPrototype alloc] initWithFrame:CGRectMake(0.0, 0.0, [TNTabItemPrototype size].width, [TNTabItemPrototype size].height)];
@@ -564,15 +569,21 @@ var TNTabItemPrototypeThemeStateSelected;
     {
         [_scrollViewTabs setFrameSize:CGSizeMake([self bounds].size.width - 40, [TNTabItemPrototype size].height)];
         [_scrollViewTabs setFrameOrigin:CGPointMake(40.0, 0.0)];
-        [self addSubview:_buttonScrollLeft];
-        [self addSubview:_buttonScrollRight];
+        if (_enableManualScrolling)
+        {
+            [self addSubview:_buttonScrollLeft];
+            [self addSubview:_buttonScrollRight];
+        }
     }
     else
     {
         [_scrollViewTabs setFrameSize:CGSizeMake([self bounds].size.width, [TNTabItemPrototype size].height)];
         [_scrollViewTabs setFrameOrigin:CGPointMake(0.0, 0.0)];
-        [_buttonScrollRight removeFromSuperview];
-        [_buttonScrollLeft removeFromSuperview];
+        if (_enableManualScrolling)
+        {
+            [_buttonScrollRight removeFromSuperview];
+            [_buttonScrollLeft removeFromSuperview];
+        }
     }
 
     [_viewTabsDocument setFrameSize:CGSizeMake(docViewWitdh, [TNTabItemPrototype size].height)];
