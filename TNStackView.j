@@ -49,15 +49,18 @@
 {
     if (self = [super initWithFrame:aFrame])
     {
-        _dataSource     = [CPArray array];
-        _stackedViews   = [CPArray array];
-        _padding        = 0;
-        _reversed       = NO;
-
-        [self setAutoresizingMask:CPViewWidthSizable];
+        [self _init];
     }
 
     return self;
+}
+
+- (void)_init
+{
+    _dataSource     = [CPArray array];
+    _stackedViews   = [CPArray array];
+    _padding        = 0;
+    _reversed       = NO;
 }
 
 /*! @ignore
@@ -150,6 +153,30 @@
     _reversed = !_reversed;
 
     [self reload];
+}
+
+#pragma mark -
+#pragma mark CPCoding compliance
+
+/*! CPCoder compliance
+*/
+- (id)initWithCoder:(CPCoder)aCoder
+{
+    self = [super initWithCoder:aCoder];
+
+    if (self)
+    {
+        [self _init];
+    }
+
+    return self;
+}
+
+/*! CPCoder compliance
+*/
+- (void)encodeWithCoder:(CPCoder)aCoder
+{
+    [super encodeWithCoder:aCoder];
 }
 
 @end
