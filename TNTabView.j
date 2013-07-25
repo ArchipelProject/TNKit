@@ -564,15 +564,14 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 */
 - (void)layoutSubviews
 {
-    var minimalDocViewWidth = [[_scrollViewTabs horizontalScroller] isEnabled] ? [self frameSize].width - 40 : [self frameSize].width,
+    var minimalDocViewWidth = /*[[_scrollViewTabs horizontalScroller] isEnabled] ? [self frameSize].width - 40 : */[self frameSize].width,
         docViewWitdh = MAX(([_tabItemViewPrototype size].width * [_itemObjects count]), minimalDocViewWidth),
         currentXOrigin = (docViewWitdh / 2) - [_itemObjects count] * [_tabItemViewPrototype size].width / 2;
 
-
     if ([[_scrollViewTabs horizontalScroller] isEnabled])
     {
-        [_scrollViewTabs setFrameSize:CGSizeMake([self bounds].size.width - 40, [_tabItemViewPrototype size].height)];
-        [_scrollViewTabs setFrameOrigin:CGPointMake(40.0, 0.0)];
+        // [_scrollViewTabs setFrameSize:CGSizeMake([self bounds].size.width - 40, [_tabItemViewPrototype size].height)];
+        // [_scrollViewTabs setFrameOrigin:CGPointMake(40.0, 0.0)];
         if (_enableManualScrolling)
         {
             [self addSubview:_buttonScrollLeft];
@@ -581,8 +580,8 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
     }
     else
     {
-        [_scrollViewTabs setFrameSize:CGSizeMake([self bounds].size.width, [_tabItemViewPrototype size].height)];
-        [_scrollViewTabs setFrameOrigin:CGPointMake(0.0, 0.0)];
+        // [_scrollViewTabs setFrameSize:CGSizeMake([self bounds].size.width, [_tabItemViewPrototype size].height)];
+        // [_scrollViewTabs setFrameOrigin:CGPointMake(0.0, 0.0)];
         if (_enableManualScrolling)
         {
             [_buttonScrollRight removeFromSuperview];
