@@ -82,6 +82,10 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
     return CGSizeMake(115.0, 25.0);
 }
 
+- (CGSize)size
+{
+    return [[self class] size];
+}
 
 #pragma mark -
 #pragma mark Initialization
@@ -561,13 +565,13 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 - (void)layoutSubviews
 {
     var minimalDocViewWidth = [[_scrollViewTabs horizontalScroller] isEnabled] ? [self frameSize].width - 40 : [self frameSize].width,
-        docViewWitdh = MAX(([TNTabItemPrototype size].width * [_itemObjects count]), minimalDocViewWidth),
-        currentXOrigin = (docViewWitdh / 2) - [_itemObjects count] * [TNTabItemPrototype size].width / 2;
+        docViewWitdh = MAX(([_tabItemViewPrototype size].width * [_itemObjects count]), minimalDocViewWidth),
+        currentXOrigin = (docViewWitdh / 2) - [_itemObjects count] * [_tabItemViewPrototype size].width / 2;
 
 
     if ([[_scrollViewTabs horizontalScroller] isEnabled])
     {
-        [_scrollViewTabs setFrameSize:CGSizeMake([self bounds].size.width - 40, [TNTabItemPrototype size].height)];
+        [_scrollViewTabs setFrameSize:CGSizeMake([self bounds].size.width - 40, [_tabItemViewPrototype size].height)];
         [_scrollViewTabs setFrameOrigin:CGPointMake(40.0, 0.0)];
         if (_enableManualScrolling)
         {
@@ -577,7 +581,7 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
     }
     else
     {
-        [_scrollViewTabs setFrameSize:CGSizeMake([self bounds].size.width, [TNTabItemPrototype size].height)];
+        [_scrollViewTabs setFrameSize:CGSizeMake([self bounds].size.width, [_tabItemViewPrototype size].height)];
         [_scrollViewTabs setFrameOrigin:CGPointMake(0.0, 0.0)];
         if (_enableManualScrolling)
         {
@@ -586,7 +590,7 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
         }
     }
 
-    [_viewTabsDocument setFrameSize:CGSizeMake(docViewWitdh, [TNTabItemPrototype size].height)];
+    [_viewTabsDocument setFrameSize:CGSizeMake(docViewWitdh, [_tabItemViewPrototype size].height)];
 
     for (var i = 0; i < [_itemObjects count]; i++)
     {
@@ -599,7 +603,7 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 
         [view setFrame:[_contentView bounds]];
 
-        currentXOrigin += [TNTabItemPrototype size].width;
+        currentXOrigin += [_tabItemViewPrototype size].width;
     }
 }
 
