@@ -208,11 +208,10 @@
 
     if (!_displayFilter)
     {
-        var enumerator = [someObjects objectEnumerator],
-            obj;
-
-        while (obj = [enumerator nextObject])
+        for (var i = [someObjects count] - 1; i >= 0; i--)
         {
+            var obj = [someObjects objectAtIndex:i];
+
             if ([_displayFilter evaluateWithObject:obj])
                 [_filteredContent addObject:obj];
         }
