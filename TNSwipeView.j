@@ -253,7 +253,7 @@ catch(e)
     else
     {
         [_mainView setFrameSize:CGSizeMake([self frameSize].width, [self frameSize].height * [_views count])];
-        for (var i = 0, c [_views count]; i < c; i++)
+        for (var i = 0, c = [_views count]; i < c; i++)
         {
             var currentView = [_views objectAtIndex:i];
 
