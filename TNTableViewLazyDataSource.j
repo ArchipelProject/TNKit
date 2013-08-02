@@ -247,7 +247,7 @@
 
     [_content sortUsingDescriptors:[aTableView sortDescriptors]];
 
-    for (var i = 0; i < [selectedObjects count]; i++)
+    for (var i = 0, c = [selectedObjects count]; i < c; i++)
     {
         var object = [selectedObjects objectAtIndex:i];
         [indexesToSelect addIndex:[_content indexOfObject:object]];

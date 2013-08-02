@@ -104,7 +104,7 @@
         [self setDelegate:self];
         [self setAlertStyle:CPInformationalAlertStyle];
 
-        for (var i = 0; i < [_actions count]; i++)
+        for (var i = 0, c = [_actions count]; i < c; i++)
             [self addButtonWithTitle:[[_actions objectAtIndex:i] objectAtIndex:0]];
     }
 

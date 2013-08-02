@@ -384,7 +384,7 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 */
 - (int)indexOfTabViewItem:(CPTabViewItem)anItem
 {
-    for (var i = 0; i < [_itemObjects count]; i++)
+    for (var i = 0, c = [_itemObjects count]; i < c; i++)
         if ([self _getTabItemAtIndex:i] == anItem)
             return i;
 
@@ -396,7 +396,7 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 */
 - (int)indexOfTabViewItemWithIdentifier:(CPString)anIdentifer
 {
-    for (var i = 0; i < [_itemObjects count]; i++)
+    for (var i = 0, c = [_itemObjects count]; i < c; i++)
         if ([[self _getTabItemAtIndex:i] identifier] == anIdentifer)
             return i;
     return -1;
@@ -550,7 +550,7 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 - (CPArray)tabViewItems
 {
     var ret = [CPArray array];
-    for (var i = 0; i < [_itemObjects count]; i++)
+    for (var i = 0, c = [_itemObjects count]; i < c; i++)
         [ret addObject:[self _getTabItemAtIndex:i]];
 
     return ret;
@@ -591,7 +591,7 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 
     [_viewTabsDocument setFrameSize:CGSizeMake(docViewWitdh, [_tabItemViewPrototype size].height)];
 
-    for (var i = 0; i < [_itemObjects count]; i++)
+    for (var i = 0, c = [_itemObjects count]; i < c; i++)
     {
         var item = [self _getTabItemAtIndex:i],
             itemView = [self _getTabViewAtIndex:i],

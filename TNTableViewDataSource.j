@@ -125,7 +125,7 @@
         {
             var tempPredicateString = @"";
 
-            for (var i = 0; i < [_searchableKeyPaths count]; i++)
+            for (var i = 0, c = [_searchableKeyPaths count]; i < c; i++)
             {
                 tempPredicateString += [_searchableKeyPaths objectAtIndex:i] + " contains[c] '" + aString + "' ";
                 if (i + 1 < [_searchableKeyPaths count])
@@ -406,7 +406,7 @@
 
     [_table reloadData];
 
-    for (var i = 0; i < [selectedObjects count]; i++)
+    for (var i = 0, c = [selectedObjects count]; i < c; i++)
     {
         var object = [selectedObjects objectAtIndex:i];
         [indexesToSelect addIndex:[_filteredContent indexOfObject:object]];

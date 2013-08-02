@@ -249,7 +249,7 @@ var TNToolbarSelectedBgImage,
 
     _sortedToolbarItems = [CPArray array];
 
-    for (var i = 0; i < [sortedKeys count]; i++)
+    for (var i = 0, c = [sortedKeys count]; i < c; i++)
     {
         var key = [sortedKeys objectAtIndex:i];
         [_sortedToolbarItems addObject:[_toolbarItemsOrder objectForKey:key]];
@@ -260,7 +260,7 @@ var TNToolbarSelectedBgImage,
     if (_iconSelected)
         [_toolbarView addSubview:_imageViewSelection positioned:CPWindowBelow relativeTo:nil];
 
-    for (var i = 0; i < [_customSubViews count]; i++)
+    for (var i = 0, c = [_customSubViews count]; i < c; i++)
         [_toolbarView addSubview:[_customSubViews objectAtIndex:i]];
 
     if (_isHUD)
@@ -289,11 +289,12 @@ var TNToolbarSelectedBgImage,
 */
 - (void)selectToolbarItem:(CPToolbarItem)aToolbarItem
 {
-    var toolbarItemView;
+    var toolbarItemView,
+        subviews = [_toolbarView subviews];
 
-    for (var i = 0; i < [[_toolbarView subviews] count]; i++)
+    for (var i = 0, c = [subviews count]; i < c; i++)
     {
-        toolbarItemView = [[_toolbarView subviews] objectAtIndex:i];
+        toolbarItemView = [subviews objectAtIndex:i];
 
         if ([toolbarItemView._toolbarItem itemIdentifier] === [aToolbarItem itemIdentifier])
             break;

@@ -91,7 +91,7 @@
     frame.size.height = 0;
     [self setFrame:frame];
 
-    for (var i = 0; i < [_dataSource count]; i++)
+    for (var i = 0, c = [_dataSource count]; i < c; i++)
     {
         var view = [_dataSource objectAtIndex:i];
 
@@ -112,7 +112,7 @@
 
     stackViewFrame.size.height = 0;
 
-    for (var i = 0; i < [workingArray count]; i++)
+    for (var i = 0, c = [workingArray count]; i < c; i++)
     {
         var currentView = [workingArray objectAtIndex:i],
             position    = [self _nextPosition];
@@ -138,7 +138,7 @@
 */
 - (IBAction)removeAllViews:(id)aSender
 {
-    for (var i = 0; i < [_dataSource count]; i++)
+    for (var i = 0, c = [_dataSource count]; i < c; i++)
         [[_dataSource objectAtIndex:i] removeFromSuperview];
 
     [_dataSource removeAllObjects];
