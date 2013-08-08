@@ -221,13 +221,21 @@ var TNToolbarSelectedBgImage,
     return [self addItemWithIdentifier:anIdentifier label:aLabel icon:anImage target:aTarget action:anAction toolTip:nil];
 }
 
+- (void)removeItemWithIdentifier:(CPString)anIdentifier
+{
+    [_toolbarItems removeObjectForKey:anIdentifier];
+
+    var keys = [_toolbarItemsOrder allKeysForObject:anIdentifier];
+    for (var i = [keys count] - 1; i >= 0; i--)
+        [_toolbarItemsOrder removeObjectForKey:[keys objectAtIndex:i]];
+}
+
 
 /*! define the position of a given existing CPToolbarItem according to its identifier
     @param anIndentifier CPString containing the identifier
 */
 - (void)setPosition:(CPNumber)aPosition forToolbarItemIdentifier:(CPString)anIndentifier
 {
-
     [_toolbarItemsOrder setObject:anIndentifier forKey:aPosition];
 }
 
