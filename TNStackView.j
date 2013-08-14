@@ -114,7 +114,7 @@
 
     for (var i = 0, c = [workingArray count]; i < c; i++)
     {
-        var currentView = [workingArray objectAtIndex:i],
+        var currentView = workingArray[i],
             position    = [self _nextPosition];
 
         position.size.height = [currentView frameSize].height;

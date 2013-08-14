@@ -227,7 +227,7 @@ var TNToolbarSelectedBgImage,
 
     var keys = [_toolbarItemsOrder allKeysForObject:anIdentifier];
     for (var i = [keys count] - 1; i >= 0; i--)
-        [_toolbarItemsOrder removeObjectForKey:[keys objectAtIndex:i]];
+        [_toolbarItemsOrder removeObjectForKey:keys[i]];
 }
 
 
@@ -259,7 +259,7 @@ var TNToolbarSelectedBgImage,
 
     for (var i = 0, c = [sortedKeys count]; i < c; i++)
     {
-        var key = [sortedKeys objectAtIndex:i];
+        var key = sortedKeys[i];
         [_sortedToolbarItems addObject:[_toolbarItemsOrder objectForKey:key]];
     }
 
@@ -269,7 +269,7 @@ var TNToolbarSelectedBgImage,
         [_toolbarView addSubview:_imageViewSelection positioned:CPWindowBelow relativeTo:nil];
 
     for (var i = 0, c = [_customSubViews count]; i < c; i++)
-        [_toolbarView addSubview:[_customSubViews objectAtIndex:i]];
+        [_toolbarView addSubview:_customSubViews[i]];
 
     if (_isHUD)
     {
@@ -302,7 +302,7 @@ var TNToolbarSelectedBgImage,
 
     for (var i = 0, c = [subviews count]; i < c; i++)
     {
-        toolbarItemView = [subviews objectAtIndex:i];
+        toolbarItemView = subviews[i];
 
         if ([toolbarItemView._toolbarItem itemIdentifier] === [aToolbarItem itemIdentifier])
             break;
@@ -334,8 +334,8 @@ var TNToolbarSelectedBgImage,
 {
     // for (var i = 0; i < [[self visibleItems] count]; i++)
     // {
-    //     if ([[[self visibleItems] objectAtIndex:i] itemIdentifier] == anIdentifier)
-    //         return [[self visibleItems] objectAtIndex:i];
+    //     if ([[self visibleItems][i] itemIdentifier] == anIdentifier)
+    //         return [self visibleItems][i];
     // }
 
     return [_toolbarItems objectForKey:anIdentifier];

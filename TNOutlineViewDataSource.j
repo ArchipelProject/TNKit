@@ -76,7 +76,7 @@
 */
 - (id)objectAtIndex:(int)anIndex
 {
-   return [_contents objectAtIndex:anIndex];
+   return _contents[anIndex];
 }
 
 /*! get the object at given indexes
@@ -97,7 +97,7 @@
 
     for (var i = 0, c = [_contents count]; i < c; i++)
     {
-        var object = [_contents objectAtIndex:i];
+        var object = _contents[i];
 
         if ([object valueForKeyPath:_parentKeyPath] == nil)
             [array addObject:object];
@@ -116,7 +116,7 @@
 
     for (var i = 0, c = [_contents count]; i < c; i++)
     {
-        var object = [_contents objectAtIndex:i];
+        var object = _contents[i];
         if ([object valueForKey:_parentKeyPath] == [anObject valueForKey:_childCompKeyPath])
             [array addObject:object];
     }
@@ -166,9 +166,9 @@
 - (id)outlineView:(CPOutlineView)anOutlineView child:(int)index ofItem:(id)item
 {
     if (!item)
-        return [[self getRootObjects] objectAtIndex:index];
+        return [self getRootObjects][index];
     else
-        return [[self getChildrenOfObject:item] objectAtIndex:index];
+        return [self getChildrenOfObject:item][index];
 }
 
 - (id)outlineView:(CPOutlineView)anOutlineView objectValueForTableColumn:(CPTableColumn)tableColumn byItem:(id)item

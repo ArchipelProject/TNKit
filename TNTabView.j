@@ -314,7 +314,7 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
     if (anIndex == -1 || anIndex >= [_itemObjects count])
         return nil;
 
-    return [[_itemObjects objectAtIndex:anIndex] objectAtIndex:0];
+    return _itemObjects[anIndex][0];
 }
 
 - (void)_getTabViewAtIndex:(int)anIndex
@@ -322,7 +322,7 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
     if (anIndex >= [_itemObjects count])
         return nil;
 
-    return [[_itemObjects objectAtIndex:anIndex] objectAtIndex:1];
+    return _itemObjects[anIndex][1];
 }
 
 #pragma mark -

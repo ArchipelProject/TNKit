@@ -127,7 +127,7 @@
 
             for (var i = 0, c = [_searchableKeyPaths count]; i < c; i++)
             {
-                tempPredicateString += [_searchableKeyPaths objectAtIndex:i] + " contains[c] '" + aString + "' ";
+                tempPredicateString += _searchableKeyPaths[i] + " contains[c] '" + aString + "' ";
                 if (i + 1 < [_searchableKeyPaths count])
                     tempPredicateString += " OR ";
             }
@@ -210,7 +210,7 @@
     {
         for (var i = [someObjects count] - 1; i >= 0; i--)
         {
-            var obj = [someObjects objectAtIndex:i];
+            var obj = someObjects[i];
 
             if ([_displayFilter evaluateWithObject:obj])
                 [_filteredContent addObject:obj];
@@ -249,7 +249,7 @@
 */
 - (void)objectAtIndex:(int)index
 {
-    return [_filteredContent objectAtIndex:index];
+    return _filteredContent[index];
 }
 
 /*! return the objects at given indexes contained in a CPIndexSet
@@ -266,7 +266,7 @@
 */
 - (void)removeObjectAtIndex:(int)index
 {
-    var object = [_filteredContent objectAtIndex:index];
+    var object = _filteredContent[index];
 
     [_filteredContent removeObjectAtIndex:index];
     [_content removeObject:object];
@@ -392,7 +392,7 @@
     }
 
 
-    return [[_filteredContent objectAtIndex:aRow] valueForKeyPath:[aCol identifier]];
+    return [_filteredContent[aRow] valueForKeyPath:[aCol identifier]];
 }
 
 - (void)tableView:(CPTableView)aTableView sortDescriptorsDidChange:(CPArray)oldDescriptors
@@ -408,7 +408,7 @@
 
     for (var i = 0, c = [selectedObjects count]; i < c; i++)
     {
-        var object = [selectedObjects objectAtIndex:i];
+        var object = selectedObjects[i];
         [indexesToSelect addIndex:[_filteredContent indexOfObject:object]];
     }
 
@@ -423,7 +423,7 @@
 
     var identifier = [aCol identifier];
 
-    [[_filteredContent objectAtIndex:aRow] setValue:aValue forKeyPath:identifier];
+    [_filteredContent[aRow] setValue:aValue forKeyPath:identifier];
 }
 
 

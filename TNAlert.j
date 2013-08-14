@@ -105,7 +105,7 @@
         [self setAlertStyle:CPInformationalAlertStyle];
 
         for (var i = 0, c = [_actions count]; i < c; i++)
-            [self addButtonWithTitle:[[_actions objectAtIndex:i] objectAtIndex:0]];
+            [self addButtonWithTitle:_actions[i][0]];
     }
 
     return self;
@@ -154,7 +154,7 @@
 */
 - (void)alertDidEnd:(CPAlert)theAlert returnCode:(int)returnCode
 {
-    var selector = [[_actions objectAtIndex:returnCode] objectAtIndex:1];
+    var selector = _actions[returnCode][1];
 
     if ([_target respondsToSelector:selector])
         [_target performSelector:selector withObject:_userInfo];

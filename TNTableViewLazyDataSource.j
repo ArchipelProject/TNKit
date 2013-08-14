@@ -136,7 +136,7 @@
 */
 - (void)objectAtIndex:(int)index
 {
-    return [_content objectAtIndex:index];
+    return _content[index];
 }
 
 /*! return the objects at given indexes contained in a CPIndexSet
@@ -236,7 +236,7 @@
         [_delegate tableViewDataSourceNeedsLoading:self];
     }
 
-    return [[_content objectAtIndex:aRow] valueForKeyPath:identifier];
+    return [_content[aRow] valueForKeyPath:identifier];
 }
 
 - (void)tableView:(CPTableView)aTableView sortDescriptorsDidChange:(CPArray)oldDescriptors
@@ -249,7 +249,7 @@
 
     for (var i = 0, c = [selectedObjects count]; i < c; i++)
     {
-        var object = [selectedObjects objectAtIndex:i];
+        var object = selectedObjects[i];
         [indexesToSelect addIndex:[_content indexOfObject:object]];
     }
 
@@ -260,7 +260,7 @@
 {
     var identifier = [aCol identifier];
 
-    [[_content objectAtIndex:aRow] setValue:aValue forKeyPath:identifier];
+    [_content[aRow] setValue:aValue forKeyPath:identifier];
 }
 
 @end
