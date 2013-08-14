@@ -241,9 +241,9 @@ catch(e)
     if (_translationFunction == TNSwipeViewCSSTranslateFunctionX)
     {
         [_mainView setFrameSize:CGSizeMake([self frameSize].width * [_views count], [self frameSize].height)];
-        for (var i = 0; i < [_views count]; i++)
+        for (var i = 0, c = [_views count]; i < c; i++)
         {
-            var currentView = [_views objectAtIndex:i];
+            var currentView = _views[i];
 
             [currentView setFrame:[self bounds]];
             [currentView setFrameOrigin:CGPointMake(i * [self frameSize].width, 0)];
@@ -253,9 +253,9 @@ catch(e)
     else
     {
         [_mainView setFrameSize:CGSizeMake([self frameSize].width, [self frameSize].height * [_views count])];
-        for (var i = 0; i < [_views count]; i++)
+        for (var i = 0, c = [_views count]; i < c; i++)
         {
-            var currentView = [_views objectAtIndex:i];
+            var currentView = _views[i];
 
             [currentView setFrame:[self bounds]];
             [currentView setFrameOrigin:CGPointMake(0, i * [self frameSize].height)];

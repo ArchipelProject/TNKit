@@ -221,13 +221,21 @@ var TNToolbarSelectedBgImage,
     return [self addItemWithIdentifier:anIdentifier label:aLabel icon:anImage target:aTarget action:anAction toolTip:nil];
 }
 
+- (void)removeItemWithIdentifier:(CPString)anIdentifier
+{
+    [_toolbarItems removeObjectForKey:anIdentifier];
+
+    var keys = [_toolbarItemsOrder allKeysForObject:anIdentifier];
+    for (var i = [keys count] - 1; i >= 0; i--)
+        [_toolbarItemsOrder removeObjectForKey:keys[i]];
+}
+
 
 /*! define the position of a given existing CPToolbarItem according to its identifier
     @param anIndentifier CPString containing the identifier
 */
 - (void)setPosition:(CPNumber)aPosition forToolbarItemIdentifier:(CPString)anIndentifier
 {
-
     [_toolbarItemsOrder setObject:anIndentifier forKey:aPosition];
 }
 
@@ -249,9 +257,9 @@ var TNToolbarSelectedBgImage,
 
     _sortedToolbarItems = [CPArray array];
 
-    for (var i = 0; i < [sortedKeys count]; i++)
+    for (var i = 0, c = [sortedKeys count]; i < c; i++)
     {
-        var key = [sortedKeys objectAtIndex:i];
+        var key = sortedKeys[i];
         [_sortedToolbarItems addObject:[_toolbarItemsOrder objectForKey:key]];
     }
 
@@ -260,8 +268,8 @@ var TNToolbarSelectedBgImage,
     if (_iconSelected)
         [_toolbarView addSubview:_imageViewSelection positioned:CPWindowBelow relativeTo:nil];
 
-    for (var i = 0; i < [_customSubViews count]; i++)
-        [_toolbarView addSubview:[_customSubViews objectAtIndex:i]];
+    for (var i = 0, c = [_customSubViews count]; i < c; i++)
+        [_toolbarView addSubview:_customSubViews[i]];
 
     if (_isHUD)
     {
@@ -289,11 +297,12 @@ var TNToolbarSelectedBgImage,
 */
 - (void)selectToolbarItem:(CPToolbarItem)aToolbarItem
 {
-    var toolbarItemView;
+    var toolbarItemView,
+        subviews = [_toolbarView subviews];
 
-    for (var i = 0; i < [[_toolbarView subviews] count]; i++)
+    for (var i = 0, c = [subviews count]; i < c; i++)
     {
-        toolbarItemView = [[_toolbarView subviews] objectAtIndex:i];
+        toolbarItemView = subviews[i];
 
         if ([toolbarItemView._toolbarItem itemIdentifier] === [aToolbarItem itemIdentifier])
             break;
@@ -325,8 +334,8 @@ var TNToolbarSelectedBgImage,
 {
     // for (var i = 0; i < [[self visibleItems] count]; i++)
     // {
-    //     if ([[[self visibleItems] objectAtIndex:i] itemIdentifier] == anIdentifier)
-    //         return [[self visibleItems] objectAtIndex:i];
+    //     if ([[self visibleItems][i] itemIdentifier] == anIdentifier)
+    //         return [self visibleItems][i];
     // }
 
     return [_toolbarItems objectForKey:anIdentifier];

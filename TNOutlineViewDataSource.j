@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -76,7 +76,7 @@
 */
 - (id)objectAtIndex:(int)anIndex
 {
-   return [_contents objectAtIndex:anIndex];
+   return _contents[anIndex];
 }
 
 /*! get the object at given indexes
@@ -95,9 +95,9 @@
 {
     var array = [CPArray array];
 
-    for (var i = 0; i < [_contents count]; i++)
+    for (var i = 0, c = [_contents count]; i < c; i++)
     {
-        var object = [_contents objectAtIndex:i];
+        var object = _contents[i];
 
         if ([object valueForKeyPath:_parentKeyPath] == nil)
             [array addObject:object];
@@ -114,9 +114,9 @@
 {
     var array = [CPArray array];
 
-    for (var i = 0; i < [_contents count]; i++)
+    for (var i = 0, c = [_contents count]; i < c; i++)
     {
-        var object = [_contents objectAtIndex:i];
+        var object = _contents[i];
         if ([object valueForKey:_parentKeyPath] == [anObject valueForKey:_childCompKeyPath])
             [array addObject:object];
     }
@@ -166,9 +166,9 @@
 - (id)outlineView:(CPOutlineView)anOutlineView child:(int)index ofItem:(id)item
 {
     if (!item)
-        return [[self getRootObjects] objectAtIndex:index];
+        return [self getRootObjects][index];
     else
-        return [[self getChildrenOfObject:item] objectAtIndex:index];
+        return [self getChildrenOfObject:item][index];
 }
 
 - (id)outlineView:(CPOutlineView)anOutlineView objectValueForTableColumn:(CPTableColumn)tableColumn byItem:(id)item

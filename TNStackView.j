@@ -49,15 +49,18 @@
 {
     if (self = [super initWithFrame:aFrame])
     {
-        _dataSource     = [CPArray array];
-        _stackedViews   = [CPArray array];
-        _padding        = 0;
-        _reversed       = NO;
-
-        [self setAutoresizingMask:CPViewWidthSizable];
+        [self _init];
     }
 
     return self;
+}
+
+- (void)_init
+{
+    _dataSource     = [CPArray array];
+    _stackedViews   = [CPArray array];
+    _padding        = 0;
+    _reversed       = NO;
 }
 
 /*! @ignore
@@ -88,7 +91,7 @@
     frame.size.height = 0;
     [self setFrame:frame];
 
-    for (var i = 0; i < [_dataSource count]; i++)
+    for (var i = 0, c = [_dataSource count]; i < c; i++)
     {
         var view = [_dataSource objectAtIndex:i];
 
@@ -109,9 +112,9 @@
 
     stackViewFrame.size.height = 0;
 
-    for (var i = 0; i < [workingArray count]; i++)
+    for (var i = 0, c = [workingArray count]; i < c; i++)
     {
-        var currentView = [workingArray objectAtIndex:i],
+        var currentView = workingArray[i],
             position    = [self _nextPosition];
 
         position.size.height = [currentView frameSize].height;
@@ -135,7 +138,7 @@
 */
 - (IBAction)removeAllViews:(id)aSender
 {
-    for (var i = 0; i < [_dataSource count]; i++)
+    for (var i = 0, c = [_dataSource count]; i < c; i++)
         [[_dataSource objectAtIndex:i] removeFromSuperview];
 
     [_dataSource removeAllObjects];
@@ -150,6 +153,30 @@
     _reversed = !_reversed;
 
     [self reload];
+}
+
+#pragma mark -
+#pragma mark CPCoding compliance
+
+/*! CPCoder compliance
+*/
+- (id)initWithCoder:(CPCoder)aCoder
+{
+    self = [super initWithCoder:aCoder];
+
+    if (self)
+    {
+        [self _init];
+    }
+
+    return self;
+}
+
+/*! CPCoder compliance
+*/
+- (void)encodeWithCoder:(CPCoder)aCoder
+{
+    [super encodeWithCoder:aCoder];
 }
 
 @end

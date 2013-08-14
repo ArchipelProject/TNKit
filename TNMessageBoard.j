@@ -154,7 +154,7 @@
 */
 - (void)tableView:(CPTableView)aTableView objectValueForTableColumn:(CPTableColumn)aColumnu row:(int)aRow
 {
-    return [_messages objectAtIndex:aRow];
+    return _messages[aRow];
 }
 
 
@@ -173,7 +173,7 @@
 */
 - (void)tableView:(CPTableView)aTableView heightOfRow:(int)aRow
 {
-    return [TNMessageView sizeOfMessageViewWithText:[[_messages objectAtIndex:aRow] objectForKey:@"message"] inWidth:([self frameSize].width)];
+    return [TNMessageView sizeOfMessageViewWithText:[_messages[aRow] objectForKey:@"message"] inWidth:([self frameSize].width)];
 }
 
 /*! tableview delegate
