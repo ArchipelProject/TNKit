@@ -146,17 +146,21 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 /*! used to set theme state of subviews
     @param aThemeState the theme state
 */
-- (void)setThemeState:(id)aThemeState
+- (BOOL)setThemeState:(CPThemeState)aThemeState
 {
     [_label setThemeState:aThemeState];
+
+    return YES;
 }
 
 /*! used to unset theme state of subviews
     @param aThemeState the theme state
 */
-- (void)unsetThemeState:(id)aThemeState
+- (BOOL)unsetThemeState:(CPThemeState)aThemeState
 {
     [_label unsetThemeState:aThemeState];
+
+    return YES;
 }
 
 /*! CPCoder compliance
