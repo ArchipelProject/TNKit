@@ -511,13 +511,13 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
     if (_currentSelectedIndex == -1)
         return;
 
-    [[[self selectedTabViewItem] view] removeFromSuperview];
-
     var pendingItem = [self _getTabItemAtIndex:anIndex];
 
     if (_delegate && [_delegate respondsToSelector:@selector(tabView:shouldSelectTabViewItem:)])
         if (![_delegate tabView:self shouldSelectTabViewItem:pendingItem])
             return;
+
+    [[[self selectedTabViewItem] view] removeFromSuperview];
 
     if (_delegate && [_delegate respondsToSelector:@selector(tabView:willSelectTabViewItem:)])
         [_delegate tabView:self willSelectTabViewItem:pendingItem];
