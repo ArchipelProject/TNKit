@@ -206,15 +206,19 @@
 {
     [_content addObjectsFromArray:someObjects];
 
-    if (!_displayFilter)
+    if (_displayFilter)
     {
-        for (var i = [someObjects count] - 1; i >= 0; i--)
+        for (var i = 0, c = [someObjects count]; i < c; i++)
         {
             var obj = someObjects[i];
 
             if ([_displayFilter evaluateWithObject:obj])
                 [_filteredContent addObject:obj];
         }
+    }
+    else
+    {
+        _filteredContent = [_content copy];
     }
 
     _needsFilter = YES;
