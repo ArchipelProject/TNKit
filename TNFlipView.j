@@ -91,34 +91,38 @@ catch(e)
 {
     if (self = [super initWithFrame:aRect])
     {
-        _animationDuration  = 0.5;
-        _flipped            = NO;
-        _animationDirection  = TNFlipViewAnimationStyleTranslateHorizontal;
-
-        _backView = [[CPView alloc] initWithFrame:[self bounds]];
-        _frontView = [[CPView alloc] initWithFrame:[self bounds]];
-
-        _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].backfaceVisibility] = "hidden";
-        _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].perspective] = 1000;
-        _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transformStyle] = "preserve-3d";
-        _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transitionTimingFunction] = "ease";
-
-        _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].backfaceVisibility] = "hidden";
-        _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].perspective] = 1000;
-        _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transformStyle] = "preserve-3d";
-        _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transitionTimingFunction] = "ease";
-
-        [self setAnimationStyle:TNFlipViewAnimationStyleRotate direction:TNFlipViewAnimationStyleTranslateHorizontal];
-
-        [_backView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-        [_frontView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-        [self addSubview:_backView];
-        [self addSubview:_frontView];
+        [self _init];
     }
 
     return self;
 }
 
+- (void)_init
+{
+    _animationDuration  = 0.5;
+    _flipped            = NO;
+    _animationDirection = TNFlipViewAnimationStyleTranslateHorizontal;
+
+    _backView = [[CPView alloc] initWithFrame:[self bounds]];
+    _frontView = [[CPView alloc] initWithFrame:[self bounds]];
+
+    _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].backfaceVisibility] = "hidden";
+    _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].perspective] = 1000;
+    _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transformStyle] = "preserve-3d";
+    _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transitionTimingFunction] = "ease";
+
+    _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].backfaceVisibility] = "hidden";
+    _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].perspective] = 1000;
+    _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transformStyle] = "preserve-3d";
+    _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transitionTimingFunction] = "ease";
+
+    [self setAnimationStyle:TNFlipViewAnimationStyleRotate direction:TNFlipViewAnimationStyleTranslateHorizontal];
+
+    [_backView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+    [_frontView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+    [self addSubview:_backView];
+    [self addSubview:_frontView];
+}
 
 #pragma mark -
 #pragma mark Setters and getters
@@ -200,6 +204,7 @@ catch(e)
 
     _currentBackViewContent = aView;
     [_currentBackViewContent setFrame:[self bounds]];
+    [_currentBackViewContent setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_backView addSubview:aView];
 }
 
@@ -221,6 +226,7 @@ catch(e)
     }
     _currentFrontViewContent = aView;
     [_currentFrontViewContent setFrame:[self bounds]];
+    [_currentFrontViewContent setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_frontView addSubview:aView];
 }
 
@@ -239,15 +245,20 @@ catch(e)
         _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transition] = _animationDuration + "s";
         _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transition] = _animationDuration + "s";
 
-        _frontView._DOMElement.addEventListener(CSSProperties[TNFlipViewCurrentBrowserEngine].transitionEnd,  function(e){
+        var endFunction = function(e) {
+            this.removeEventListener(CSSProperties[TNFlipViewCurrentBrowserEngine].transitionEnd, arguments.callee, NO);
+
             [_backView removeFromSuperview];
             [_frontView removeFromSuperview];
             [self addSubview:_backView];
             [self addSubview:_frontView];
+
             _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transition] = "0s";
             _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transition] = "0s";
-            this[CSSProperties[TNFlipViewCurrentBrowserEngine].transitionEnd] = nil;
-        }, YES);
+        }
+
+
+        _frontView._DOMElement.addEventListener(CSSProperties[TNFlipViewCurrentBrowserEngine].transitionEnd, endFunction , YES);
 
         if (TNFlipViewCurrentBrowserEngine == "gecko")
             _animationStyle = TNFlipViewAnimationStyleTranslate;
@@ -286,15 +297,18 @@ catch(e)
         _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transition] = _animationDuration + "s";
         _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transition] = _animationDuration + "s";
 
-        _frontView._DOMElement.addEventListener(CSSProperties[TNFlipViewCurrentBrowserEngine].transitionEnd,  function(e){
+        var endFunction = function(e) {
+            this.removeEventListener(CSSProperties[TNFlipViewCurrentBrowserEngine].transitionEnd, arguments.callee, NO);
             [_backView removeFromSuperview];
             [_frontView removeFromSuperview];
             [self addSubview:_frontView];
             [self addSubview:_backView];
+
             _frontView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transition] = "0s";
             _backView._DOMElement.style[CSSProperties[TNFlipViewCurrentBrowserEngine].transition] = "0s";
-            this.webkitTransitionEnd = nil;
-        }, YES);
+        };
+
+        _frontView._DOMElement.addEventListener(CSSProperties[TNFlipViewCurrentBrowserEngine].transitionEnd, endFunction, YES);
 
         if (TNFlipViewCurrentBrowserEngine == "gecko")
             _animationStyle = TNFlipViewAnimationStyleTranslate;
@@ -357,6 +371,9 @@ catch(e)
         _animationDuration          = [aCoder decodeObjectForKey:@"_animationDuration"];
         _currentBackViewContent     = [aCoder decodeObjectForKey:@"_currentBackViewContent"];
         _currentFrontViewContent    = [aCoder decodeObjectForKey:@"_currentFrontViewContent"];
+        _animationDirection         = [aCoder decodeIntForKey:@"_animationDirection"];
+
+        [self _init];
     }
 
     return self;
@@ -374,6 +391,7 @@ catch(e)
     [aCoder encodeObject:_animationDuration forKey:@"_animationDuration"];
     [aCoder encodeObject:_currentBackViewContent forKey:@"_currentBackViewContent"];
     [aCoder encodeObject:_currentFrontViewContent forKey:@"_currentFrontViewContent"];
+    [aCoder encodeInt:_animationDirection forKey:@"_animationDirection"];
 }
 
 @end
