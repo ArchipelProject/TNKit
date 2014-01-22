@@ -381,8 +381,8 @@
 {
     if (_needsFilter)
     {
-        [self filterObjects:_searchField];
         _needsFilter = NO;
+        [self filterObjects:_searchField];
     }
 
     if (aRow >= [_filteredContent count])
