@@ -378,7 +378,7 @@
 
 /*! Returns the the full content, filtered with the given predicate
 */
-- (void)filteredArrayUsingPredicate:(CPPredicate)aPredicate
+- (CPArray)filteredArrayUsingPredicate:(CPPredicate)aPredicate
 {
     return [_content filteredArrayUsingPredicate:aPredicate];
 }
