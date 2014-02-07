@@ -368,6 +368,21 @@
     _needsFilter = YES;
 }
 
+/*! Sort the content
+*/
+- (void)sortUsingDescriptors:(CPArray)someDescriptors
+{
+    [_content sortUsingDescriptors:someDescriptors];
+    [_filteredContent sortUsingDescriptors:someDescriptors];
+}
+
+/*! Returns the the full content, filtered with the given predicate
+*/
+- (void)filteredArrayUsingPredicate:(CPPredicate)aPredicate
+{
+    return [_content filteredArrayUsingPredicate:aPredicate];
+}
+
 
 #pragma mark -
 #pragma mark Datasource implementation
