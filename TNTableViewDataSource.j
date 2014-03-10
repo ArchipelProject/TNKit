@@ -162,13 +162,13 @@
     if (!_filter)
     {
         _filteredContent = _displayFilter ? [[_content copy] filteredArrayUsingPredicate:_displayFilter] : [_content copy];
-        [_table reloadData];
+        // [_table reloadData];
         return;
     }
 
     _filteredContent = [self _filterWithPredicate:_filter];
 
-    [_table reloadData];
+    // [_table reloadData];
 }
 
 
