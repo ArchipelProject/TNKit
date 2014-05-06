@@ -154,7 +154,7 @@ var TNMessageViewBackgroundColorLeftNormal,
     @param aFrame the frame of the view
     @return initialized view
 */
-- (void)initWithFrame:(CGRect)aFrame
+- (id)initWithFrame:(CGRect)aFrame
 {
     if (self = [super initWithFrame:aFrame])
     {
