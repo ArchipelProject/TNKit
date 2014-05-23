@@ -28,8 +28,7 @@
 @import "TNSwipeView.j"
 
 
-var TNTabViewTabMargin = 50.0,
-    TNTabViewTabsBackgroundColor,
+var TNTabViewTabsBackgroundColor,
     TNTabViewTabButtonColorNormal,
     TNTabViewTabButtonColorPressed,
     TNTabViewTabButtonColorActive,
@@ -95,6 +94,16 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 - (BOOL)isImage
 {
     return [[self class] isImage];
+}
+
++ (float)margin
+{
+    return 50.0;
+}
+
+- (float)margin
+{
+    return [[self class] margin];
 }
 
 
@@ -548,9 +557,10 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 */
 - (void)layoutSubviews
 {
-    var widths = [],
+    var numberOfItems = [_itemObjects count],
+        margin        = [_tabItemViewPrototype margin],
         totalTabsSize = 0,
-        numberOfItems = [_itemObjects count];
+        widths        = [];
 
     // first we compute what will be the size of all the tabs
     for (var i = 0; i < numberOfItems; i++)
@@ -564,12 +574,12 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
             width = [[item label] sizeWithFont:[CPFont systemFontOfSize:[CPFont systemFontSize]]].width + 5;
 
         widths.push(width);
-        totalTabsSize += width + TNTabViewTabMargin;
+        totalTabsSize += width + margin;
     }
 
     var currentXOrigin = ([_viewTabs frameSize].width / 2) - totalTabsSize / 2;
 
-    currentXOrigin += (TNTabViewTabMargin / 2);
+    currentXOrigin += (margin / 2);
 
     for (var i = 0; i < numberOfItems; i++)
     {
@@ -588,7 +598,7 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 
         [view setFrame:[_contentView bounds]];
 
-        currentXOrigin += width + TNTabViewTabMargin;
+        currentXOrigin += width + margin;
     }
 }
 
