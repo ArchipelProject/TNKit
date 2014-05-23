@@ -28,7 +28,7 @@
 @import "TNSwipeView.j"
 
 
-var TNTabViewTabMargin = 2.0,
+var TNTabViewTabMargin = 50.0,
     TNTabViewTabsBackgroundColor,
     TNTabViewTabButtonColorNormal,
     TNTabViewTabButtonColorPressed,
@@ -82,10 +82,21 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
     return CGSizeMake(115.0, 25.0);
 }
 
++ (BOOL)isImage
+{
+    return NO;
+}
+
 - (CGSize)size
 {
     return [[self class] size];
 }
+
+- (BOOL)isImage
+{
+    return [[self class] isImage];
+}
+
 
 #pragma mark -
 #pragma mark Initialization
@@ -96,13 +107,14 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 {
     if (self = [super initWithFrame:aFrame])
     {
-        _label = [[CPButton alloc] initWithFrame:CGRectMake(0, 0, [TNTabItemPrototype size].width - TNTabViewTabMargin, 22)];
-        [_label setAutoresizingMask:CPViewMinXMargin | CPViewMinYMargin];
+        _label = [[CPButton alloc] initWithFrame:CGRectMake(0, 0, [TNTabItemPrototype size].width, 22)];
+        [_label setAutoresizingMask:CPViewMinXMargin | CPViewMinYMargin | CPViewWidthSizable];
 
         [self prepareTheme];
 
         [self addSubview:_label];
 
+        [_label setAlignment:CPCenterTextAlignment];
         [_label setTarget:self];
         [_label setAction:@selector(_didClick:)];
         _index = -1;
@@ -195,15 +207,11 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
     BOOL                        _enableManualScrolling  @accessors(property=enableManualScrolling);
 
     CPArray                     _itemObjects;
-    CPButton                    _buttonScrollLeft;
-    CPButton                    _buttonScrollRight;
     CPView                      _currentSelectedItemView;
-    CPView                      _viewTabsDocument;
+    CPView                      _viewTabs;
     int                         _currentSelectedIndex;
     CPView                      _contentView;
     TNTabItemPrototype          _tabItemViewPrototype;
-    CPScrollView                _scrollViewTabs;
-    BOOL                        _needsScroll;
 }
 
 
@@ -227,47 +235,19 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
             TNTabViewTabButtonLeftBezelColorPressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/scroll-button-left-bezel-pressed.png"]];
         }
 
-        _viewTabsDocument = [[CPView alloc] initWithFrame:CGRectMake(0.0, 0.0, 0.0, [TNTabItemPrototype size].height)];
-
-        _scrollViewTabs = [[CPScrollView alloc] initWithFrame:CGRectMake(0.0, 0.0, CGRectGetWidth(aFrame), [TNTabItemPrototype size].height)];
-        [_scrollViewTabs setAutoresizingMask:CPViewWidthSizable];
-        [_scrollViewTabs setAutohidesScrollers:YES];
-        [_scrollViewTabs setDocumentView:_viewTabsDocument];
-        [_scrollViewTabs setHasVerticalScroller:NO];
-        [_scrollViewTabs setHasHorizontalScroller:NO];
+        _viewTabs = [[CPView alloc] initWithFrame:CGRectMake(0.0, 0.0, [self frameSize].width, [TNTabItemPrototype size].height)];
+        [_viewTabs setAutoresizingMask:CPViewWidthSizable];
 
         _contentView = [[CPView alloc] initWithFrame:CGRectMake(0, [TNTabItemPrototype size].height, CGRectGetWidth(aFrame), CGRectGetHeight(aFrame) - [TNTabItemPrototype size].height)];
         [_contentView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
 
         _currentSelectedIndex = -1;
-        _needsScroll = NO;
         _enableManualScrolling = YES;
         _itemObjects = [CPArray array];
 
         _tabItemViewPrototype = [[TNTabItemPrototype alloc] initWithFrame:CGRectMake(0.0, 0.0, [TNTabItemPrototype size].width, [TNTabItemPrototype size].height)];
 
-        _buttonScrollRight = [CPButton buttonWithTitle:@">"];
-        [_buttonScrollRight setBordered:NO];
-        [_buttonScrollRight setImage:TNTabViewTabButtonRightBezelColorNormal]; // this avoid the blinking..
-        [_buttonScrollRight setValue:TNTabViewTabButtonRightBezelColorNormal forThemeAttribute:@"image"];
-        [_buttonScrollRight setValue:TNTabViewTabButtonRightBezelColorPressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
-        [_buttonScrollRight setFrame:CGRectMake(20.0, 0.0, 20.0, [TNTabItemPrototype size].height)];
-        [_buttonScrollRight setContinuous:YES];
-        [_buttonScrollRight setTarget:_scrollViewTabs];
-        [_buttonScrollRight setAction:@selector(moveRight:)];
-
-        _buttonScrollLeft = [CPButton buttonWithTitle:@"<"];
-        [_buttonScrollLeft setBordered:NO];
-        [_buttonScrollLeft setImage:TNTabViewTabButtonLeftBezelColorNormal]; // this avoid the blinking..
-        [_buttonScrollLeft setValue:TNTabViewTabButtonLeftBezelColorNormal forThemeAttribute:@"image"];
-        [_buttonScrollLeft setValue:TNTabViewTabButtonLeftBezelColorPressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
-        [_buttonScrollLeft setFrame:CGRectMake(0.0, 0.0, 20.0, [TNTabItemPrototype size].height)];
-        [_buttonScrollLeft setContinuous:YES];
-        [_buttonScrollLeft setTarget:_scrollViewTabs];
-        [_buttonScrollLeft setAction:@selector(moveLeft:)];
-
-
-        [self addSubview:_scrollViewTabs];
+        [self addSubview:_viewTabs];
         [self addSubview:_contentView];
         [self setTabViewBackgroundColor:TNTabViewTabsBackgroundColor];
         [self setNeedsLayout];
@@ -285,7 +265,7 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 */
 - (void)setTabViewBackgroundColor:(CPColor)aColor
 {
-    [_viewTabsDocument setBackgroundColor:aColor];
+    [_viewTabs setBackgroundColor:aColor];
 }
 
 /*! set the background color for the tabs view
@@ -372,7 +352,7 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
     if (previousSelectedItem)
         [self selectTabViewItem:previousSelectedItem];
 
-    [_viewTabsDocument addSubview:itemView];
+    [_viewTabs addSubview:itemView];
     [self setNeedsLayout];
 
     if (_delegate && [_delegate respondsToSelector:@selector(tabViewDidChangeNumberOfTabViewItems:)])
@@ -568,45 +548,47 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 */
 - (void)layoutSubviews
 {
-    var minimalDocViewWidth = /*[[_scrollViewTabs horizontalScroller] isEnabled] ? [self frameSize].width - 40 : */[self frameSize].width,
-        docViewWitdh = MAX(([_tabItemViewPrototype size].width * [_itemObjects count]), minimalDocViewWidth),
-        currentXOrigin = (docViewWitdh / 2) - [_itemObjects count] * [_tabItemViewPrototype size].width / 2;
+    var widths = [],
+        totalTabsSize = 0,
+        numberOfItems = [_itemObjects count];
 
-    if ([[_scrollViewTabs horizontalScroller] isEnabled])
-    {
-        // [_scrollViewTabs setFrameSize:CGSizeMake([self bounds].size.width - 40, [_tabItemViewPrototype size].height)];
-        // [_scrollViewTabs setFrameOrigin:CGPointMake(40.0, 0.0)];
-        if (_enableManualScrolling)
-        {
-            [self addSubview:_buttonScrollLeft];
-            [self addSubview:_buttonScrollRight];
-        }
-    }
-    else
-    {
-        // [_scrollViewTabs setFrameSize:CGSizeMake([self bounds].size.width, [_tabItemViewPrototype size].height)];
-        // [_scrollViewTabs setFrameOrigin:CGPointMake(0.0, 0.0)];
-        if (_enableManualScrolling)
-        {
-            [_buttonScrollRight removeFromSuperview];
-            [_buttonScrollLeft removeFromSuperview];
-        }
-    }
-
-    [_viewTabsDocument setFrameSize:CGSizeMake(docViewWitdh, [_tabItemViewPrototype size].height)];
-
-    for (var i = 0, c = [_itemObjects count]; i < c; i++)
+    // first we compute what will be the size of all the tabs
+    for (var i = 0; i < numberOfItems; i++)
     {
         var item = [self _getTabItemAtIndex:i],
-            itemView = [self _getTabViewAtIndex:i],
-            view = [item view];
+            width;
 
-        [itemView setFrameOrigin:CGPointMake(currentXOrigin, 2.0)];
+        if ([_tabItemViewPrototype isImage])
+            width = [_tabItemViewPrototype size].width;
+        else
+            width = [[item label] sizeWithFont:[CPFont systemFontOfSize:[CPFont systemFontSize]]].width + 5;
+
+        widths.push(width);
+        totalTabsSize += width + TNTabViewTabMargin;
+    }
+
+    var currentXOrigin = ([_viewTabs frameSize].width / 2) - totalTabsSize / 2;
+
+    currentXOrigin += (TNTabViewTabMargin / 2);
+
+    for (var i = 0; i < numberOfItems; i++)
+    {
+        var item      = [self _getTabItemAtIndex:i],
+            itemView  = [self _getTabViewAtIndex:i],
+            itemFrame = [itemView frame],
+            view      = [item view],
+            width     = widths[i];
+
+        itemFrame.size.width = width;
+        itemFrame.origin.x   = currentXOrigin;
+        itemFrame.origin.y   = 2.0;
+
+        [itemView setFrame:itemFrame];
         [itemView setIndex:i];
 
         [view setFrame:[_contentView bounds]];
 
-        currentXOrigin += [_tabItemViewPrototype size].width;
+        currentXOrigin += width + TNTabViewTabMargin;
     }
 }
 
@@ -634,11 +616,10 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
         _delegate                   = [aCoder decodeObjectForKey:@"_delegate"];
         _itemObjects                = [aCoder decodeObjectForKey:@"_itemObjects"];
         _currentSelectedItemView    = [aCoder decodeObjectForKey:@"_currentSelectedItemView"];
-        _viewTabsDocument           = [aCoder decodeObjectForKey:@"_viewTabsDocument"];
+        _viewTabs                   = [aCoder decodeObjectForKey:@"_viewTabs"];
         _currentSelectedIndex       = [aCoder decodeObjectForKey:@"_currentSelectedIndex"];
         _contentView                = [aCoder decodeObjectForKey:@"_contentView"];
         _tabItemViewPrototype       = [aCoder decodeObjectForKey:@"_tabItemViewPrototype"];
-        _scrollViewTabs             = [aCoder decodeObjectForKey:@"_scrollViewTabs"];
     }
 
     return self;
@@ -653,11 +634,10 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
     [aCoder encodeObject:_delegate forKey:@"_delegate"];
     [aCoder encodeObject:_itemObjects forKey:@"_itemObjects"];
     [aCoder encodeObject:_currentSelectedItemView forKey:@"_currentSelectedItemView"];
-    [aCoder encodeObject:_viewTabsDocument forKey:@"_viewTabsDocument"];
+    [aCoder encodeObject:_viewTabs forKey:@"_viewTabs"];
     [aCoder encodeObject:_currentSelectedIndex forKey:@"_currentSelectedIndex"];
     [aCoder encodeObject:_contentView forKey:@"_contentView"];
     [aCoder encodeObject:_tabItemViewPrototype forKey:@"_tabItemViewPrototype"];
-    [aCoder encodeObject:_scrollViewTabs forKey:@"_scrollViewTabs"];
 }
 
 @end
