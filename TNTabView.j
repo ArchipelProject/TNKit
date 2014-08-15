@@ -591,7 +591,7 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 
         itemFrame.size.width = width;
         itemFrame.origin.x   = currentXOrigin;
-        itemFrame.origin.y   = 2.0;
+        itemFrame.origin.y   = 1.0;
 
         [itemView setFrame:itemFrame];
         [itemView setIndex:i];
