@@ -136,18 +136,6 @@
 
 
 #pragma mark -
-#pragma mark Displaying
-
-/*! run the alert as a sheet of given window
-    @param aWindow the window to use for sheeting
-*/
-- (void)beginSheetModalForWindow:(CPWindow)aWindow
-{
-    [self beginSheetModalForWindow:aWindow];
-}
-
-
-#pragma mark -
 #pragma mark Delegates
 
 /*! @ignore
