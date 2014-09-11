@@ -116,7 +116,7 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 {
     if (self = [super initWithFrame:aFrame])
     {
-        _label = [[CPButton alloc] initWithFrame:CGRectMake(0, 0, [TNTabItemPrototype size].width, 22)];
+        _label = [[CPButton alloc] initWithFrame:CGRectMake(0, 0, [self size].width, 22)];
         [_label setAutoresizingMask:CPViewMinXMargin | CPViewMinYMargin | CPViewWidthSizable];
 
         [self prepareTheme];
