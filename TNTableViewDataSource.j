@@ -410,8 +410,7 @@
         [_delegate dataSource:self willReachEndOfData:aRow];
     }
 
-
-    return [_filteredContent[aRow] valueForKeyPath:[aCol identifier]];
+    return [aCol identifier] == "self" ? _filteredContent[aRow] : [_filteredContent[aRow] valueForKeyPath:[aCol identifier]];
 }
 
 - (void)tableView:(CPTableView)aTableView sortDescriptorsDidChange:(CPArray)oldDescriptors
