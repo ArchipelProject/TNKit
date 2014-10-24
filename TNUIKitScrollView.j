@@ -23,7 +23,7 @@
 
 @implementation TNUIKitScrollView : CPScroller
 
-- (void)initWithFrame:(CGRect)aRect
+- (id)initWithFrame:(CGRect)aRect
 {
     if (self = [super initWithFrame:aRect])
     {
