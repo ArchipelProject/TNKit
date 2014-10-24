@@ -25,8 +25,6 @@
 
 @import "TNMessageView.j"
 
-
-
 /*! @ingroup messageboard
     This class allows to stack TNMessageView in a variable
     row height CPTableView with shortcuts. Result will display
@@ -53,6 +51,7 @@
 
         [self setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
         [self setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
+        [self setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleNone];
         [self setAllowsColumnReordering:NO];
         [self setAllowsColumnResizing:NO];
         [self setAllowsEmptySelection:YES];
@@ -180,7 +179,7 @@
 */
 - (void)tableView:(CPTableView)aTableView shouldSelectRow:(int)aRow
 {
-    return NO;
+    return YES;
 }
 
 
