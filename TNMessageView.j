@@ -154,7 +154,7 @@ var TNMessageViewBackgroundColorLeftNormal,
     @param aFrame the frame of the view
     @return initialized view
 */
-- (void)initWithFrame:(CGRect)aFrame
+- (id)initWithFrame:(CGRect)aFrame
 {
     if (self = [super initWithFrame:aFrame])
     {
@@ -183,11 +183,13 @@ var TNMessageViewBackgroundColorLeftNormal,
         [_fieldAuthor setTextColor:[CPColor grayColor]];
         [_fieldAuthor setAutoresizingMask:CPViewWidthSizable];
         [_fieldAuthor setSelectable:YES];
+        [_fieldAuthor setEditable:NO];
 
         _fieldMessage = [[CPTextField alloc] initWithFrame:CGRectMake(20, 30, CGRectGetWidth([_viewContainer frame]) - 40 , CGRectGetHeight([_viewContainer frame]))];
         [_fieldMessage setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
         [_fieldMessage setLineBreakMode:CPLineBreakByWordWrapping];
         [_fieldMessage setSelectable:YES];
+        [_fieldMessage setEditable:NO];
 
         _fieldTimestamp = [[CPTextField alloc] initWithFrame:CGRectMake(CGRectGetWidth([_viewContainer frame]) - 210, 10, 190, 20)];
         [_fieldTimestamp setAutoresizingMask:CPViewMinXMargin];
@@ -196,6 +198,7 @@ var TNMessageViewBackgroundColorLeftNormal,
         [_fieldTimestamp setValue:[CPColor colorWithHexString:@"808080"] forThemeAttribute:@"text-color" inState:CPThemeStateNormal];
         [_fieldTimestamp setAlignment:CPRightTextAlignment];
         [_fieldTimestamp setSelectable:YES];
+        [_fieldTimestamp setEditable:NO];
 
         [_viewContainer addSubview:_fieldAuthor];
         [_viewContainer addSubview:_fieldMessage];
