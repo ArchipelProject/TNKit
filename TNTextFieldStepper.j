@@ -139,7 +139,7 @@ var TNStepperButtonsSize;
     return [_stepper target];
 }
 
-- (id)setAction:(SEL)aSelector
+- (void)setAction:(SEL)aSelector
 {
     [_stepper setAction:aSelector];
     [_textField setAction:aSelector];
