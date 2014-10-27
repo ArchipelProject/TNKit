@@ -559,6 +559,7 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 {
     var numberOfItems = [_itemObjects count],
         margin        = [_tabItemViewPrototype margin],
+        contentInset  = [[_tabItemViewPrototype label] currentValueForThemeAttribute:@"content-inset"],
         totalTabsSize = 0,
         widths        = [];
 
@@ -571,7 +572,7 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
         if ([_tabItemViewPrototype isImage])
             width = [_tabItemViewPrototype size].width;
         else
-            width = [[item label] sizeWithFont:[CPFont systemFontOfSize:[CPFont systemFontSize]]].width + 5;
+            width = [[item label] sizeWithFont:[[_tabItemViewPrototype label] currentValueForThemeAttribute:@"font"]].width + contentInset.left + contentInset.right;
 
         widths.push(width);
         totalTabsSize += width + margin;
