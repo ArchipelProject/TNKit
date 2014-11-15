@@ -486,8 +486,11 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
     _currentSelectedItemView = [self _getTabViewAtIndex:anIndex];
     [_currentSelectedItemView setThemeState:TNTabItemPrototypeThemeStateSelected];
 
-    [[pendingItem view] setFrame:[_contentView bounds]];
-    [_contentView addSubview:[pendingItem view]];
+    if (pendingItem)
+    {
+        [[pendingItem view] setFrame:[_contentView bounds]];
+        [_contentView addSubview:[pendingItem view]];
+    }
 
     _currentSelectedIndex = anIndex;
 
