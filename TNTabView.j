@@ -358,17 +358,11 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
     [itemView setAction:@selector(_tabItemCliked:)];
     [_itemObjects insertObject:[anItem, itemView] atIndex:anIndex];
 
-    if (previousSelectedItem)
-        [self selectTabViewItem:previousSelectedItem];
-
     [_viewTabs addSubview:itemView];
     [self setNeedsLayout];
 
     if (_delegate && [_delegate respondsToSelector:@selector(tabViewDidChangeNumberOfTabViewItems:)])
         [_delegate tabViewDidChangeNumberOfTabViewItems:self];
-
-    if (shouldSelectFirstTab)
-        [self selectFirstTabViewItem:nil];
 }
 
 
@@ -421,11 +415,6 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
     [_itemObjects removeObjectAtIndex:[self indexOfTabViewItemWithIdentifier:[anItem identifier]]];
 
     [self setNeedsLayout];
-
-    if ([_itemObjects count] == 0)
-        _currentSelectedIndex = -1;
-    else if (_currentSelectedIndex >= [_itemObjects count])
-        [self selectLastTabViewItem:nil];
 
     if (_delegate && [_delegate respondsToSelector:@selector(tabViewDidChangeNumberOfTabViewItems:)])
         [_delegate tabViewDidChangeNumberOfTabViewItems:self];
@@ -510,10 +499,10 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
         if (![_delegate tabView:self shouldSelectTabViewItem:pendingItem])
             return;
 
-    [[[self selectedTabViewItem] view] removeFromSuperview];
-
     if (_delegate && [_delegate respondsToSelector:@selector(tabView:willSelectTabViewItem:)])
         [_delegate tabView:self willSelectTabViewItem:pendingItem];
+
+    [[[self selectedTabViewItem] view] removeFromSuperview];
 
     [_currentSelectedItemView unsetThemeState:TNTabItemPrototypeThemeStateSelected];
     _currentSelectedItemView = [self _getTabViewAtIndex:anIndex];
