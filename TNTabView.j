@@ -343,9 +343,6 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 */
 - (void)insertTabViewItem:(CPTabViewItem)anItem atIndex:(int)anIndex
 {
-    if (_currentSelectedIndex == -1)
-        _currentSelectedIndex = 0;
-
     var previousSelectedItem = [self selectedTabViewItem],
         itemView = [self _newTabItemPrototype];
 
@@ -398,9 +395,6 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 */
 - (void)removeTabViewItem:(CPTabViewItem)anItem
 {
-    if (_currentSelectedIndex == -1)
-        return;
-
     var itemIndex = [self indexOfTabViewItemWithIdentifier:[anItem identifier]],
         currentItemView = [self _getTabViewAtIndex:itemIndex],
         associatedView = [[self _getTabItemAtIndex:itemIndex] view];
@@ -453,9 +447,6 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 */
 - (void)selectLastTabViewItem:(id)aSender
 {
-    if (_currentSelectedIndex == -1)
-        return;
-
     [self selectTabViewItemAtIndex:[_itemObjects count] - 1];
 }
 
@@ -464,9 +455,6 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 */
 - (void)selectNextTabViewItem:(id)aSender
 {
-    if (_currentSelectedIndex == -1)
-        return;
-
     [self selectTabViewItemAtIndex:(_currentSelectedIndex + 1)];
 }
 
@@ -475,9 +463,6 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 */
 - (void)selectPreviousTabViewItem:(id)aSender
 {
-    if (_currentSelectedIndex == -1)
-        return;
-
     [self selectTabViewItemAtIndex:(_currentSelectedIndex - 1)];
 }
 
@@ -486,9 +471,6 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 */
 - (void)selectTabViewItemAtIndex:(int)anIndex
 {
-    if (_currentSelectedIndex == -1)
-        return;
-
     var pendingItem = [self _getTabItemAtIndex:anIndex];
 
     if (_delegate && [_delegate respondsToSelector:@selector(tabView:shouldSelectTabViewItem:)])
