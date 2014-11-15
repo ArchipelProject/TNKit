@@ -343,12 +343,8 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 */
 - (void)insertTabViewItem:(CPTabViewItem)anItem atIndex:(int)anIndex
 {
-    var shouldSelectFirstTab = NO;
     if (_currentSelectedIndex == -1)
-    {
-        shouldSelectFirstTab = YES;
         _currentSelectedIndex = 0;
-    }
 
     var previousSelectedItem = [self selectedTabViewItem],
         itemView = [self _newTabItemPrototype];
