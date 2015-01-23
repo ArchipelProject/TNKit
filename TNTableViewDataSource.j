@@ -383,6 +383,16 @@
     return [_content filteredArrayUsingPredicate:aPredicate];
 }
 
+- (id)firstObject
+{
+    return [_filteredContent firstObject];
+}
+
+- (id)lastObject
+{
+    return [_filteredContent lastObject];
+}
+
 
 #pragma mark -
 #pragma mark Datasource implementation
