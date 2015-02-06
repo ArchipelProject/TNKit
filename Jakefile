@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -30,8 +30,8 @@ var ENV = require("system").env,
 
 framework ("TNKit", function(task)
 {
-    task.setBuildIntermediatesPath(FILE.join("Build", "TNKit.build", configuration));
-    task.setBuildPath(FILE.join("Build", configuration));
+    task.setBuildIntermediatesPath(FILE.join(ENV["CAPP_BUILD"], "TNKit.build", configuration));
+    task.setBuildPath(FILE.join(ENV["CAPP_BUILD"], configuration));
 
     task.setProductName("TNKit");
     task.setIdentifier("org.archipelproject.TNKit");
