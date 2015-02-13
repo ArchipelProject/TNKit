@@ -91,9 +91,9 @@
     frame.size.height = 0;
     [self setFrame:frame];
 
-    for (var i = 0, c = [_dataSource count]; i < c; i++)
+    for (var i = 0, c = [_stackedViews count]; i < c; i++)
     {
-        var view = [_dataSource objectAtIndex:i];
+        var view = [_stackedViews objectAtIndex:i];
 
         if ([view superview])
             [view removeFromSuperview];
