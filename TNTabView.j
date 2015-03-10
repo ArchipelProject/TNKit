@@ -233,35 +233,40 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 {
     if (self = [super initWithFrame:aFrame])
     {
-        if (!TNTabViewTabsBackgroundColor)
-        {
-            var bundle = [CPBundle bundleForClass:[self class]];
-            TNTabViewTabsBackgroundColor = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/tabs-background.png"]]];
-            TNTabViewTabButtonRightBezelColorNormal = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/scroll-button-right-bezel.png"]];
-            TNTabViewTabButtonLeftBezelColorNormal = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/scroll-button-left-bezel.png"]];
-            TNTabViewTabButtonRightBezelColorPressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/scroll-button-right-bezel-pressed.png"]];
-            TNTabViewTabButtonLeftBezelColorPressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/scroll-button-left-bezel-pressed.png"]];
-        }
-
-        _viewTabs = [[CPView alloc] initWithFrame:CGRectMake(0.0, 0.0, [self frameSize].width, [TNTabItemPrototype size].height)];
-        [_viewTabs setAutoresizingMask:CPViewWidthSizable];
-
-        _contentView = [[CPView alloc] initWithFrame:CGRectMake(0, [TNTabItemPrototype size].height, CGRectGetWidth(aFrame), CGRectGetHeight(aFrame) - [TNTabItemPrototype size].height)];
-        [_contentView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
-
-        _currentSelectedIndex = -1;
-        _enableManualScrolling = YES;
-        _itemObjects = [CPArray array];
-
-        _tabItemViewPrototype = [[TNTabItemPrototype alloc] initWithFrame:CGRectMake(0.0, 0.0, [TNTabItemPrototype size].width, [TNTabItemPrototype size].height)];
-
-        [self addSubview:_viewTabs];
-        [self addSubview:_contentView];
-        [self setTabViewBackgroundColor:TNTabViewTabsBackgroundColor];
-        [self setNeedsLayout];
+        [self _init];
     }
 
     return self;
+}
+
+
+- (void)_init
+{
+    if (!TNTabViewTabsBackgroundColor)
+    {
+        var bundle = [CPBundle bundleForClass:[self class]];
+        TNTabViewTabsBackgroundColor = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/tabs-background.png"]]];
+        TNTabViewTabButtonRightBezelColorNormal = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/scroll-button-right-bezel.png"]];
+        TNTabViewTabButtonLeftBezelColorNormal = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/scroll-button-left-bezel.png"]];
+        TNTabViewTabButtonRightBezelColorPressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/scroll-button-right-bezel-pressed.png"]];
+        TNTabViewTabButtonLeftBezelColorPressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/scroll-button-left-bezel-pressed.png"]];
+    }
+
+    _viewTabs = [[CPView alloc] initWithFrame:CGRectMake(0.0, 0.0, [self frameSize].width, [TNTabItemPrototype size].height)];
+    [_viewTabs setAutoresizingMask:CPViewWidthSizable];
+
+    _contentView = [[CPView alloc] initWithFrame:CGRectMake(0, [TNTabItemPrototype size].height, CGRectGetWidth([self frame]), CGRectGetHeight([self frame]) - [TNTabItemPrototype size].height)];
+    [_contentView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
+
+    _currentSelectedIndex = -1;
+    _enableManualScrolling = YES;
+    _itemObjects = [CPArray array];
+
+    _tabItemViewPrototype = [[TNTabItemPrototype alloc] initWithFrame:CGRectMake(0.0, 0.0, [TNTabItemPrototype size].width, [TNTabItemPrototype size].height)];
+
+    [self addSubview:_viewTabs];
+    [self addSubview:_contentView];
+    [self setTabViewBackgroundColor:TNTabViewTabsBackgroundColor];
 }
 
 
@@ -593,13 +598,15 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 {
     if (self = [super initWithCoder:aCoder])
     {
-        _delegate                   = [aCoder decodeObjectForKey:@"_delegate"];
-        _itemObjects                = [aCoder decodeObjectForKey:@"_itemObjects"];
-        _currentSelectedItemView    = [aCoder decodeObjectForKey:@"_currentSelectedItemView"];
-        _viewTabs                   = [aCoder decodeObjectForKey:@"_viewTabs"];
-        _currentSelectedIndex       = [aCoder decodeObjectForKey:@"_currentSelectedIndex"];
-        _contentView                = [aCoder decodeObjectForKey:@"_contentView"];
-        _tabItemViewPrototype       = [aCoder decodeObjectForKey:@"_tabItemViewPrototype"];
+        [self _init];
+
+        _delegate                   = [aCoder decodeObjectForKey:@"_delegate"] || _delegate;
+        _itemObjects                = [aCoder decodeObjectForKey:@"_itemObjects"] || _itemObjects;
+        _currentSelectedItemView    = [aCoder decodeObjectForKey:@"_currentSelectedItemView"] || _currentSelectedItemView;
+        _viewTabs                   = [aCoder decodeObjectForKey:@"_viewTabs"] || _viewTabs;
+        _currentSelectedIndex       = [aCoder decodeObjectForKey:@"_currentSelectedIndex"] || _currentSelectedIndex;
+        _contentView                = [aCoder decodeObjectForKey:@"_contentView"] || _contentView;
+        _tabItemViewPrototype       = [aCoder decodeObjectForKey:@"_tabItemViewPrototype"] || _tabItemViewPrototype;
     }
 
     return self;
