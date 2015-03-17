@@ -25,189 +25,11 @@
 @import <AppKit/CPView.j>
 @import <AppKit/CPScrollView.j>
 
-@import "TNSwipeView.j"
-
-
-var TNTabViewTabsBackgroundColor,
-    TNTabViewTabButtonColorNormal,
-    TNTabViewTabButtonColorPressed,
-    TNTabViewTabButtonColorActive,
-    TNTabViewTabButtonRightBezelColorNormal,
-    TNTabViewTabButtonLeftBezelColorNormal,
-    TNTabViewTabButtonRightBezelColorPressed,
-    TNTabViewTabButtonLeftBezelColorPressed;
-
-TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStateSelected");
-
-/*! @ingroup tnkit
-    This class represent the prototype of a TNTabView item
-    you can overide it and use setTabItemViewPrototype: of TNTabView
-    to implement your own item view
-*/
-@implementation TNTabItemPrototype : CPControl
-{
-    CPButton    _label  @accessors(getter=label);
-    int         _index  @accessors(property=index);
-}
-
-
-#pragma mark -
-#pragma mark class methods
-
-+ (void)initialize
-{
-    TNTabViewTabButtonColorNormal = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[
-                    [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-normal-left.png"] size:CGSizeMake(9, 22)],
-                    [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-normal-center.png"] size:CGSizeMake(1, 22)],
-                    [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-normal-right.png"] size:CGSizeMake(9, 22)]]
-                isVertical:NO]];
-    TNTabViewTabButtonColorPressed = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[
-                    [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-pressed-left.png"] size:CGSizeMake(9, 22)],
-                    [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-pressed-center.png"] size:CGSizeMake(1, 22)],
-                    [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-pressed-right.png"] size:CGSizeMake(9, 22)]]
-                isVertical:NO]];
-    TNTabViewTabButtonColorActive = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[
-                    [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-active-left.png"] size:CGSizeMake(9, 22)],
-                    [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-active-center.png"] size:CGSizeMake(1, 22)],
-                    [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:TNTabView] pathForResource:@"TNTabView/tabitem-active-right.png"] size:CGSizeMake(9, 22)]]
-                isVertical:NO]];
-}
-
-/*! return the actual size of a TNTabItemPrototype
-    This is used to layout the TNTabView
-*/
-+ (CGSize)size
-{
-    return CGSizeMake(115.0, 25.0);
-}
-
-+ (BOOL)isImage
-{
-    return NO;
-}
-
-- (CGSize)size
-{
-    return [[self class] size];
-}
-
-- (BOOL)isImage
-{
-    return [[self class] isImage];
-}
-
-+ (float)margin
-{
-    return 50.0;
-}
-
-- (float)margin
-{
-    return [[self class] margin];
-}
-
-
-#pragma mark -
-#pragma mark Initialization
-
-/*! initialize a new TNTabItemPrototype
-*/
-- (TNTabItemPrototype)initWithFrame:(CGRect)aFrame
-{
-    if (self = [super initWithFrame:aFrame])
-    {
-        _label = [[CPButton alloc] initWithFrame:CGRectMake(0, 0, [self size].width, 22)];
-        [_label setAutoresizingMask:CPViewMinXMargin | CPViewMinYMargin | CPViewWidthSizable];
-
-        [self prepareTheme];
-
-        [self addSubview:_label];
-
-        [_label setAlignment:CPCenterTextAlignment];
-        [_label setTarget:self];
-        [_label setAction:@selector(_didClick:)];
-        _index = -1;
-    }
-
-    return self;
-}
-
-- (void)prepareTheme
-{
-    [_label setValue:TNTabViewTabButtonColorNormal forThemeAttribute:@"bezel-color" inState:CPThemeStateNormal];
-    [_label setValue:TNTabViewTabButtonColorPressed forThemeAttribute:@"bezel-color" inState:CPThemeStateHighlighted];
-    [_label setValue:TNTabViewTabButtonColorActive forThemeAttribute:@"bezel-color" inState:TNTabItemPrototypeThemeStateSelected];
-    [_label setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateHighlighted];
-    [_label setValue:[CPColor blackColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateHighlighted];
-    [_label setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:TNTabItemPrototypeThemeStateSelected];
-    [_label setValue:[CPColor blackColor] forThemeAttribute:@"text-shadow-color" inState:TNTabItemPrototypeThemeStateSelected];
-}
-
-
-/*! @ignore
-*/
-- (IBAction)_didClick:(id)aSender
-{
-    [[self target] performSelector:[self action] withObject:self];
-}
-
-#pragma mark -
-#pragma mark overrides
-
-/*! called to set the content of the view
-    from the CPTabViewItem passed by TNTabView
-    @passed anItem the CPTabViewItem
-*/
-- (void)setObjectValue:(CPTabView)anItem
-{
-    [_label setTitle:[anItem label]];
-}
-
-/*! used to set theme state of subviews
-    @param aThemeState the theme state
-*/
-- (BOOL)setThemeState:(ThemeState)aThemeState
-{
-    [_label setThemeState:aThemeState];
-
-    return YES;
-}
-
-/*! used to unset theme state of subviews
-    @param aThemeState the theme state
-*/
-- (BOOL)unsetThemeState:(ThemeState)aThemeState
-{
-    [_label unsetThemeState:aThemeState];
-
-    return YES;
-}
-
-/*! CPCoder compliance
-*/
-- (id)initWithCoder:(CPCoder)aCoder
-{
-    if (self = [super initWithCoder:aCoder])
-        _label  = [aCoder decodeObjectForKey:@"_label"];
-
-    return self;
-}
-
-/*! CPCoder compliance
-*/
-- (void)encodeWithCoder:(CPCoder)aCoder
-{
-    [super encodeWithCoder:aCoder];
-
-    [aCoder encodeObject:_label forKey:@"_label"];
-}
-
-@end
+@import "TNTabViewItemsPrototypes.j"
 
 
 /*! @ingroup tnkit
     this class is a sort of CPTabView (protocol compliant)
-    but that uses a TNSwipeView
 */
 @implementation TNTabView : CPControl
 {
@@ -226,6 +48,11 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 #pragma mark -
 #pragma mark Initialization
 
++ (void)initialize
+{
+    TNTabViewTabsBackgroundColor = ;
+}
+
 /*! initialize the TNTabView
     @param aFrame the frame of the view
 */
@@ -239,34 +66,27 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
     return self;
 }
 
-
 - (void)_init
 {
-    if (!TNTabViewTabsBackgroundColor)
-    {
-        var bundle = [CPBundle bundleForClass:[self class]];
-        TNTabViewTabsBackgroundColor = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/tabs-background.png"]]];
-        TNTabViewTabButtonRightBezelColorNormal = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/scroll-button-right-bezel.png"]];
-        TNTabViewTabButtonLeftBezelColorNormal = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/scroll-button-left-bezel.png"]];
-        TNTabViewTabButtonRightBezelColorPressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/scroll-button-right-bezel-pressed.png"]];
-        TNTabViewTabButtonLeftBezelColorPressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNTabView/scroll-button-left-bezel-pressed.png"]];
-    }
-
     _viewTabs = [[CPView alloc] initWithFrame:CGRectMake(0.0, 0.0, [self frameSize].width, [TNTabItemPrototype size].height)];
     [_viewTabs setAutoresizingMask:CPViewWidthSizable];
+    _viewTabs._DOMElement.style.borderBottom = "1px solid #F2F2F2";
+    _viewTabs._DOMElement.style.borderTop = "1px solid #F2F2F2";
+    _viewTabs._DOMElement.style.boxSizing = @"border-box";
+    _viewTabs._DOMElement.style.MozBoxSizing = @"border-box";
+    _viewTabs._DOMElement.style.WebkitBoxSizing = @"border-box";
 
     _contentView = [[CPView alloc] initWithFrame:CGRectMake(0, [TNTabItemPrototype size].height, CGRectGetWidth([self frame]), CGRectGetHeight([self frame]) - [TNTabItemPrototype size].height)];
     [_contentView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
 
-    _currentSelectedIndex = -1;
+    _currentSelectedIndex  = -1;
     _enableManualScrolling = YES;
-    _itemObjects = [CPArray array];
-
-    _tabItemViewPrototype = [[TNTabItemPrototype alloc] initWithFrame:CGRectMake(0.0, 0.0, [TNTabItemPrototype size].width, [TNTabItemPrototype size].height)];
+    _itemObjects           = [CPArray array];
+    _tabItemViewPrototype  = [TNTabItemPrototype new];
 
     [self addSubview:_viewTabs];
     [self addSubview:_contentView];
-    [self setTabViewBackgroundColor:TNTabViewTabsBackgroundColor];
+    [self setTabViewBackgroundColor:[CPColor whiteColor]];
 }
 
 
@@ -322,6 +142,7 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
     return _itemObjects[anIndex][1];
 }
 
+
 #pragma mark -
 #pragma mark Events
 
@@ -330,6 +151,7 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 - (void)mouseDown:(CPEvent)anEvent
 {
 }
+
 
 #pragma mark -
 #pragma mark CPTabView protocol
@@ -577,6 +399,10 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
     }
 }
 
+
+#pragma mark -
+#pragma mark Actions
+
 /*! @ignore
 */
 - (IBAction)_tabItemCliked:(id)aSender
@@ -587,13 +413,10 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
     [self selectTabViewItemAtIndex:[aSender index]];
 }
 
-@end
 
+#pragma mark -
+#pragma mark CPCoding Compliance
 
-@implementation TNTabView (CPCoding)
-
-/*! CPCoder compliance
-*/
 - (id)initWithCoder:(CPCoder)aCoder
 {
     if (self = [super initWithCoder:aCoder])
@@ -612,8 +435,6 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
     return self;
 }
 
-/*! CPCoder compliance
-*/
 - (void)encodeWithCoder:(CPCoder)aCoder
 {
     [super encodeWithCoder:aCoder];
