@@ -160,15 +160,11 @@
     _filteredContent = [CPArray array];
 
     if (!_filter)
-    {
         _filteredContent = _displayFilter ? [[_content copy] filteredArrayUsingPredicate:_displayFilter] : [_content copy];
-        // [_table reloadData];
-        return;
-    }
+    else
+        _filteredContent = [self _filterWithPredicate:_filter];
 
-    _filteredContent = [self _filterWithPredicate:_filter];
-
-    // [_table reloadData];
+    [_table reloadData];
 }
 
 
