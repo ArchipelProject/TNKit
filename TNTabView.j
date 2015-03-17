@@ -48,11 +48,6 @@
 #pragma mark -
 #pragma mark Initialization
 
-+ (void)initialize
-{
-    TNTabViewTabsBackgroundColor = ;
-}
-
 /*! initialize the TNTabView
     @param aFrame the frame of the view
 */
