@@ -247,7 +247,7 @@ var TNFlipView_didShowView_ = 1 << 1;
 {
     var frontFunction = function(e)
     {
-        this.removeEventListener("transitionend", arguments.callee, NO);
+        this.removeEventListener("transitionEnd", arguments.callee, NO);
         this.removeEventListener("webkitAnimationEnd", arguments.callee, NO);
 
         _flipped = !_flipped;
@@ -257,18 +257,18 @@ var TNFlipView_didShowView_ = 1 << 1;
         [self _delegateDidShowView];
     };
 
-    _frontView._DOMElement.addEventListener("transitionend", frontFunction, NO);
+    _frontView._DOMElement.addEventListener("transitionEnd", frontFunction, NO);
     _frontView._DOMElement.addEventListener("webkitAnimationEnd", frontFunction, NO);
 
     var backFunction = function(e)
     {
-        this.removeEventListener("transitionend", arguments.callee, NO);
+        this.removeEventListener("transitionEnd", arguments.callee, NO);
         this.removeEventListener("webkitAnimationEnd", arguments.callee, NO);
 
         [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
     };
 
-    _backView._DOMElement.addEventListener("transitionend", backFunction, NO);
+    _backView._DOMElement.addEventListener("transitionEnd", backFunction, NO);
     _backView._DOMElement.addEventListener("webkitAnimationEnd", backFunction, NO);
 }
 

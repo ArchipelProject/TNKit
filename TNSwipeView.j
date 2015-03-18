@@ -24,13 +24,13 @@
 
 var CSSProperties = {
         "webkit" : {
-            "transform": "WebkitTransform",
-            "backfaceVisibility": "WebkitBackfaceVisibility",
-            "perspective": "WebkitPerspective",
-            "transformStyle": "WebkitTransformStyle",
-            "transition": "WebkitTransition",
-            "transitionTimingFunction": "WebkitTransitionTimingFunction",
-            "transitionEnd": "webkitTransitionEnd"
+            "transform": "transform",
+            "backfaceVisibility": "backfaceVisibility",
+            "perspective": "perspective",
+            "transformStyle": "transformStyle",
+            "transition": "transition",
+            "transitionTimingFunction": "transitionTimingFunction",
+            "transitionEnd": "transitionEnd"
         },
         "gecko" : {
             "transform": "MozTransform",
