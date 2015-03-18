@@ -146,7 +146,7 @@ var TNToolbarSelectedBgImage,
 {
     var newItem = [[CPToolbarItem alloc] initWithItemIdentifier:anIdentifier];
 
-    [newItem setLabel:aLabel];
+    [newItem setLabel:aLabel || @""];
     [newItem setView:aView];
     [newItem setTarget:aTarget];
     [newItem setAction:anAction];
@@ -183,10 +183,10 @@ var TNToolbarSelectedBgImage,
 {
     var newItem = [[CPToolbarItem alloc] initWithItemIdentifier:anIdentifier];
 
-    [newItem setLabel:aLabel];
-    [newItem setImage:[[CPImage alloc] initWithContentsOfFile:anImage size:CGSizeMake(32,32)]];
+    [newItem setLabel:aLabel || @""];
+    [newItem setImage:anImage];
     if (anotherImage)
-        [newItem setAlternateImage:[[CPImage alloc] initWithContentsOfFile:anotherImage size:CGSizeMake(32,32)]];
+        [newItem setAlternateImage:anotherImage];
     [newItem setTarget:aTarget];
     [newItem setAction:anAction];
     [newItem setToolTip:aToolTip];
