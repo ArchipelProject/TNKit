@@ -164,7 +164,7 @@
     else
         _filteredContent = [self _filterWithPredicate:_filter];
 
-    [_table reloadData];
+    // [_table reloadData];
 }
 
 
@@ -428,7 +428,7 @@
     [_filteredContent sortUsingDescriptors:[aTableView sortDescriptors]];
     [_content sortUsingDescriptors:[aTableView sortDescriptors]];
 
-    [_table reloadData];
+    // [_table reloadData];
 
     for (var i = 0, c = [selectedObjects count]; i < c; i++)
     {
