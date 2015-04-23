@@ -28,7 +28,7 @@
 */
 @implementation TNWorker: CPObject
 {
-    DOMWorker       _worker;
+    id              _worker;
     CPString        _workerBlob     @accessors(property=workerBlob);
     CPURL           _workerURL      @accessors(property=workerURL);
     id              _delegate       @accessors(property=delegate);
