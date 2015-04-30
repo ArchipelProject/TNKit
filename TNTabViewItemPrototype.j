@@ -19,6 +19,7 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/CPControl.j>
 @import <AppKit/CPButton.j>
+@import <AppKit/CPTabViewItem.j>
 
 TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStateSelected");
 
@@ -29,8 +30,9 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 */
 @implementation TNTabItemPrototype : CPControl
 {
-    CPButton    _label  @accessors(getter=label);
-    int         _index  @accessors(property=index);
+    CPButton        _button         @accessors(getter=button);
+    CPTabViewItem   _tabViewItem    @accessors(property=tabViewItem);
+    int             _index          @accessors(property=index);
 }
 
 
@@ -75,6 +77,17 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
     return [[self class] margin];
 }
 
+- (int)width
+{
+    if (![self isImage] && _tabViewItem && _button)
+    {
+        var contentInset  = [_button currentValueForThemeAttribute:@"content-inset"];
+
+        return [[_tabViewItem label] sizeWithFont:[_button currentValueForThemeAttribute:@"font"]].width + contentInset.left + contentInset.right;
+    }
+
+    return [self size].width;
+}
 
 #pragma mark -
 #pragma mark Initialization
@@ -85,16 +98,16 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 {
     if (self = [super initWithFrame:aFrame])
     {
-        _label = [[CPButton alloc] initWithFrame:CGRectMake(0, 0, [self size].width, 22)];
-        [_label setAutoresizingMask:CPViewMinXMargin | CPViewMinYMargin | CPViewWidthSizable];
+        _button = [[CPButton alloc] initWithFrame:CGRectMake(0, 0, [self size].width, 22)];
+        [_button setAutoresizingMask:CPViewMinXMargin | CPViewMinYMargin | CPViewWidthSizable];
 
         [self prepareTheme];
 
-        [self addSubview:_label];
+        [self addSubview:_button];
 
-        [_label setAlignment:CPCenterTextAlignment];
-        [_label setTarget:self];
-        [_label setAction:@selector(_didClick:)];
+        [_button setAlignment:CPCenterTextAlignment];
+        [_button setTarget:self];
+        [_button setAction:@selector(_didClick:)];
         _index = -1;
     }
 
@@ -103,12 +116,12 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 
 - (void)prepareTheme
 {
-    [_label setValue:[CPColor colorWithHexString:@"777D7D"] forThemeAttribute:@"text-color"];
-    [_label setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color"];
-    [_label setValue:[CPColor colorWithHexString:@"B3D0FF"] forThemeAttribute:@"text-color" inState:CPThemeStateHighlighted];
-    [_label setValue:[CPColor colorWithHexString:@"6B94EC"] forThemeAttribute:@"text-color" inState:TNTabItemPrototypeThemeStateSelected];
-    [_label setBordered:NO];
-    [_label setFont:[CPFont systemFontOfSize:12]];
+    [_button setValue:[CPColor colorWithHexString:@"777D7D"] forThemeAttribute:@"text-color"];
+    [_button setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color"];
+    [_button setValue:[CPColor colorWithHexString:@"B3D0FF"] forThemeAttribute:@"text-color" inState:CPThemeStateHighlighted];
+    [_button setValue:[CPColor colorWithHexString:@"6B94EC"] forThemeAttribute:@"text-color" inState:TNTabItemPrototypeThemeStateSelected];
+    [_button setBordered:NO];
+    [_button setFont:[CPFont systemFontOfSize:12]];
 }
 
 
@@ -119,7 +132,6 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
     [[self target] performSelector:[self action] withObject:self];
 }
 
-
 #pragma mark -
 #pragma mark Overrides
 
@@ -127,18 +139,19 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
     from the CPTabViewItem passed by TNTabView
     @passed anItem the CPTabViewItem
 */
-- (void)setObjectValue:(CPTabView)anItem
+- (void)setTabViewItem:(CPTabViewItem)anItem
 {
-    [_label setTitle:[anItem label]];
+    _tabViewItem = anItem;
+    [_button setTitle:[anItem label]];
 }
+
 
 /*! used to set theme state of subviews
     @param aThemeState the theme state
 */
 - (BOOL)setThemeState:(ThemeState)aThemeState
 {
-    [_label setThemeState:aThemeState];
-
+    [_button setThemeState:aThemeState];
     return YES;
 }
 
@@ -147,8 +160,7 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 */
 - (BOOL)unsetThemeState:(ThemeState)aThemeState
 {
-    [_label unsetThemeState:aThemeState];
-
+    [_button unsetThemeState:aThemeState];
     return YES;
 }
 
@@ -157,7 +169,7 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 - (id)initWithCoder:(CPCoder)aCoder
 {
     if (self = [super initWithCoder:aCoder])
-        _label  = [aCoder decodeObjectForKey:@"_label"];
+        _button  = [aCoder decodeObjectForKey:@"_button"];
 
     return self;
 }
@@ -168,7 +180,22 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 {
     [super encodeWithCoder:aCoder];
 
-    [aCoder encodeObject:_label forKey:@"_label"];
+    [aCoder encodeObject:_button forKey:@"_button"];
+}
+
+
+#pragma mark -
+#pragma mark Deprecated
+
+- (CPButton)label
+{
+    CPLog.warn("Deprecated method in TNTabViewItemPrototype.j, you should us [self button] instead of [self label]");
+    return [self button];
+}
+
+- (void)setObjectValue:(CPTabView)anItem
+{
+    [self setTabViewItem:anItem];
 }
 
 @end
