@@ -98,7 +98,7 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 {
     if (self = [super initWithFrame:aFrame])
     {
-        _button = [[CPButton alloc] initWithFrame:CGRectMake(0, 0, [self size].width, 22)];
+        _button = [[CPButton alloc] initWithFrame:CGRectMake(0, 0, [self size].width, [self size].height)];
         [_button setAutoresizingMask:CPViewMinXMargin | CPViewMinYMargin | CPViewWidthSizable];
 
         [self prepareTheme];
@@ -181,21 +181,6 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
     [super encodeWithCoder:aCoder];
 
     [aCoder encodeObject:_button forKey:@"_button"];
-}
-
-
-#pragma mark -
-#pragma mark Deprecated
-
-- (CPButton)label
-{
-    CPLog.warn("Deprecated method in TNTabViewItemPrototype.j, you should us [self button] instead of [self label]");
-    return [self button];
-}
-
-- (void)setObjectValue:(CPTabView)anItem
-{
-    [self setTabViewItem:anItem];
 }
 
 @end
