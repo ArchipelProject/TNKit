@@ -24,17 +24,38 @@
 @import <AppKit/CPTheme.j>
 @import <AppKit/CPView.j>
 @import <AppKit/CPScrollView.j>
+@import <AppKit/CPMenu.j>
+@import <AppKit/CPViewController.j>
+@import <AppKit/CPPopover.j>
+@import <AppKit/CPTableView.j>
 
-@import "TNTabViewItemsPrototypes.j"
+@import "TNTabViewItemPrototype.j"
 
+@global CPPopoverBehaviorTransient
+
+var TNTabViewDelegate_tabView_shouldSelectTabViewItem_      = 1 << 1,
+    TNTabViewDelegate_tabView_didSelectTabViewItem_         = 1 << 2,
+    TNTabViewDelegate_tabView_willSelectTabViewItem_        = 1 << 3,
+    TNTabViewDelegate_tabViewDidChangeNumberOfTabViewItems_ = 1 << 4;
+
+@protocol TNTabViewDelegate <CPObject>
+
+@optional
+- (BOOL)tabView:(TNTabView)aTabView shouldSelectTabViewItem:(CPTabViewItem)aTabViewItem;
+- (void)tabView:(TNTabView)aTabView didSelectTabViewItem:(CPTabViewItem)aTabViewItem;
+- (void)tabView:(TNTabView)aTabView willSelectTabViewItem:(CPTabViewItem)aTabViewItem;
+- (void)tabViewDidChangeNumberOfTabViewItems:(TNTabView)aTabView;
+
+@end
 
 /*! @ingroup tnkit
     this class is a sort of CPTabView (protocol compliant)
 */
-@implementation TNTabView : CPControl
+@implementation TNTabView : CPControl <CPTableViewDelegate, CPTableViewDataSource>
 {
-    id                          _delegate               @accessors(property=delegate);
-    BOOL                        _enableManualScrolling  @accessors(property=enableManualScrolling);
+    id <TNTabViewDelegate>      _delegate                   @accessors(property=delegate);
+    BOOL                        _enableManualScrolling      @accessors(property=enableManualScrolling);
+    TNTabItemPrototype          _nextTabItemViewPrototype   @accessors(property=nextTabItemViewPrototype);
 
     CPArray                     _itemObjects;
     CPView                      _currentSelectedItemView;
@@ -42,6 +63,12 @@
     int                         _currentSelectedIndex;
     CPView                      _contentView;
     TNTabItemPrototype          _tabItemViewPrototype;
+    TNTabItemPrototype          _tabItemTableViewPrototype;
+    unsigned                    _implementedDelegateMethods;
+
+    CPPopover                   _nextItemPopover;
+    CPTableView                 _tableView;
+    int                         _numberOfItemsDisplayed;
 }
 
 
@@ -76,14 +103,56 @@
 
     _currentSelectedIndex  = -1;
     _enableManualScrolling = YES;
-    _itemObjects           = [CPArray array];
+    _itemObjects           = [];
     _tabItemViewPrototype  = [TNTabItemPrototype new];
+    _tabItemTableViewPrototype = [TNTabItemPrototype new];
 
     [self addSubview:_viewTabs];
     [self addSubview:_contentView];
     [self setTabViewBackgroundColor:[CPColor whiteColor]];
+
+    [self setNextTabItemViewPrototype:[TNTabItemPrototype new]];
+
+    _nextItemPopover = [CPPopover new];
+    [_nextItemPopover setBehavior:CPPopoverBehaviorTransient];
+
+    _tableView = [[CPTableView alloc] initWithFrame:CGRectMakeZero()];
+
+    var tableColumn = [[CPTableColumn alloc] initWithIdentifier:@"TNTabViewColumn"];
+    [_tableView addTableColumn:tableColumn];
+
+    [_tableView setDelegate:self];
+    [_tableView setDataSource:self];
+
+    var contentViewController = [CPViewController new];
+    [contentViewController setView:_tableView];
+
+    [_nextItemPopover setContentViewController:contentViewController];
 }
 
+#pragma mark -
+#pragma mark Delegate methods
+
+- (void)setDelegate:(id <TNTabViewDelegate>)aDelegate
+{
+    if (aDelegate == _delegate)
+        return;
+
+    _implementedDelegateMethods = 0;
+    _delegate = aDelegate;
+
+    if ([_delegate respondsToSelector:@selector(tabViewDidChangeNumberOfTabViewItems:)])
+        _implementedDelegateMethods |= TNTabViewDelegate_tabViewDidChangeNumberOfTabViewItems_;
+
+    if ([_delegate respondsToSelector:@selector(tabView:willSelectTabViewItem:)])
+        _implementedDelegateMethods |= TNTabViewDelegate_tabView_willSelectTabViewItem_;
+
+    if ([_delegate respondsToSelector:@selector(tabView:didSelectTabViewItem:)])
+        _implementedDelegateMethods |= TNTabViewDelegate_tabView_didSelectTabViewItem_;
+
+    if ([_delegate respondsToSelector:@selector(tabView:shouldSelectTabViewItem:)])
+        _implementedDelegateMethods |= TNTabViewDelegate_tabView_shouldSelectTabViewItem_;
+}
 
 #pragma mark -
 #pragma mark Getters / Setters
@@ -104,6 +173,19 @@
     [_contentView setBackgroundColor:aColor];
 }
 
+/*! Set the prototype view for the next tab items
+    @param anItemPrototype a subclass of TNTabItemPrototype that represent the prototype
+*/
+- (void)setNextTabItemViewPrototype:(TNTabItemPrototype)anItemPrototype
+{
+    _nextTabItemViewPrototype = anItemPrototype;
+
+    [_nextTabItemViewPrototype setTarget:self];
+    [_nextTabItemViewPrototype setAction:@selector(_nextTabViewClicked:)];
+
+    [self setNeedsLayout];
+}
+
 /*! set the prototype view for items
     @param anItemPrototype a subclass of TNTabItemPrototype that represent the prototype
 */
@@ -121,12 +203,29 @@
     return [CPKeyedUnarchiver unarchiveObjectWithData:[CPKeyedArchiver archivedDataWithRootObject:_tabItemViewPrototype]];
 }
 
+/*! set the prototype view for items in a tableView
+    @param anItemPrototype a subclass of TNTabItemPrototype that represent the prototype
+*/
+- (void)setTabItemTableViewPrototype:(TNTabItemPrototype)anItemPrototype
+{
+    _tabItemTableViewPrototype = anItemPrototype;
+}
+
+/*! @ignore
+    Returns a new copy of the current item view prototype for a tableView
+    @return a new copy of current TNTabItemPrototype
+*/
+- (void)_newTableViewTabItemPrototype
+{
+    return [CPKeyedUnarchiver unarchiveObjectWithData:[CPKeyedArchiver archivedDataWithRootObject:_tabItemTableViewPrototype]];
+}
+
 - (void)_getTabItemAtIndex:(int)anIndex
 {
     if (anIndex == -1 || anIndex >= [_itemObjects count])
         return nil;
 
-    return _itemObjects[anIndex][0];
+    return [_itemObjects[anIndex] tabViewItem];
 }
 
 - (void)_getTabViewAtIndex:(int)anIndex
@@ -134,7 +233,7 @@
     if (anIndex >= [_itemObjects count])
         return nil;
 
-    return _itemObjects[anIndex][1];
+    return _itemObjects[anIndex];
 }
 
 
@@ -167,16 +266,13 @@
     var previousSelectedItem = [self selectedTabViewItem],
         itemView = [self _newTabItemPrototype];
 
-    [itemView setObjectValue:anItem];
+    [itemView setTabViewItem:anItem];
     [itemView setTarget:self];
     [itemView setAction:@selector(_tabItemCliked:)];
-    [_itemObjects insertObject:[anItem, itemView] atIndex:anIndex];
+    [_itemObjects insertObject:itemView atIndex:anIndex];
 
-    [_viewTabs addSubview:itemView];
+    [self _sendDelegateMethodTabViewDidChangeNumberOfTabViewItems];
     [self setNeedsLayout];
-
-    if (_delegate && [_delegate respondsToSelector:@selector(tabViewDidChangeNumberOfTabViewItems:)])
-        [_delegate tabViewDidChangeNumberOfTabViewItems:self];
 }
 
 
@@ -185,11 +281,11 @@
 */
 - (int)indexOfTabViewItem:(CPTabViewItem)anItem
 {
-    for (var i = 0, c = [_itemObjects count]; i < c; i++)
-        if ([self _getTabItemAtIndex:i] == anItem)
+    for (var i = 0; i < [_itemObjects count]; i++)
+        if ([_itemObjects[i] tabViewItem] == anItem)
             return i;
 
-    return -1;
+    return CPNotFound;
 }
 
 /*! implement CPTabViewProtocol
@@ -197,10 +293,11 @@
 */
 - (int)indexOfTabViewItemWithIdentifier:(CPString)anIdentifer
 {
-    for (var i = 0, c = [_itemObjects count]; i < c; i++)
-        if ([[self _getTabItemAtIndex:i] identifier] == anIdentifer)
+    for (var i = 0; i < [_itemObjects count]; i++)
+        if ([[_itemObjects[i] tabViewItem] identifier] == anIdentifer)
             return i;
-    return -1;
+
+    return CPNotFound;
 }
 
 /*! implement CPTabViewProtocol
@@ -218,17 +315,16 @@
 {
     var itemIndex = [self indexOfTabViewItemWithIdentifier:[anItem identifier]],
         currentItemView = [self _getTabViewAtIndex:itemIndex],
-        associatedView = [[self _getTabItemAtIndex:itemIndex] view];
+        associatedView = [[currentItemView tabViewItem] view];
 
     [associatedView removeFromSuperview];
 
     [currentItemView removeFromSuperview];
     [_itemObjects removeObjectAtIndex:[self indexOfTabViewItemWithIdentifier:[anItem identifier]]];
 
-    [self setNeedsLayout];
+    [self _sendDelegateMethodTabViewDidChangeNumberOfTabViewItems];
 
-    if (_delegate && [_delegate respondsToSelector:@selector(tabViewDidChangeNumberOfTabViewItems:)])
-        [_delegate tabViewDidChangeNumberOfTabViewItems:self];
+    [self setNeedsLayout];
 }
 
 /*! implement CPTabViewProtocol
@@ -294,12 +390,10 @@
 {
     var pendingItem = [self _getTabItemAtIndex:anIndex];
 
-    if (_delegate && [_delegate respondsToSelector:@selector(tabView:shouldSelectTabViewItem:)])
-        if (![_delegate tabView:self shouldSelectTabViewItem:pendingItem])
-            return;
+    if (![self _sendDelegateMethodShouldSelectTabViewItem:pendingItem])
+        return;
 
-    if (_delegate && [_delegate respondsToSelector:@selector(tabView:willSelectTabViewItem:)])
-        [_delegate tabView:self willSelectTabViewItem:pendingItem];
+    [self _sendDelegateMethodWillSelectTabViewItem:pendingItem];
 
     [[[self selectedTabViewItem] view] removeFromSuperview];
 
@@ -315,9 +409,7 @@
 
     _currentSelectedIndex = anIndex;
 
-    if (_delegate && [_delegate respondsToSelector:@selector(tabView:didSelectTabViewItem:)])
-        [_delegate tabView:self didSelectTabViewItem:pendingItem];
-
+    [self _sendDelegateMethodDidSelectTabViewItem:pendingItem];
 }
 
 /*! implement CPTabViewProtocol
@@ -334,8 +426,9 @@
 - (CPArray)tabViewItems
 {
     var ret = [CPArray array];
-    for (var i = 0, c = [_itemObjects count]; i < c; i++)
-        [ret addObject:[self _getTabItemAtIndex:i]];
+
+    for (var i = 0; i < [_itemObjects count]; i++)
+        [ret addObject:[_itemObjects[i] tabViewItem]];
 
     return ret;
 }
@@ -348,50 +441,84 @@
 */
 - (void)layoutSubviews
 {
-    var numberOfItems = [_itemObjects count],
-        margin        = [_tabItemViewPrototype margin],
-        contentInset  = [[_tabItemViewPrototype label] currentValueForThemeAttribute:@"content-inset"],
-        totalTabsSize = 0,
-        widths        = [];
+    var tabSize = [_viewTabs frameSize].width,
+        margin = [_tabItemViewPrototype margin],
+        totalSize = 0,
+        widths = [],
+        shouldAddPopoverButton = NO;
 
-    // first we compute what will be the size of all the tabs
-    for (var i = 0; i < numberOfItems; i++)
+    for (var i = 0; i < [_itemObjects count]; i++)
     {
-        var item = [self _getTabItemAtIndex:i],
-            width;
+        var item = _itemObjects[i],
+            width = [item width];
 
-        if ([_tabItemViewPrototype isImage])
-            width = [_tabItemViewPrototype size].width;
-        else
-            width = [[item label] sizeWithFont:[[_tabItemViewPrototype label] currentValueForThemeAttribute:@"font"]].width + contentInset.left + contentInset.right;
+        [widths addObject:width];
+        totalSize += width + margin;
 
-        widths.push(width);
-        totalTabsSize += width + margin;
+        if (totalSize >= tabSize)
+        {
+            totalSize -= [widths lastObject] + margin;
+            [widths removeLastObject];
+
+            totalSize -= [widths lastObject] + margin;
+            [widths removeLastObject];
+
+            shouldAddPopoverButton = YES;
+            totalSize += [_nextTabItemViewPrototype width] + margin;
+
+            break;
+        }
     }
 
-    var currentXOrigin = ([_viewTabs frameSize].width / 2) - totalTabsSize / 2;
+    var currentXOrigin = tabSize / 2 - totalSize / 2 + margin / 2;
 
-    currentXOrigin += (margin / 2);
-
-    for (var i = 0; i < numberOfItems; i++)
+    for (var i = 0; i < [widths count]; i++)
     {
-        var item      = [self _getTabItemAtIndex:i],
-            itemView  = [self _getTabViewAtIndex:i],
+        var itemView = _itemObjects[i],
+            width = widths[i],
             itemFrame = [itemView frame],
-            view      = [item view],
-            width     = widths[i];
+            tabContentView = [[itemView tabViewItem] view];
 
         itemFrame.size.width = width;
         itemFrame.origin.x   = currentXOrigin;
         itemFrame.origin.y   = 1.0;
 
-        [itemView setFrame:itemFrame];
         [itemView setIndex:i];
+        [itemView setFrame:itemFrame];
 
-        [view setFrame:[_contentView bounds]];
+        [tabContentView setFrame:[_contentView bounds]];
+        [self addSubview:itemView];
 
         currentXOrigin += width + margin;
     }
+
+    if (shouldAddPopoverButton)
+    {
+        var width = [_nextTabItemViewPrototype width];
+            itemFrame = [_nextTabItemViewPrototype frame];
+
+        itemFrame.size.width = width;
+        itemFrame.origin.x   = currentXOrigin;
+        itemFrame.origin.y   = 1.0;
+
+        [_nextTabItemViewPrototype setFrame:itemFrame];
+        [self addSubview:_nextTabItemViewPrototype];
+    }
+    else
+    {
+        [_nextTabItemViewPrototype removeFromSuperview];
+    }
+
+    for (var i = [widths count]; i < [_itemObjects count]; i++)
+    {
+        var itemView = _itemObjects[i];
+
+        [itemView setIndex:i];
+        [itemView removeFromSuperview];
+    }
+
+    _numberOfItemsDisplayed = [widths count];
+    [_tableView reloadData];
 }
 
 
@@ -408,9 +535,25 @@
     [self selectTabViewItemAtIndex:[aSender index]];
 }
 
+- (IBAction)_nextTabViewClicked:(id)aSender
+{
+    [_tableView reloadData];
+    [_nextItemPopover showRelativeToRect:nil ofView:aSender preferredEdge:CPMinXEdge]
+}
 
-#pragma mark -
-#pragma mark CPCoding Compliance
+@end
+
+var TNTabViewDelegateKey                    = @"TNTabViewDelegateKey",
+    TNTabViewItemObjectsKey                 = @"TNTabViewItemObjectsKey",
+    TNTabViewCurrentSelectedItemViewKey     = @"TNTabViewCurrentSelectedItemViewKey",
+    TNTabViewViewTabsKey                    = @"TNTabViewViewTabsKey",
+    TNTabViewCurrentSelectedIndexKey        = @"TNTabViewCurrentSelectedIndexKey",
+    TNTabViewContentViewKey                 = @"TNTabViewContentViewKey",
+    TNTabViewtTabItemViewPrototypeKey       = @"TNTabViewtTabItemViewPrototypeKey",
+    TNTabViewtNextTabItemViewPrototypeKey   = @"TNTabViewtNextTabItemViewPrototypeKey",
+    TNTabViewtTabItemTableViewPrototypeKey  = @"TNTabViewtTabItemTableViewPrototypeKey";
+
+@implementation TNTabView (TNTabViewCoding)
 
 - (id)initWithCoder:(CPCoder)aCoder
 {
@@ -418,13 +561,15 @@
     {
         [self _init];
 
-        _delegate                   = [aCoder decodeObjectForKey:@"_delegate"] || _delegate;
-        _itemObjects                = [aCoder decodeObjectForKey:@"_itemObjects"] || _itemObjects;
-        _currentSelectedItemView    = [aCoder decodeObjectForKey:@"_currentSelectedItemView"] || _currentSelectedItemView;
-        _viewTabs                   = [aCoder decodeObjectForKey:@"_viewTabs"] || _viewTabs;
-        _currentSelectedIndex       = [aCoder decodeObjectForKey:@"_currentSelectedIndex"] || _currentSelectedIndex;
-        _contentView                = [aCoder decodeObjectForKey:@"_contentView"] || _contentView;
-        _tabItemViewPrototype       = [aCoder decodeObjectForKey:@"_tabItemViewPrototype"] || _tabItemViewPrototype;
+        _delegate                   = [aCoder decodeObjectForKey:TNTabViewDelegateKey] || _delegate;
+        _itemObjects                = [aCoder decodeObjectForKey:TNTabViewItemObjectsKey] || _itemObjects;
+        _currentSelectedItemView    = [aCoder decodeObjectForKey:TNTabViewCurrentSelectedItemViewKey] || _currentSelectedItemView;
+        _viewTabs                   = [aCoder decodeObjectForKey:TNTabViewViewTabsKey] || _viewTabs;
+        _currentSelectedIndex       = [aCoder decodeObjectForKey:TNTabViewCurrentSelectedIndexKey] || _currentSelectedIndex;
+        _contentView                = [aCoder decodeObjectForKey:TNTabViewContentViewKey] || _contentView;
+        _tabItemViewPrototype       = [aCoder decodeObjectForKey:TNTabViewtTabItemViewPrototypeKey] || _tabItemViewPrototype;
+        _nextTabItemViewPrototype   = [aCoder decodeObjectForKey:TNTabViewtNextTabItemViewPrototypeKey] || _nextTabItemViewPrototype;
+        _tabItemTableViewPrototype  = [aCoder decodeObjectForKey:TNTabViewtTabItemTableViewPrototypeKey] || _tabItemTableViewPrototype
     }
 
     return self;
@@ -434,13 +579,88 @@
 {
     [super encodeWithCoder:aCoder];
 
-    [aCoder encodeObject:_delegate forKey:@"_delegate"];
-    [aCoder encodeObject:_itemObjects forKey:@"_itemObjects"];
-    [aCoder encodeObject:_currentSelectedItemView forKey:@"_currentSelectedItemView"];
-    [aCoder encodeObject:_viewTabs forKey:@"_viewTabs"];
-    [aCoder encodeObject:_currentSelectedIndex forKey:@"_currentSelectedIndex"];
-    [aCoder encodeObject:_contentView forKey:@"_contentView"];
-    [aCoder encodeObject:_tabItemViewPrototype forKey:@"_tabItemViewPrototype"];
+    [aCoder encodeObject:_delegate forKey:TNTabViewDelegateKey];
+    [aCoder encodeObject:_itemObjects forKey:TNTabViewItemObjectsKey];
+    [aCoder encodeObject:_currentSelectedItemView forKey:TNTabViewCurrentSelectedItemViewKey];
+    [aCoder encodeObject:_viewTabs forKey:TNTabViewViewTabsKey];
+    [aCoder encodeObject:_currentSelectedIndex forKey:TNTabViewCurrentSelectedIndexKey];
+    [aCoder encodeObject:_contentView forKey:TNTabViewContentViewKey];
+    [aCoder encodeObject:_tabItemViewPrototype forKey:TNTabViewtTabItemViewPrototypeKey];
+    [aCoder encodeObject:_nextTabItemViewPrototype forKey:TNTabViewtNextTabItemViewPrototypeKey];
+    [aCoder encodeObject:_tabItemTableViewPrototype forKey:TNTabViewtTabItemTableViewPrototypeKey];
+}
+
+@end
+
+
+@implementation TNTabView (TNTabViewDelegate)
+
+- (BOOL)_sendDelegateMethodShouldSelectTabViewItem:(CPTabViewItem)aTabViewItem
+{
+    if (!(_implementedDelegateMethods & TNTabViewDelegate_tabView_shouldSelectTabViewItem_))
+        return YES;
+
+    return [_delegate tabView:self shouldSelectTabViewItem:aTabViewItem];
+}
+
+- (void)_sendDelegateMethodDidSelectTabViewItem:(CPTabViewItem)aTabViewItem
+{
+    if (!(_implementedDelegateMethods & TNTabViewDelegate_tabView_didSelectTabViewItem_))
+        return;
+
+    return [_delegate tabView:self didSelectTabViewItem:aTabViewItem];
+}
+
+- (void)_sendDelegateMethodWillSelectTabViewItem:(CPTabViewItem)aTabViewItem
+{
+    if (!(_implementedDelegateMethods & TNTabViewDelegate_tabView_willSelectTabViewItem_))
+        return;
+
+    [_delegate tabView:self willSelectTabViewItem:aTabViewItem];
+}
+
+- (void)_sendDelegateMethodTabViewDidChangeNumberOfTabViewItems
+{
+    if (!(_implementedDelegateMethods & TNTabViewDelegate_tabViewDidChangeNumberOfTabViewItems_))
+        return;
+
+    [_delegate tabViewDidChangeNumberOfTabViewItems:self];
+}
+
+@end
+
+@implementation TNTabView (CPTableViewDelegate)
+
+- (void)tableViewSelectionDidChange:(CPNotification)aNotification
+{
+    var selectedRow = [_tableView selectedRow];
+
+    [self selectTabViewItemAtIndex:selectedRow + _numberOfItemsDisplayed];
+    [_nextItemPopover close];
+}
+
+- (CPView)tableView:(CPTableView)aTableView viewForTableColumn:(CPTableColumn)aTableColumn row:(CPInteger)aRowIndex
+{
+    var view = [self _newTableViewTabItemPrototype];
+    [view setFrameSize:[view size]];
+
+    [aTableColumn setWidth:MAX([aTableColumn width], [view frameSize].width + [view margin])];
+
+    return view;
+}
+
+@end
+
+@implementation TNTabView (CPTableViewDataSource)
+
+- (CPInteger)numberOfRowsInTableView:(CPTableView)aTableView
+{
+    return [_itemObjects count] - _numberOfItemsDisplayed;
+}
+
+- (id)tableView:(CPTableView)aTableView objectValueForTableColumn:(CPTableColumn)aTableColumn row:(CPInteger)aRowIndex
+{
+    return [_itemObjects[aRowIndex + _numberOfItemsDisplayed] tabViewItem];
 }
 
 @end
