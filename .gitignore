@@ -5,4 +5,6 @@ Build
 Documentation
 *Build
 debug.txt
+*.xcodeproj
+.XcodeSupport
 *.tm_properties
