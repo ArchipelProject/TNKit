@@ -103,6 +103,7 @@ var TNTabViewDelegate_tabView_shouldSelectTabViewItem_      = 1 << 1,
     [self setTabViewBackgroundColor:[CPColor whiteColor]];
 }
 
+
 #pragma mark -
 #pragma mark Delegate methods
 
@@ -126,6 +127,7 @@ var TNTabViewDelegate_tabView_shouldSelectTabViewItem_      = 1 << 1,
     if ([_delegate respondsToSelector:@selector(tabView:shouldSelectTabViewItem:)])
         _implementedDelegateMethods |= TNTabViewDelegate_tabView_shouldSelectTabViewItem_;
 }
+
 
 #pragma mark -
 #pragma mark Getters / Setters
@@ -315,7 +317,12 @@ var TNTabViewDelegate_tabView_shouldSelectTabViewItem_      = 1 << 1,
 */
 - (void)selectNextTabViewItem:(id)aSender
 {
-    [self selectTabViewItemAtIndex:(_currentSelectedIndex + 1)];
+    var nextIndex = _currentSelectedIndex + 1;
+
+    if (nextIndex > [self numberOfTabViewItems] - 1)
+        nextIndex = 0;
+
+    [self selectTabViewItemAtIndex:nextIndex];
 }
 
 /*! implement CPTabViewProtocol
@@ -323,7 +330,12 @@ var TNTabViewDelegate_tabView_shouldSelectTabViewItem_      = 1 << 1,
 */
 - (void)selectPreviousTabViewItem:(id)aSender
 {
-    [self selectTabViewItemAtIndex:(_currentSelectedIndex - 1)];
+    var nextIndex = _currentSelectedIndex - 1;
+
+    if (nextIndex < 0)
+        nextIndex = [self numberOfTabViewItems] - 1;
+
+    [self selectTabViewItemAtIndex:nextIndex];
 }
 
 /*! implement CPTabViewProtocol
@@ -374,6 +386,24 @@ var TNTabViewDelegate_tabView_shouldSelectTabViewItem_      = 1 << 1,
         [ret addObject:[_itemObjects[i] tabViewItem]];
 
     return ret;
+}
+
+#pragma mark -
+#pragma mark Responder Chain
+
+- (BOOL)acceptsFirstResponder
+{
+    return YES;
+}
+
+- (void)keyUp:(CPEvent)anEvent
+{
+    if ([anEvent keyCode] == CPLeftArrowKeyCode)
+        [self selectPreviousTabViewItem:self];
+    else if ([anEvent keyCode] == CPRightArrowKeyCode)
+        [self selectNextTabViewItem:self];
+    else
+        [super keyUp:anEvent];
 }
 
 
@@ -436,6 +466,8 @@ var TNTabViewDelegate_tabView_shouldSelectTabViewItem_      = 1 << 1,
 */
 - (IBAction)_tabItemCliked:(id)aSender
 {
+    [[self window] makeFirstResponder:self];
+
     if (_currentSelectedIndex == [aSender index])
         return;
 
