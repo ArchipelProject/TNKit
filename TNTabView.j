@@ -398,9 +398,11 @@ var TNTabViewDelegate_tabView_shouldSelectTabViewItem_      = 1 << 1,
 
 - (void)keyUp:(CPEvent)anEvent
 {
-    if ([anEvent keyCode] == CPLeftArrowKeyCode)
+    var keyCode = [anEvent keyCode];
+
+    if (keyCode == CPLeftArrowKeyCode)
         [self selectPreviousTabViewItem:self];
-    else if ([anEvent keyCode] == CPRightArrowKeyCode)
+    else if (keyCode == CPRightArrowKeyCode)
         [self selectNextTabViewItem:self];
     else
         [super keyUp:anEvent];
