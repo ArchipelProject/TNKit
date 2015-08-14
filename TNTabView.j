@@ -466,7 +466,7 @@ var TNTabViewDelegate_tabView_shouldSelectTabViewItem_      = 1 << 1,
 
 /*! @ignore
 */
-- (IBAction)_tabItemCliked:(id)aSender
+- (@action)_tabItemCliked:(id)aSender
 {
     [[self window] makeFirstResponder:self];
 

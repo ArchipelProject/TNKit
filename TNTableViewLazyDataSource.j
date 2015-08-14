@@ -68,7 +68,7 @@
     it will filter the content of the datasource according to the sender value
     @param sender the sender of the action
 */
-- (IBAction)filterObjects:(id)sender
+- (@action)filterObjects:(id)sender
 {
     if (!_searchField)
         _searchField = sender;

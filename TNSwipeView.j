@@ -455,7 +455,7 @@ catch(e)
     if current view is the last one, first view will be selected
     @param aSender the sender of the action
 */
-- (IBAction)nextView:(id)aSender
+- (@action)nextView:(id)aSender
 {
     [self _performDirectionalSlide:TNSwipeViewDirectionLeft];
 }
@@ -464,7 +464,7 @@ catch(e)
     if current view is the first one, last view will be selected
     @param aSender the sender of the action
 */
-- (IBAction)previousView:(id)aSender
+- (@action)previousView:(id)aSender
 {
     [self _performDirectionalSlide:TNSwipeViewDirectionRight];
 }

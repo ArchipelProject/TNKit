@@ -127,7 +127,7 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 
 /*! @ignore
 */
-- (IBAction)_didClick:(id)aSender
+- (@action)_didClick:(id)aSender
 {
     [[self target] performSelector:[self action] withObject:self];
 }

@@ -134,9 +134,9 @@
     [self setFrame:stackViewFrame];
 }
 
-/*! remove all items as an IBAction
+/*! remove all items as an @action
 */
-- (IBAction)removeAllViews:(id)aSender
+- (@action)removeAllViews:(id)aSender
 {
     for (var i = 0, c = [_dataSource count]; i < c; i++)
         [[_dataSource objectAtIndex:i] removeFromSuperview];
@@ -148,7 +148,7 @@
 
 /*! reverse the display of the view (but not in the Datasource) as an @action
 */
-- (IBAction)reverse:(id)sender
+- (@action)reverse:(id)sender
 {
     _reversed = !_reversed;
 

@@ -358,7 +358,7 @@ var TNFlipView_didShowView_ = 1 << 1;
 /*! flip or unflip the view
     @param aSender the sender of the acion
 */
-- (IBAction)flip:(id)aSender
+- (@action)flip:(id)aSender
 {
     if (_flipped)
         [self showFront];

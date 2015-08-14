@@ -124,15 +124,15 @@
 /*! remove all message.
     @deprecated
 */
-- (IBAction)removeAllMessages:(id)aSender
+- (@action)removeAllMessages:(id)aSender
 {
     CPLog.warn("TNMessageBoard removeAllMessages: is deprecated. please use removeAllViews:")
     [self removeAllViews:aSender];
 }
 
-/*! remove all items as an IBAction
+/*! remove all items as an @action
 */
-- (IBAction)removeAllViews:(id)aSender
+- (@action)removeAllViews:(id)aSender
 {
     [_messages removeAllObjects];
     [self reloadData];
