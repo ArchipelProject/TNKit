@@ -46,7 +46,7 @@ framework ("TNKit", function(task)
     if (configuration === "Debug")
         task.setCompilerFlags("-DDEBUG -g");
     else
-        task.setCompilerFlags("-O");
+        task.setCompilerFlags("-O2");
 });
 
 task("build", ["TNKit"]);
