@@ -68,13 +68,21 @@ task ("documentation", function()
    OS.system("doxygen TNKit.doxygen")
 });
 
-task("test", function()
-{
-    var tests = new FileList('Test/*Test.j');
-    var cmd = ["ojtest"].concat(tests.items());
-    var cmdString = cmd.map(OS.enquote).join(" ");
+task("test", ["test-only"]);
 
-    var code = OS.system(cmdString);
+task("test-only", function()
+{
+    ENV["OBJJ_INCLUDE_PATHS"] = "Frameworks";
+
+    OS.system("capp gen -fl . --force");
+
+    var tests = new FileList('Test/*Test.j'),
+        cmd = ["ojtest"].concat(tests.items()),
+        cmdString = cmd.map(OS.enquote).join(" "),
+        code = OS.system(cmdString);
+
+    OS.system("rm -rf Frameworks");
+
     if (code !== 0)
         OS.exit(code);
 });
