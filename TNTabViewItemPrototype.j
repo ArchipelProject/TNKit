@@ -83,7 +83,7 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 
 - (int)width
 {
-    if (![self isImage] && _tabViewItem && _button && _errorLabel)
+    if (![self isImage] && _tabViewItem && _button)
     {
         var contentInset    = [_button currentValueForThemeAttribute:@"content-inset"];
         return [[_tabViewItem label] sizeWithFont:[_button currentValueForThemeAttribute:@"font"]].width + contentInset.left + contentInset.right;
@@ -205,7 +205,7 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 {
     if (self = [super initWithCoder:aCoder])
     {
-        _button  = [aCoder decodeObjectForKey:@"_button"];
+        _button      = [aCoder decodeObjectForKey:@"_button"];
         _errorLabel  = [aCoder decodeObjectForKey:@"_errorLabel"];
         _errorColor  = [aCoder decodeObjectForKey:@"_errorColor"];
 
