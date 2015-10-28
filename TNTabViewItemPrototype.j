@@ -122,12 +122,12 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
 
 - (void)prepareTheme
 {
+    [_button setValue:[CPColor colorWithHexString:@"777D7D"] forThemeAttribute:@"text-color"];
+    [_button setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color"];
+    [_button setValue:[CPColor colorWithHexString:@"B3D0FF"] forThemeAttribute:@"text-color" inState:CPThemeStateHighlighted];
+    [_button setValue:[CPColor colorWithHexString:@"6B94EC"] forThemeAttribute:@"text-color" inState:TNTabItemPrototypeThemeStateSelected];
     [_button setBordered:NO];
     [_button setFont:[CPFont systemFontOfSize:12]];
-    [_button setValue:[CPColor colorWithHexString:@"6B94EC"] forThemeAttribute:@"text-color" inState:TNTabItemPrototypeThemeStateSelected];
-    [_button setValue:[CPColor colorWithHexString:@"777D7D"] forThemeAttribute:@"text-color"];
-    [_button setValue:[CPColor colorWithHexString:@"B3D0FF"] forThemeAttribute:@"text-color" inState:CPThemeStateHighlighted];
-    [_button setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color"];
 }
 
 
@@ -149,12 +149,11 @@ TNTabItemPrototypeThemeStateSelected = CPThemeState("TNTabItemPrototypeThemeStat
     [_errorLabel setObjectValue:nbErrors];
     [_errorLabel sizeToFit];
     [_errorLabel setHidden:!nbErrors];
-    [_button setValue:nbErrors ? _errorColor : [CPColor colorWithHexString:@"777D7D"] forThemeAttribute:@"text-color"];
 
     var labelFrame  = [_errorLabel frame],
         labelWidth  = labelFrame.size.width + 5;
 
-    [_errorLabel setFrame:CGRectMake(-labelWidth, [self size].height / 2 - labelFrame.size.height / 2, labelWidth, labelFrame.size.height)];
+    [_errorLabel setFrame:CGRectMake(-labelWidth - 4, [self size].height / 2 - labelFrame.size.height / 2, labelWidth, labelFrame.size.height)];
 }
 
 - (void)setErrorColor:(CPColor)aColor
